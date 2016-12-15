@@ -8,6 +8,10 @@
 
 <ion-content padding>
 
+<ion-list>
+  <ion-item *ngFor="let item of dogs" >
+    {{ item.name }} -> {{ item.product }}
+  </ion-item>
+</ion-list>
 
-there ought to be a list here.
 </ion-content>
