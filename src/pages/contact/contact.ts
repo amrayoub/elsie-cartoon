@@ -5,16 +5,17 @@ import { Pako } from '../../providers/pako';
 
 @Component({
   selector: 'page-contact',
-  templateUrl: 'contact.html'
+  templateUrl: 'contact.html',
+  providers: [ [Pako] ]
 })
 
 export class ContactPage {
   record: any;
   rander: any[];
-  keys: any[];
+  keys: any;
 
   constructor(public navCtrl: NavController, public pako: Pako) {
-    
+
   }
   makeVal() {
     let rander = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'l', 'm', 'n', 'o', 'p'];
@@ -24,10 +25,12 @@ export class ContactPage {
     return new Date().valueOf().toString();
   }
 
-  pInsert(key, val) {
+  public pInsert(key, val) {
     val = this.makeVal(); // override fake dev data
     key = this.makeKey(); // override fake dev data
-    this.pako.pakInsert(key, val)
+    console.log("-- pInsert " + key + " && " + val );
+    // this.pako.pakInsert(key, val)
+    this.pako.db.set(key, val)
       .then((val) => {
         console.log("Inserted " + val);
         this.record = val;
@@ -35,14 +38,18 @@ export class ContactPage {
   }
 
   pKeys() {
-    this.pako.pakKeys()
+    // this.pako.pakKeys()
+    this.pako.db.keys()
       .then((val) => {
         this.keys = val;
+        console.log("pako.keys " + JSON.stringify(val));
       })
   }
 
   pRead(key, val) {
-    this.pako.pakRead(key).then((val) => {
+    // this.pako.pakRead(key)
+    this.pako.db.get(key)
+    .then((val) => {
       this.record = val;
     });
   }

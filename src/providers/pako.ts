@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http'; 
+import { Http } from '@angular/http';
 import { Storage } from '@ionic/storage';
 import 'rxjs/add/operator/map';
 
@@ -16,13 +16,24 @@ export class Pako {
       { name: 'Oracle', code: 89, product: 'RDBMS' },
       { name: 'IBM', code: 542, product: 'Computer Hardware and Software' }
     ];
-    
+
+    this.db = new Storage();
   }
 
   loadAll() {
     return Promise.resolve(this.data)
       .catch((err) => { console.log('error in this.data ' + JSON.stringify(err)); });
   }
+
+  // public pakInsert(key, val) {
+  //   this.db.set(key, val).subscribe(
+  //     data => {
+  //       console.log('heh. subscribe. who knew?');
+  //     },
+  //     err => { },
+  //     () => console.log()
+  //   );;
+  // }
 
   public pakInsert(key, val): any {
     this.db.set(key, val)
