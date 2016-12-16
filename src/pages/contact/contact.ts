@@ -25,10 +25,10 @@ export class ContactPage {
     return new Date().valueOf().toString();
   }
 
-  public pInsert(key, val) {
+  public pakoSet(key, val) {
     val = this.makeVal(); // override fake dev data
     key = this.makeKey(); // override fake dev data
-    console.log("-- pInsert " + key + " && " + val );
+    console.log("-- pakoSet " + key + " && " + val );
     // this.pako.pakInsert(key, val)
     this.pako.db.set(key, val)
       .then((val) => {
@@ -37,7 +37,7 @@ export class ContactPage {
       });
   }
 
-  pKeys() {
+  pakoKeys() {
     // this.pako.pakKeys()
     this.pako.db.keys()
       .then((val) => {
@@ -46,7 +46,7 @@ export class ContactPage {
       })
   }
 
-  pRead(key, val) {
+  pakoGet(key, val) {
     // this.pako.pakRead(key)
     this.pako.db.get(key)
     .then((val) => {

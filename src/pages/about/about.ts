@@ -7,12 +7,8 @@ import { Pako } from '../../providers/pako';
   templateUrl: 'about.html'
 })
 export class AboutPage {
-  dogs: any;
-  constructor(public navCtrl: NavController, public db: Pako) {
-    this.db.loadAll().then((res) => {
-      this.dogs = res;
-    });
-  }
+
+  constructor(public navCtrl: NavController, public db: Pako) { }
 
 }
 
