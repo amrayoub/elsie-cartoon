@@ -6,7 +6,7 @@ import { Pako } from '../../providers/pako';
 @Component({
   selector: 'page-contact',
   templateUrl: 'contact.html',
-  providers: [ [Pako] ]
+  providers: [ Pako ]
 })
 
 export class ContactPage {
@@ -25,11 +25,17 @@ export class ContactPage {
     return new Date().valueOf().toString();
   }
 
+  pakoTest() {
+    console.log("Ali hasn't been chosen, again. :(");
+    // let bob = this.jline.nuBox();
+    // console.log("Jline's nuBox " + JSON.stringify(bob));
+  }
+
   public pakoSet(key, val) {
     val = this.makeVal(); // override fake dev data
     key = this.makeKey(); // override fake dev data
     console.log("-- pakoSet " + key + " && " + val );
-    // this.pako.pakInsert(key, val)
+    // this.pako.pakInsert(key, val) <- always fails
     this.pako.db.set(key, val)
       .then((val) => {
         console.log("Inserted " + val);

@@ -28,6 +28,6 @@ import { Pako } from '../providers/pako';
     HomePage,
     TabsPage
   ],
-  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, Storage, [Pako]]
+  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, Storage, Pako ]
 })
 export class AppModule {}

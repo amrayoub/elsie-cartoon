@@ -2,6 +2,7 @@
   "name": "ionic-hello-world",
   "author": "Ionic Framework",
   "homepage": "http://ionicframework.com/",
+  "config": {"ionic_source_map": "source-map"},
   "private": true,
   "scripts": {
     "ionic:build": "ionic-app-scripts build",

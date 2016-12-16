@@ -3,6 +3,47 @@ import { Http } from '@angular/http';
 import { Storage } from '@ionic/storage';
 import 'rxjs/add/operator/map';
 
+// @Injectable()
+// export class Jline {
+//   id: string;
+//   sigval: string;
+//   action: string;
+//   badge: string;
+//   thing: string;
+//   box: string;
+//   sighuman: string;
+
+//   constructor(id: string, sigval: string, action: string, badge: string, thing: string, box: string, sighuman: string) {
+//     console.log("Hi there, J. Line! ----- ");
+//     this.id = id;
+//     this.sigval = sigval;
+//     this.action = action;
+//     this.badge = badge;
+//     this.thing = thing;
+//     this.box = box;
+//     this.sighuman = sighuman;
+//   }
+
+//   public nuBox() {
+//     let nd = new Date();
+//     let sv = nd.valueOf().toString();
+//     let sh = nd.toString();
+//     let badid = new Date().valueOf().toString();
+//     // return new Jline(badid, sv, "nuBox", badid, "", badid, sh);
+
+//     return {
+//       id: badid,
+//       sigval: sv,
+//       action: "nuBox",
+//       badge: badid,
+//       thing: "",
+//       box: badid,
+//       sighuman: sh
+//     }
+
+//   }
+// }
+
 @Injectable()
 export class Pako {
 
