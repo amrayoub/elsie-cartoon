@@ -1,5 +1,20 @@
 import { Injectable } from '@angular/core';
 
+/** 
+ * @param value = machine-readable
+ * @param human = your grandma
+ */
+export class DRing<Object> {
+  public value: string;
+  public human: string;
+  constructor() {
+    let when = new Date();
+    // let s = when.valueOf().toString();
+    // let h = when.toString();
+    return ({ value: when.valueOf().toString(), human: when.toString() })
+  }
+}
+
 @Injectable()
 export class Jline {
   id: string;
@@ -21,18 +36,11 @@ export class Jline {
   ) {
     let t1 = new Date();
     let t1val = t1.valueOf();
-    let t1str = t1.valueOf().toString() + ".jpg";
+    let t1str = t1.valueOf().toString();
     let t2val = t1val + 1478;
-    let t2str = t2val.toString() + ".jpg";
+    let t2str = t2val.toString();
     let t2 = new Date(t2val).toString();
 
-    // this.id = id;
-    // this.signetValue = signetValue;
-    // this.action = action;
-    // this.badge = badge;
-    // this.thing = thing;
-    // this.box = box;
-    // this.signetHuman = signetHuman;
     if (id == 'z') {
       this.id = t1str;
     } else {
@@ -49,7 +57,7 @@ export class Jline {
       this.action = action;
     }
     if (badge == 'z') {
-      this.badge = this.id;
+      this.badge = this.id + ".jpg";
     } else {
       this.badge = badge;
     }
@@ -71,10 +79,45 @@ export class Jline {
 
   }
 
+
+  // badge = box
+  public setNuBox(action: string = 'nuBox') {
+    let jam: DRing<Object> = new DRing();
+    this.signetValue = jam.value;
+    this.signetHuman = jam.human;
+    this.box = this.badge;
+    this.action = action;
+    return this;
+  }
+
+  // badge = thg
+  public setNuThg(box: string) {
+    let jam: DRing<Object> = new DRing();
+    this.signetValue = jam.value;
+    this.signetHuman = jam.human;
+    this.thing = this.badge;
+    this.box = box;
+    this.action = "nuThg";
+    return this;
+  }
+
+  // badge = only badge
+  public setMoThg(thg: string, box: string) {
+    let jam: DRing<Object> = new DRing();
+    this.signetValue = jam.value;
+    this.signetHuman = jam.human;
+    this.thing = thg;
+    this.box = box;
+    this.action = "moThg";
+    return this;
+  }
+
   public hello() {
     console.log("JLINE: Saying 'hi.'");
   }
 
+
+  /** DO NOT USE - FOR SHAME PURPOSES ONLY - DUMBNESS */
   init(id: string = 'z', signetValue: string = 'z', action: string = 'z', badge: string = 'z', thing: string = 'z', box: string = 'z', signetHuman: string = 'z') {
     // begin here. 
 
@@ -128,6 +171,8 @@ export class Jline {
   } // innit?
 
 } // Jline
+
+
 
   // constructor1(
   //   id: string = 'z',

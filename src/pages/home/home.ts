@@ -9,23 +9,18 @@ import { Jline } from '../../models/jline';
   providers: [Jline]
 })
 export class HomePage {
+  max: any;
+  jay = new Jline();
 
   constructor(public navCtrl: NavController, public db: Storage) {
-    this.makeJline();
   }
 
-  makeJline() {
-    let max = new Date().valueOf().toString();
-    // let bob = {i: "don't know"};
-    // let bob = new Jline();
-    // let bob = new Jline();
-    // bob.init().then((ret) => {
-    //   console.log("Now bob says, " + JSON.stringify(ret) + " :: " + max);
-    // });
-    let bob = new Jline();
-    console.log("here's bob " + JSON.stringify(bob));
-  }
+   ex1() {
+    console.log('b4 ' + JSON.stringify(this.jay));
+    this.jay.setNuBox();
+    console.log('f9 ' + JSON.stringify(this.jay));
+  } // exercise
 
-}
+} // HomePage class
 
 // return new Promise((resolve) => resolve({ msg: "working on it...j" }));
