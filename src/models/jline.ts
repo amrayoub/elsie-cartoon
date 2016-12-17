@@ -15,6 +15,16 @@ export class DRing<Object> {
   }
 }
 
+class Greeter {
+  greeting: string;
+  constructor() {
+    this.greeting = "Blabla";
+  }
+  greet = () => {
+    alert(this.greeting);
+  }
+}
+
 @Injectable()
 export class Jline {
   id: string;
@@ -81,35 +91,43 @@ export class Jline {
 
 
   // badge = box
+  // setNuBox = (action: string = 'nuBox') => {
   public setNuBox(action: string = 'nuBox') {
     let jam: DRing<Object> = new DRing();
     this.signetValue = jam.value;
     this.signetHuman = jam.human;
     this.box = this.badge;
     this.action = action;
-    return this;
+    // return this;
+    return new Jline( 'z', jam.value, this.action, this.badge, 'z', this.box, jam.human );
   }
 
+/** https://basarat.gitbooks.io/typescript/content/docs/classes.html */
+
   // badge = thg
-  public setNuThg(box: string) {
+  setNuThg = (box: string) => {
+    // public setNuThg(box: string) {
     let jam: DRing<Object> = new DRing();
     this.signetValue = jam.value;
     this.signetHuman = jam.human;
     this.thing = this.badge;
     this.box = box;
     this.action = "nuThg";
-    return this;
+    // return this;
+    return new Jline('z', this.signetValue, this.action, this.badge, this.thing, this.box, this.signetHuman)
   }
 
   // badge = only badge
-  public setMoThg(thg: string, box: string) {
+  setMoThg = (thg: string, box: string) => {
+    // public setMoThg(thg: string, box: string) {
     let jam: DRing<Object> = new DRing();
     this.signetValue = jam.value;
     this.signetHuman = jam.human;
     this.thing = thg;
     this.box = box;
     this.action = "moThg";
-    return this;
+    // return this;
+    return new Jline('z', this.signetValue, this.action, this.badge, this.thing, this.box, this.signetHuman)
   }
 
   public hello() {
