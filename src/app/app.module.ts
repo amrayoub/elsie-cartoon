@@ -4,7 +4,7 @@ import { Storage } from '@ionic/storage';
 
 import { MyApp } from './app.component';
 import { CamPage } from '../pages/cam/cam';
-import { ContactPage } from '../pages/contact/contact';
+import { BoxPage } from '../pages/box/box';
 import { HomePage } from '../pages/home/home';
 import { TabsPage } from '../pages/tabs/tabs';
 
@@ -12,7 +12,7 @@ import { TabsPage } from '../pages/tabs/tabs';
   declarations: [
     MyApp,
     CamPage,
-    ContactPage,
+    BoxPage,
     HomePage,
     TabsPage
   ],
@@ -23,7 +23,7 @@ import { TabsPage } from '../pages/tabs/tabs';
   entryComponents: [
     MyApp,
     CamPage,
-    ContactPage,
+    BoxPage,
     HomePage,
     TabsPage
   ],
