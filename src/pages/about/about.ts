@@ -8,7 +8,7 @@ import { Pako } from '../../providers/pako';
 })
 export class AboutPage {
 
-  constructor(public navCtrl: NavController, public db: Pako) { }
+  constructor(public navCtrl: NavController) { }
 
 }
 

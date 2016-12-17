@@ -7,8 +7,6 @@ import { AboutPage } from '../pages/about/about';
 import { ContactPage } from '../pages/contact/contact';
 import { HomePage } from '../pages/home/home';
 import { TabsPage } from '../pages/tabs/tabs';
-import { Pako } from '../providers/pako';
-import { Jline } from '../models/jline';
 
 @NgModule({
   declarations: [
@@ -29,6 +27,6 @@ import { Jline } from '../models/jline';
     HomePage,
     TabsPage
   ],
-  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, Storage, Pako, Jline ]
+  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, Storage ]
 })
 export class AppModule {}

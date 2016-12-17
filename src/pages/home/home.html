@@ -6,21 +6,20 @@
 
 <ion-content padding>
   <p>
-    <button ion-button (click)="makeJline()">makeJline</button> 
+    <button small ion-button (click)="makeJline()">makeJline</button>
+    <button small ion-button (click)="ex1()">ex1</button>
+    <button small ion-button (click)="ex2()">ex2</button>
+  </p>
 
-    <button ion-button (click)="ex1()">exercise</button>
-    
-    <button ion-button (click)="harness()">harness</button>
-    
-    <br>
-    Mock Camera by generate fake data and put placeholder image in cache. 
-    </p>
-    
-    
+  <p> Mock Camera by generate fake data and put placeholder image in cache.
+  </p>
+
+  <p><button small ion-button (click)="nuBox()">nuBox</button> {{ nubNotes }}</p>
+
   <p> exercise the Storage engine. Perhaps see about making typical database actions available thru a service/provider. </p>
   <p>Multi-capture, in particular, can be mocked for any number of snapshots.</p>
   <p>Storage accepts JSON. So... wouldn't that make the export dirt-simple? </p>
-  <p>Supposedly there can be multiple Stores; at least LocalForage allows for that. Would that help or is that no longer necessary?</p>
+  <p><span class="strike">Supposedly there can be multiple Stores; at least LocalForage allows for that. Would that help or is that no longer necessary?</span></p>
 
   <p><strong>done-ish</strong></p>
   <p>Build the tabs, experiment with push-to-detail page (pop to return) [see ionicLifeCycleExample code]</p>
