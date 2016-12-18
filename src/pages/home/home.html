@@ -5,14 +5,30 @@
 </ion-header>
 
 <ion-content padding>
-  <p> exercise the Storage engine. Perhaps see about making typical database actions available thru a service/provider.</p>
-  <p>Mock the Camera by generating fake data and placing some kind of image in the cache.
-  </p>
-  <p>Multi-capture, in particular, can be mocked for any number of snapshots.</p>
-  <p>Storage accepts JSON. So... wouldn't that make the export dirt-simple? </p>
-  <p>Supposedly there can be multiple Stores; at least LocalForage allows for that. Would that help or is that no longer necessary?</p>
 
-  <p><strong>done-ish</strong></p>
-  <p>Build the tabs, experiment with push-to-detail page (pop to return) [see ionicLifeCycleExample code]</p>
-  <p>S</p>
+  <ion-fab top right edge>
+    <button ion-fab mini><ion-icon name="add"></ion-icon></button>
+    <ion-fab-list>
+      <button ion-fab><ion-icon name="logo-googleplus"></ion-icon></button>
+      <button ion-fab><ion-icon name="logo-youtube"></ion-icon></button>
+      <button ion-fab><ion-icon name="logo-twitter"></ion-icon></button>
+    </ion-fab-list>
+  </ion-fab>
+
+  <p><strong>Status:</strong> Most recent Box, Thing, Badge -- and some numbers.
+    <code>Ionic Storage driver: asyncStorage</code>
+  </p>
+
+  <p *ngIf="meta.showStart">
+    <button small ion-button (click)="toNewBox()">first</button> Make a new "box"
+  </p>
+
+  <!--<img src="assets/cats-1.jpg" alt="">-->
+
+  <!--<p>
+    <button small ion-button (click)="makeJline()">makeJline</button>
+    <button small ion-button (click)="ex1()">ex1</button>
+    <button small ion-button (click)="ex2()">ex2</button>
+  </p>-->
+
 </ion-content>

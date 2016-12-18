@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Yeah, whatever, Boxy Page
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+  <ion-toolbar>
+    <ion-buttons>
+      <button ion-button>
+        <ion-icon name="ionic" item-left></ion-icon>d
+        </button>
+      <button ion-button>
+        <ion-icon name="ionic" item-left></ion-icon>d
+        </button>
+      <button ion-button>
+        <ion-icon name="crop" item-left></ion-icon>d
+        </button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <ion-fab left middle>
+    <button ion-fab (click)="addBox()">
+     <ion-icon name="add-circle"></ion-icon>
+     </button><br>
+    <span class="one-shot">New Box</span>
+  </ion-fab>
+
+  <ion-list>
+    <ion-item *ngFor="let box of dbBoxes">
+      <img [src]="fs2 + box.badge" alt="cat" style="max-width:90px; max-height:60px;">
+      {{ box.action }} {{ box.badge }}
+    </ion-item>
+  </ion-list>
+
+</ion-content>
