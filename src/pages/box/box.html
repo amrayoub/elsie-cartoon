@@ -6,7 +6,7 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content>
+<ion-content padding>
 
   <ion-toolbar>
     <ion-buttons>
@@ -29,11 +29,11 @@
     <span class="one-shot">New Box</span>
   </ion-fab>
 
-  <ion-fab right middle>
-    <button ion-fab (click)="multiPix()" disabled *ngIf="meta.showStart">
-     <ion-icon name="add-circle"></ion-icon>
-     </button><br>
-    <span class="one-shot">Pix of Box</span>
-  </ion-fab>
+  <ion-list>
+    <ion-item *ngFor="let box of dbBoxes">
+      <img [src]="fs2 + box.badge" alt="cat" style="max-width:90px; max-height:60px;">
+      {{ box.action }} {{ box.badge }}
+    </ion-item>
+  </ion-list>
 
 </ion-content>

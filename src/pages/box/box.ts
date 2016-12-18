@@ -3,7 +3,7 @@ import { NavController, ToastController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { Badger, DRing } from '../../models/badger';
 import { MediaCapture, MediaFile, CaptureError } from 'ionic-native';
-import { File, Entry, FileError } from 'ionic-native';
+import { File, Entry, FileError, Camera } from 'ionic-native';
 
 declare var cordova: any;
 
@@ -19,59 +19,87 @@ declare var cordova: any;
 export class BoxPage {
   meta: any;
   images: any[];
-  curThg: any;
   curBox: any;
   fromPath: any;
   fs2: any;
   cats: string[];
+  thePhoto: any;
+  rawImageFullPath: any;
+  box: Badger;
+  dbBoxes: any[];
+
   constructor(
     public navCtrl: NavController,
     public db: Storage,
     public toastCtrl: ToastController
   ) {
     this.dbCheck();
-    this.cats = ["cats-1.jpg", "cats-2.jpg", "cats-3.jpg", "cats-4.jpg", "cats-5.jpg", "cats-6.jpg", "cats-7.jpg", "cats-8.jpg"]
-  }
-
-  // 0 new Box object w/action
-  // 2 camera
-  // 4 update Box object and/or camera image
-  // 6 new record in db
-  addBox() {
-    let box = new Badger();
-    box.action = "nuBox"
+    this.cats = ["cats-1.jpg", "cats-2.jpg", "cats-3.jpg", "cats-4.jpg", "cats-5.jpg", "cats-6.jpg", "cats-7.jpg", "cats-8.jpg"];
     try {
       this.fs2 = cordova.file.externalDataDirectory;
     } catch (e) {
       this.fs2 = "assets/";
-      console.log('not on the device, mate');
-    }
-    console.log(`made nuBox: ${JSON.stringify(box)}`);
-    this.multiPix();
+    } finally {
+      console.log(`Today's FS2 is: ${this.fs2}`);
+    } //try
   }
 
-  multiPix() {
-    // let goodoptions: CaptureImageOptions = {limit: 7};
-    console.log('** starting a media-capture escapade');
+  addBox() {
+    this.box = new Badger();
+    this.box.action = "nuBox"
+    console.log(`made nuBox: ${JSON.stringify(this.box)}`);
+    // this.multiPix();
+    this.singlePix();
+  }
+
+  singlePix() {
     try {
-      let trigger = cordova.file.externalDataDirectory;
-      MediaCapture.captureImage({ limit: 3 })
-        .then(
-        (data: MediaFile[]) => {
-          this.images = data;
-          console.log('WTF? camera this.images?');
-        },
-        (err: CaptureError) => { console.error(err) }
-        );
-    } catch (e) {
-      console.log('not on the device, mate');
-      // file:/storage/emulated/0/DCIM/Camera/<name>.jpg
-      this.images = [];
-      this.cats.forEach(element => {
-        this.images.push(this.fs2 + element)
+      let deviceFailureFlag = cordova.file.externalDataDirectory;
+      Camera.getPicture({
+        destinationType: Camera.DestinationType.FILE_URI,
+        correctOrientation: true
+      }).then((result) => {
+        // result is file:///storage/emulated/0/Android/data/com.whatever/cache/imagenumber.jpg
+        this.rawImageFullPath = this.slashName(result);
+      }, (err) => {
+        console.log(err);
       });
+    } catch (e) {
+      // fake result is file:/storage/emulated/0/DCIM/Camera/<name>.jpg
+      let thisCat = "assets/" + this.cats[Math.floor(Math.random() * this.cats.length)];
+      this.rawImageFullPath = this.slashName(thisCat);
+    } finally {
+      this.curBox = this.rawImageFullPath.name;
+      this.fromPath = this.rawImageFullPath.path;
+      this.box.badge = this.curBox;
+      this.box.box = this.curBox;
+      this.mvImageToSafePlace();
     }
-    this.fakeMulti();
+  } //singlePix()
+
+  mvImageToSafePlace() {
+    if (this.fs2 !== this.fromPath) {
+      console.log(`--Fr: ${this.fromPath} ${this.curBox}`);
+      console.log(`--To: ${this.fs2} ${this.curBox}`);
+      File.moveFile(this.fromPath, this.curBox, this.fs2, this.curBox).then(
+        (val: Entry) => {
+          console.log("** File.moveFile OK " + JSON.stringify(val));
+        },
+        (err: FileError) => { console.log(`FileError ${JSON.stringify(err)}`); }
+      );
+    }
+    console.log(`Box: ${JSON.stringify(this.box)}`);
+    this.saveBoxObject();
+  }
+
+  saveBoxObject() {
+    this.db.set(this.curBox, this.box)
+      .then((res) => {
+        this.db.get(this.curBox)
+          .then((res) => {
+            console.log(`db.get ${this.curBox} -=> ${JSON.stringify(res)}`);
+          });
+      });
   }
 
   slashName(path) {
@@ -80,63 +108,6 @@ export class BoxPage {
     let p = o.replace(':', '://');
     return { 'name': n, 'path': p };
   }
-  fakeMulti() {
-    console.log(`images: ${JSON.stringify(this.images)}`);
-  }
-
-  multiPostProcessing() {
-
-    let tmp = this.slashName(this.images[0].fullPath)
-    this.curThg = tmp.name;
-    this.fromPath = tmp.path;
-    console.log('** multiPostProcessing - this.curThg, Path: ' + this.curThg + " | " + this.fromPath);
-
-    /** images is a MediaFile */
-    this.images.forEach((shot, index) => {
-      /** filesystem */
-      console.log("** mPP - filesystemFr: " + this.fromPath + shot.name);
-      console.log("** mPP - filesystemTo: " + this.fs2 + shot.name);
-      File.moveFile(this.fromPath, shot.name, this.fs2, shot.name).then(
-        (val: Entry) => {
-          // console.log("** mPP Move apparently OK ", JSON.stringify(val));
-        },
-        (err: FileError) => { console.log("** mPP BAD MOVE ** " + err.message) }
-      );
-      /** database */
-      let signow: Date = new Date();
-      let action: any = 'xxYyy';
-      if (0 == index) { action = 'nuThg' } else { action = 'moThg' }
-      console.log('** multiPostProcessing ' + index + ' let action: ' + action);
-      //
-      let copper = {
-        'signetValue': signow.valueOf(),
-        'action': action,
-        'badge': shot.name,
-        'thing': this.curThg,
-        'box': this.curBox,
-        'signetHuman': signow
-      };
-
-      console.log('copper ' + JSON.stringify(copper));
-      //
-      /** looks like the db key will (always?) be the badge name. Makes sense. So far... */
-      this.db.set(shot.name, {
-        'signetValue': signow.valueOf(),
-        'action': action,
-        'badge': shot.name,
-        'thing': this.curThg,
-        'box': this.curBox,
-        'signetHuman': signow
-      }).then((ret) => {
-        console.log("** mPP - database.set() returned: " + JSON.stringify(ret));
-      });
-    }); // images.forEach
-    /** I think this will asynch itself out of position, but... */
-    this.showThing(this.curThg);
-  } // multiPostProcessing
-
-
-  showThing(thg) { }
 
   dbCheck(): void {
     this.meta = {};
@@ -145,25 +116,40 @@ export class BoxPage {
       if (this.meta.allkeys.length == 0) {
         this.meta.showStart = true;
         this.freshDatabase();
+      } else {
+        console.log(`db has: ${JSON.stringify(this.meta.allkeys.length)} records.`);
+        this.meta.allkeys.forEach((k) => {
+          console.log(`meta.allkey ${k}`);
+          this.dbBoxes = [];
+          this.db.get(k).then((record)=>{
+            if(record.action == "nuBox" || record.action == "unBox") {
+              this.dbBoxes.push(record);
+              console.log(`pushing... ${JSON.stringify(record)}`);
+            }
+          }); //db.get
+        }); //allkeys.foreach
       }
-      console.log(`allkeys: ${JSON.stringify(this.meta.allkeys)}`);
-    })
+    }); //dbkeys.then
   }
 
   freshDatabase(): void {
     let toast = this.toastCtrl.create({
-      message: 'Database empty. Make New Box. NOW.',
-      duration: 3000,
+      message: 'Database Empty. U Make New Box.',
+      duration: 2000,
       showCloseButton: true,
       position: 'middle'
     });
-    toast.onDidDismiss(() => {
-      console.log('Dismissed toast');
-    });
+    toast.onDidDismiss(() => { /** console.log('Dismissed toast');*/ });
     toast.present();
   } //freshDatabase()
 
 } // BoxPage
+
+        // config.xml
+        // <preference name="AndroidPersistentFileLocation" value="Internal" />
+        // <preference name="iosPersistentFileLocation" value="Library" />
+        // console.log(cordova.file.dataDirectory);
+
 
 /** from CLACKULATOR
 cordova-plugin-camera 2.3.0 "Camera"

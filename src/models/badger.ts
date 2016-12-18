@@ -28,7 +28,7 @@ export class Badger {
     this.id = jam.value;
     this.signetValue = jam.value;
     this.signetHuman = jam.human;
-    this.badge = jam.value + ".jpg";
+    // this.badge = jam.value + ".jpg"; // No. Let Camera decide.
   }
 
 }
