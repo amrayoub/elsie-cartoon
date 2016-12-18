@@ -24,29 +24,33 @@ export class BoxPage {
   fs2: any;
   cats: string[];
   thePhoto: any;
-  rawImageFullPath: any;
+  rawImage: any;
   box: Badger;
   dbBoxes: any[];
+  dbId: any;
+  areWeLocal: boolean;
 
   constructor(
     public navCtrl: NavController,
     public db: Storage,
     public toastCtrl: ToastController
   ) {
-    this.dbCheck();
     this.cats = ["cats-1.jpg", "cats-2.jpg", "cats-3.jpg", "cats-4.jpg", "cats-5.jpg", "cats-6.jpg", "cats-7.jpg", "cats-8.jpg"];
     try {
       this.fs2 = cordova.file.externalDataDirectory;
     } catch (e) {
+      this.areWeLocal = true;
       this.fs2 = "assets/";
     } finally {
       console.log(`Today's FS2 is: ${this.fs2}`);
+      this.dbCheck();
     } //try
   }
 
   addBox() {
     this.box = new Badger();
     this.box.action = "nuBox"
+    this.dbId = new Date().valueOf().toString();
     // console.log(`made nuBox: ${JSON.stringify(this.box)}`);
     // this.multiPix();
     this.singlePix();
@@ -60,28 +64,33 @@ export class BoxPage {
         correctOrientation: true
       }).then((result) => {
         // result is file:///storage/emulated/0/Android/data/com.whatever/cache/imagenumber.jpg
-        this.rawImageFullPath = this.slashName(result);
+        this.rawImage = this.slashName(result);
       }, (err) => {
         console.log(err);
       });
     } catch (e) {
       // fake result is file:/storage/emulated/0/DCIM/Camera/<name>.jpg
+      this.areWeLocal = true;
       let thisCat = "assets/" + this.cats[Math.floor(Math.random() * this.cats.length)];
-      this.rawImageFullPath = this.slashName(thisCat);
+      this.rawImage = this.slashName(thisCat);
     } finally {
-      this.curBox = this.rawImageFullPath.name;
-      this.fromPath = this.rawImageFullPath.path;
-      this.box.badge = this.curBox;
-      this.box.box = this.curBox;
+      /**
+       * Need to move away from using badge as a unique identifier.
+       *   - works in Cordovaville
+       *   - not in Browserville. We use duplicate images here in Browserville.
+       */
+      this.box.badge = this.rawImage.name;
+      this.box.box = this.rawImage.name;
+
       this.mvImageToSafePlace();
     }
   } //singlePix()
 
   mvImageToSafePlace() {
-    if (this.fs2 !== this.fromPath) {
-      console.log(`--Fr: ${this.fromPath} ${this.curBox}`);
-      console.log(`--To: ${this.fs2} ${this.curBox}`);
-      File.moveFile(this.fromPath, this.curBox, this.fs2, this.curBox).then(
+    if (this.fs2 !== this.rawImage.path) {
+      console.log(`--Fr: ${this.rawImage.path} ${this.rawImage.name}`);
+      console.log(`--To: ${this.fs2} ${this.rawImage.name}`);
+      File.moveFile(this.rawImage.path, this.rawImage.name, this.fs2, this.rawImage.name).then(
         (val: Entry) => {
           console.log("** File.moveFile OK " + JSON.stringify(val));
         },
@@ -93,21 +102,14 @@ export class BoxPage {
   }
 
   saveBoxObject() {
-    this.db.set(this.box.badge, this.box)
+    this.db.set(this.dbId, this.box)
       .then((res) => {
-        this.db.get(this.box.badge)
+        this.db.get(this.dbId)
           .then((res) => {
-            console.log(`save/db.get ${this.box.badge} -=> ${JSON.stringify(res.signetHuman)}`);
+            console.log(`save/db.get ${this.dbId} -=> ${JSON.stringify(res.signetHuman)}`);
           });
       });
     this.dbCheck(); // refresh current data;
-  }
-
-  slashName(path) {
-    let n = path.split('/').pop();
-    let o = path.split('/').slice(0, -1).join('/') + '/';
-    let p = o.replace(':', '://');
-    return { 'name': n, 'path': p };
   }
 
   dbCheck(): void {
@@ -131,19 +133,29 @@ export class BoxPage {
         }); //allkeys.foreach
 
         for (let i = this.meta.allkeys.length; i >= 0; i--) {
-          let target = this.meta.allkeys[i];
-          this.db.get(target).then((record) => {
+          let rowNumber = this.meta.allkeys[i];
+          this.db.get(rowNumber).then((record) => {
             if (record && record.hasOwnProperty('action')) {
-              console.log(`i ${i} t ${target} r ${record.action} `);
+              console.log(`${i} : ${rowNumber} : ${record.action} : ${record.badge} `);
             } else {
               console.log(`might be a global constant...`);
             }
           });
           // more statements
         }
-
       }
     }); //dbkeys.then
+  }
+
+/**
+ * End of the Actions --------------------
+ */
+
+  slashName(path) {
+    let n = path.split('/').pop();
+    let o = path.split('/').slice(0, -1).join('/') + '/';
+    let p = o.replace(':', '://');
+    return { 'name': n, 'path': p };
   }
 
   freshDatabase(): void {
