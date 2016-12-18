@@ -10,20 +10,30 @@
 
   <ion-toolbar>
     <ion-buttons>
-      <button ion-button  >
+      <button ion-button>
         <ion-icon name="ionic" item-left></ion-icon>d
         </button>
-      <button ion-button  >
+      <button ion-button>
         <ion-icon name="ionic" item-left></ion-icon>d
         </button>
-      <button ion-button  >
+      <button ion-button>
         <ion-icon name="crop" item-left></ion-icon>d
         </button>
     </ion-buttons>
   </ion-toolbar>
 
-  <ion-list>
-  </ion-list>
+  <ion-fab left middle>
+    <button ion-fab (click)="addBox()">
+     <ion-icon name="add-circle"></ion-icon>
+     </button><br>
+    <span class="one-shot">New Box</span>
+  </ion-fab>
 
+  <ion-fab right middle>
+    <button ion-fab (click)="multiPix()" disabled *ngIf="meta.showStart">
+     <ion-icon name="add-circle"></ion-icon>
+     </button><br>
+    <span class="one-shot">Pix of Box</span>
+  </ion-fab>
 
 </ion-content>

@@ -2,6 +2,9 @@ import { Component } from '@angular/core';
 import { App, NavController, Tabs } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { Badger } from '../../models/badger';
+import { File, Entry, FileError } from 'ionic-native';
+
+declare var cordova: any;
 
 @Component({
   selector: 'page-home',
@@ -12,20 +15,36 @@ import { Badger } from '../../models/badger';
 export class HomePage {
   nubNotes: string;
   meta: any = {};
-    // private app: App, 
+  bytes_free: any;
+  // private app: App,
 
   constructor(
     public navCtrl: NavController,
     public db: Storage,
-    private tabs:Tabs) {
+    private tabs: Tabs) {
     this.checkDb();
+    this.checkFs();
+    this.getCat();
+  }
+
+  checkFs() {
+    // File.getFreeDiskSpace().then((data: any) => {
+    //   this.bytes_free = data;
+    // });
+  }
+
+  getCat() {
+
   }
 
   checkDb() {
     this.db.keys().then((ret) => {
       this.meta.allkeys = ret;
-      if (this.meta.allkeys.length == 0) { this.meta.showStart = true; }
-      console.log(`allkeys: ${JSON.stringify(this.meta.allkeys)}`);
+      // console.log(`allkeys: ${JSON.stringify(this.meta.allkeys)}`);
+      if (this.meta.allkeys.length == 0) {
+        this.meta.showStart = true;
+        this.tabs.select(2);
+      }
     })
   }
 
@@ -54,12 +73,12 @@ export class HomePage {
     // let nav = this.app.getRootNav();
     // nav.push(BoxPage);
     this.tabs.select(2);
-}
+  }
 
-nuBox() {
-  this.nubNotes = "1) new Badger, 2) 'nuBox', 3)start Camera, 3) move image to 'files/badge.jpg'";
+  nuBox() {
+    this.nubNotes = "1) new Badger, 2) 'nuBox', 3)start Camera, 3) move image to 'files/badge.jpg'";
 
-}
+  }
 
 
 } // HomePage class
