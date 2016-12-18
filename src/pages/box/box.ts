@@ -47,7 +47,7 @@ export class BoxPage {
   addBox() {
     this.box = new Badger();
     this.box.action = "nuBox"
-    console.log(`made nuBox: ${JSON.stringify(this.box)}`);
+    // console.log(`made nuBox: ${JSON.stringify(this.box)}`);
     // this.multiPix();
     this.singlePix();
   }
@@ -88,18 +88,19 @@ export class BoxPage {
         (err: FileError) => { console.log(`FileError ${JSON.stringify(err)}`); }
       );
     }
-    console.log(`Box: ${JSON.stringify(this.box)}`);
+    // console.log(`Box: ${JSON.stringify(this.box)}`);
     this.saveBoxObject();
   }
 
   saveBoxObject() {
-    this.db.set(this.curBox, this.box)
+    this.db.set(this.box.badge, this.box)
       .then((res) => {
-        this.db.get(this.curBox)
+        this.db.get(this.box.badge)
           .then((res) => {
-            console.log(`db.get ${this.curBox} -=> ${JSON.stringify(res)}`);
+            console.log(`save/db.get ${this.box.badge} -=> ${JSON.stringify(res.signetHuman)}`);
           });
       });
+    this.dbCheck(); // refresh current data;
   }
 
   slashName(path) {
@@ -118,16 +119,29 @@ export class BoxPage {
         this.freshDatabase();
       } else {
         console.log(`db has: ${JSON.stringify(this.meta.allkeys.length)} records.`);
+        // Glob = this.db.length, then db.get (using allkeys) from end until first nuThg, nuBox
+        this.dbBoxes = [];
         this.meta.allkeys.forEach((k) => {
-          console.log(`meta.allkey ${k}`);
-          this.dbBoxes = [];
-          this.db.get(k).then((record)=>{
-            if(record.action == "nuBox" || record.action == "unBox") {
+          this.db.get(k).then((record) => {
+            if (record.action == "nuBox" || record.action == "unBox") {
               this.dbBoxes.push(record);
-              console.log(`pushing... ${JSON.stringify(record)}`);
+              // console.log(`dbBoxes.push( ${JSON.stringify(record)}`);
             }
           }); //db.get
         }); //allkeys.foreach
+
+        for (let i = this.meta.allkeys.length; i >= 0; i--) {
+          let target = this.meta.allkeys[i];
+          this.db.get(target).then((record) => {
+            if (record && record.hasOwnProperty('action')) {
+              console.log(`i ${i} t ${target} r ${record.action} `);
+            } else {
+              console.log(`might be a global constant...`);
+            }
+          });
+          // more statements
+        }
+
       }
     }); //dbkeys.then
   }
