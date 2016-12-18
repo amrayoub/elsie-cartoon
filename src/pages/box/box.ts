@@ -43,10 +43,11 @@ export class BoxPage {
       this.fs2 = "assets/";
     } finally {
       console.log(`Today's FS2 is: ${this.fs2}`);
-      this.dbCheck();
     } //try
   }
-
+  ionViewDidEnter() {
+    this.dbCheck();
+  }
   addBox() {
     this.box = new Badger();
     this.box.action = "nuBox"
@@ -107,22 +108,22 @@ export class BoxPage {
         this.db.get(this.dbId)
           .then((res) => {
             console.log(`save/db.get ${this.dbId} -=> ${JSON.stringify(res.signetHuman)}`);
+            this.dbCheck(); // refresh current data; I wish it really did...
           });
       });
-    this.dbCheck(); // refresh current data;
   }
 
   dbCheck(): void {
     this.meta = {};
+    this.dbBoxes = [];
     this.db.keys().then((ret) => {
       this.meta.allkeys = ret;
       if (this.meta.allkeys.length == 0) {
         this.meta.showStart = true;
         this.freshDatabase();
       } else {
+        // console.log(`db meta: ${JSON.stringify(this.meta.allkeys)} `);
         console.log(`db has: ${JSON.stringify(this.meta.allkeys.length)} records.`);
-        // Glob = this.db.length, then db.get (using allkeys) from end until first nuThg, nuBox
-        this.dbBoxes = [];
         this.meta.allkeys.forEach((k) => {
           this.db.get(k).then((record) => {
             if (record.action == "nuBox" || record.action == "unBox") {
@@ -130,9 +131,10 @@ export class BoxPage {
               // console.log(`dbBoxes.push( ${JSON.stringify(record)}`);
             }
           }); //db.get
+
         }); //allkeys.foreach
 
-        for (let i = this.meta.allkeys.length; i >= 0; i--) {
+        for (let i = this.meta.allkeys.length - 1; i >= 0; i--) {
           let rowNumber = this.meta.allkeys[i];
           this.db.get(rowNumber).then((record) => {
             if (record && record.hasOwnProperty('action')) {
@@ -147,9 +149,9 @@ export class BoxPage {
     }); //dbkeys.then
   }
 
-/**
- * End of the Actions --------------------
- */
+  /**
+   * End of the Actions --------------------
+   */
 
   slashName(path) {
     let n = path.split('/').pop();
