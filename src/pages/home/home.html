@@ -15,7 +15,14 @@
     </ion-fab-list>
   </ion-fab>
 
-<p><strong>Status:</strong> Most recent Box, Thing, Badge -- and some numbers </p>
+  <p><strong>Status:</strong> Most recent Box, Thing, Badge -- and some numbers.
+    <code>Ionic Storage driver: asyncStorage</code>
+  </p>
+
+  <p *ngIf="meta.showStart">
+    <button small ion-button (click)="toNewBox()">first</button> Make a new "box"
+  </p>
+
 
   <!--<p>
     <button small ion-button (click)="makeJline()">makeJline</button>

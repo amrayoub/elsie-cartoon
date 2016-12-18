@@ -8,6 +8,7 @@ import { BoxPage } from '../pages/box/box';
 import { HomePage } from '../pages/home/home';
 import { TabsPage } from '../pages/tabs/tabs';
 
+
 @NgModule({
   declarations: [
     MyApp,
