@@ -33,6 +33,16 @@ export class HomePage {
     // });
   }
 
+  emptyDatabase() {
+    this.db.clear().then(() => {
+      // Run this code once the database has been entirely deleted.
+      console.log('Database is now empty.');
+    }).catch(function (err) {
+      // This code runs if there were any errors
+      console.log(err);
+    });
+  }
+
   getCat() {
 
   }
