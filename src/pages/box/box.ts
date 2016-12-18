@@ -30,7 +30,7 @@ export class BoxPage {
     public toastCtrl: ToastController
   ) {
     this.dbCheck();
-    this.cats = ["assets/cats-1.jpg", "assets/cats-2.jpg", "assets/cats-3.jpg", "assets/cats-4.jpg", "assets/cats-5.jpg", "assets/cats-6.jpg", "assets/cats-7.jpg", "assets/cats-8.jpg"]
+    this.cats = ["cats-1.jpg", "cats-2.jpg", "cats-3.jpg", "cats-4.jpg", "cats-5.jpg", "cats-6.jpg", "cats-7.jpg", "cats-8.jpg"]
   }
 
   // 0 new Box object w/action
@@ -47,12 +47,14 @@ export class BoxPage {
       console.log('not on the device, mate');
     }
     console.log(`made nuBox: ${JSON.stringify(box)}`);
+    this.multiPix();
   }
 
   multiPix() {
+    // let goodoptions: CaptureImageOptions = {limit: 7};
+    console.log('** starting a media-capture escapade');
     try {
-      // let goodoptions: CaptureImageOptions = {limit: 7};
-      console.log('** starting a media-capture escapade');
+      let trigger = cordova.file.externalDataDirectory;
       MediaCapture.captureImage({ limit: 3 })
         .then(
         (data: MediaFile[]) => {
@@ -64,11 +66,12 @@ export class BoxPage {
     } catch (e) {
       console.log('not on the device, mate');
       // file:/storage/emulated/0/DCIM/Camera/<name>.jpg
+      this.images = [];
       this.cats.forEach(element => {
-        this.images.push( this.fs2 + element )
+        this.images.push(this.fs2 + element)
       });
     }
-    this.multiPostProcessing();
+    this.fakeMulti();
   }
 
   slashName(path) {
@@ -80,6 +83,7 @@ export class BoxPage {
   fakeMulti() {
     console.log(`images: ${JSON.stringify(this.images)}`);
   }
+
   multiPostProcessing() {
 
     let tmp = this.slashName(this.images[0].fullPath)
@@ -132,10 +136,7 @@ export class BoxPage {
   } // multiPostProcessing
 
 
-  showThing(thg) {
-
-  }
-
+  showThing(thg) { }
 
   dbCheck(): void {
     this.meta = {};
