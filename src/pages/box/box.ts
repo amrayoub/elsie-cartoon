@@ -17,7 +17,7 @@ declare var cordova: any;
  * the Multi- returns tripe such as this:
  * file:/storage/emulated/0/DCIM/Camera/<name>.jpg */
 export class BoxPage {
-  meta: any = {glob:"empty"};
+  postit: any = {};
   images: any[];
   curBox: any;
   fromPath: any;
@@ -36,6 +36,8 @@ export class BoxPage {
     public toastCtrl: ToastController
   ) {
     this.cats = ["cats-1.jpg", "cats-2.jpg", "cats-3.jpg", "cats-4.jpg", "cats-5.jpg", "cats-6.jpg", "cats-7.jpg", "cats-8.jpg"];
+    this.postit = { glob: { curBox: 'nil', curThg: 'nil' }, stanley: "steamer" };
+    console.log(`constructed with  ${JSON.stringify(this.postit)}`);
     try {
       this.areWeLocal = false;
       this.fs2 = cordova.file.externalDataDirectory;
@@ -100,6 +102,7 @@ export class BoxPage {
   }
 
   saveBoxObject() {
+    this.postit.glob.curBox = this.dbId;
     this.db.set(this.dbId, this.box)
       .then((res) => {
         this.db.get(this.dbId)
@@ -109,9 +112,40 @@ export class BoxPage {
             } else {
               console.log(`save/db.get ${this.dbId} -=> ${JSON.stringify(res)}`);
             }
+
             this.dbCheck(); // refresh current data; I wish it really did...
-          });
+
+            // this.db.get("dbglob")
+            //   .then((res) => {
+            //     // look at res.curBox, res.curThg
+
+            //     asdfasdf
+            //   })
+            //   .then((x) => {
+            //     this.db.set("dbglob", something);
+            // })
+
+          })
       });
+  }
+
+  /**
+   * @param b is actually signetValue, so...
+   *    let's loop thru the database to find a key in the haystack...
+   */
+  openBox(boxSignet) {
+    this.db.keys()
+      .then((res) => {
+        let ak = res;
+        res.forEach(oneKey => {
+          this.db.get(oneKey)
+            .then((ret) => {
+              if (ret.signetValue == boxSignet) {
+                this.postit.glob.curBox = oneKey;
+              }
+            })
+        });
+      })
   }
 
   /**
@@ -122,21 +156,21 @@ export class BoxPage {
    */
 
   dbCheck(): void {
-    this.meta = {};
+    this.postit.allkeys = [];
     this.dbBoxes = [];
     let dbGlobLocated = false;
     this.db.keys()
       .then((ret) => {
-        this.meta.allkeys = ret;
-        if (this.meta.allkeys.length == 0) {
-          this.meta.showStart = true;
+        this.postit.allkeys = ret;
+        if (this.postit.allkeys.length == 0) {
+          this.postit.showStart = true;
           this.freshDatabase();
         } else {
-          console.log(`db has: ${JSON.stringify(this.meta.allkeys.length)} records.`);
+          console.log(`db has: ${JSON.stringify(this.postit.allkeys.length)} records.`);
           console.log(`reminder, fs2 is ${this.fs2}`);
 
-          for (let i = this.meta.allkeys.length - 1; i >= 0; i--) {
-            let rowNumber = this.meta.allkeys[i];
+          for (let i = this.postit.allkeys.length - 1; i >= 0; i--) {
+            let rowNumber = this.postit.allkeys[i];
             this.db.get(rowNumber).then((record) => {
               // IS IT ONE OF OURS?
               if (record && record.hasOwnProperty('action')) {
@@ -154,16 +188,18 @@ export class BoxPage {
               } // one of ours?
             });
           } // done with allkeys
+
+          // this.postit.glob.curBox;
+
           if (dbGlobLocated == false) {
-            this.db.set("dbglob", {"hello": "world"})
-            .then((ret)=>{
-              this.db.get("dbglob")
-              .then((rec)=>{
-                console.log(` "dbglob: ${JSON.stringify(rec)}`);
-                this.meta.glob = rec;
-                console.log(` "meta: ${JSON.stringify(this.meta)}`);
-              })
-            });
+            this.db.set("dbglob", this.postit.glob)
+              .then((ret) => {
+                this.db.get("dbglob")
+                  .then((rec) => {
+                    console.log(` "dbglob: ${JSON.stringify(rec)}`);
+                    console.log(` "postit: ${JSON.stringify(this.postit)}`);
+                  })
+              });
           }
         }
       }); //dbkeys()
