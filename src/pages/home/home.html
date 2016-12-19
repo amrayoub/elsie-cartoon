@@ -7,28 +7,31 @@
 <ion-content padding>
 
   <ion-fab top right edge>
-    <button ion-fab mini><ion-icon name="add"></ion-icon></button>
+    <button ion-fab mini>
+      <ion-icon name="add"></ion-icon>
+      </button>
     <ion-fab-list>
-      <button ion-fab><ion-icon name="logo-googleplus"></ion-icon></button>
-      <button ion-fab><ion-icon name="logo-youtube"></ion-icon></button>
-      <button ion-fab><ion-icon name="logo-twitter"></ion-icon></button>
+      <button ion-fab>
+        <ion-icon name="logo-googleplus"></ion-icon>
+        </button>
+      <button ion-fab>
+        <ion-icon name="logo-youtube"></ion-icon>
+        </button>
+      <button ion-fab>
+        <ion-icon name="logo-twitter"></ion-icon>
+        </button>
+      <button ion-fab color="danger" (click)="emptyDatabase()">
+        <ion-icon name="trash"></ion-icon>
+        </button>
     </ion-fab-list>
   </ion-fab>
 
-  <p><strong>Status:</strong> Most recent Box, Thing, Badge -- and some numbers.
-    <code>Ionic Storage driver: asyncStorage</code>
-  </p>
+  <p> <code>Ionic Storage driver: asyncStorage</code> </p>
 
-  <p *ngIf="meta.showStart">
-    <button small ion-button (click)="toNewBox()">first</button> Make a new "box"
-  </p>
-
-  <!--<img src="assets/cats-1.jpg" alt="">-->
-
-  <!--<p>
-    <button small ion-button (click)="makeJline()">makeJline</button>
-    <button small ion-button (click)="ex1()">ex1</button>
-    <button small ion-button (click)="ex2()">ex2</button>
-  </p>-->
+  <p *ngIf="meta.showStart"> Make a new "box" </p>
+  <p *ngIf="meta.glob">
+    <img [src]="fs2+meta.glob.curBoxBadge" alt="Box Badge" style="max-width:180px; max-height:120px;">
+<br> <strong>The Open Box</strong>
+</p>
 
 </ion-content>
