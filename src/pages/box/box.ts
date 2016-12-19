@@ -17,7 +17,7 @@ declare var cordova: any;
  * the Multi- returns tripe such as this:
  * file:/storage/emulated/0/DCIM/Camera/<name>.jpg */
 export class BoxPage {
-  postit: any = {};
+  meta: any = {};
   images: any[];
   curBox: any;
   fromPath: any;
@@ -36,8 +36,8 @@ export class BoxPage {
     public toastCtrl: ToastController
   ) {
     this.cats = ["cats-1.jpg", "cats-2.jpg", "cats-3.jpg", "cats-4.jpg", "cats-5.jpg", "cats-6.jpg", "cats-7.jpg", "cats-8.jpg"];
-    this.postit = { glob: { curBox: 'nil', curThg: 'nil' }, stanley: "steamer" };
-    console.log(`constructed with  ${JSON.stringify(this.postit)}`);
+    this.meta = { glob: { curBox: false, curBoxBadge: false, curThg: false, curThgBadge:false }, stanley: "steamer" };
+    console.log(`constructed with  ${JSON.stringify(this.meta)}`);
     try {
       this.areWeLocal = false;
       this.fs2 = cordova.file.externalDataDirectory;
@@ -49,7 +49,7 @@ export class BoxPage {
     } //try
   }
   ionViewDidEnter() {
-    this.dbCheck();
+    this.checkDb();
   }
   addBox() {
     this.box = new Badger();
@@ -102,7 +102,8 @@ export class BoxPage {
   }
 
   saveBoxObject() {
-    this.postit.glob.curBox = this.dbId;
+    this.meta.glob.curBox = this.dbId;
+    this.meta.glob.curBoxBadge = this.box.badge;
     this.db.set(this.dbId, this.box)
       .then((res) => {
         this.db.get(this.dbId)
@@ -113,7 +114,7 @@ export class BoxPage {
               console.log(`save/db.get ${this.dbId} -=> ${JSON.stringify(res)}`);
             }
 
-            this.dbCheck(); // refresh current data; I wish it really did...
+            this.checkDb(); // refresh current data; I wish it really did...
 
             // this.db.get("dbglob")
             //   .then((res) => {
@@ -141,9 +142,11 @@ export class BoxPage {
           this.db.get(oneKey)
             .then((ret) => {
               if (ret.signetValue == boxSignet) {
-                this.postit.glob.curBox = oneKey;
+                this.meta.glob.curBox = oneKey;
+                this.meta.glob.curBoxBadge = ret.badge;
               }
-            })
+              this.db.set("dbglob", this.meta.glob); // set and forget?
+            });
         });
       })
   }
@@ -155,22 +158,22 @@ export class BoxPage {
    * 3. use keys to fetch Current/Status record, update in-memory Status
    */
 
-  dbCheck(): void {
-    this.postit.allkeys = [];
+  checkDb(): void {
+    this.meta.allkeys = [];
     this.dbBoxes = [];
     let dbGlobLocated = false;
     this.db.keys()
       .then((ret) => {
-        this.postit.allkeys = ret;
-        if (this.postit.allkeys.length == 0) {
-          this.postit.showStart = true;
+        this.meta.allkeys = ret;
+        if (this.meta.allkeys.length == 0) {
+          this.meta.showStart = true;
           this.freshDatabase();
         } else {
-          console.log(`db has: ${JSON.stringify(this.postit.allkeys.length)} records.`);
+          console.log(`db has: ${JSON.stringify(this.meta.allkeys.length)} records.`);
           console.log(`reminder, fs2 is ${this.fs2}`);
 
-          for (let i = this.postit.allkeys.length - 1; i >= 0; i--) {
-            let rowNumber = this.postit.allkeys[i];
+          for (let i = this.meta.allkeys.length - 1; i >= 0; i--) {
+            let rowNumber = this.meta.allkeys[i];
             this.db.get(rowNumber).then((record) => {
               // IS IT ONE OF OURS?
               if (record && record.hasOwnProperty('action')) {
@@ -189,15 +192,15 @@ export class BoxPage {
             });
           } // done with allkeys
 
-          // this.postit.glob.curBox;
+          // this.meta.glob.curBox;
 
           if (dbGlobLocated == false) {
-            this.db.set("dbglob", this.postit.glob)
+            this.db.set("dbglob", this.meta.glob)
               .then((ret) => {
                 this.db.get("dbglob")
                   .then((rec) => {
                     console.log(` "dbglob: ${JSON.stringify(rec)}`);
-                    console.log(` "postit: ${JSON.stringify(this.postit)}`);
+                    console.log(` "meta: ${JSON.stringify(this.meta)}`);
                   })
               });
           }

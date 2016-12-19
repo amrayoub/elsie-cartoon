@@ -16,7 +16,8 @@ export class HomePage {
   nubNotes: string;
   meta: any = {};
   bytes_free: any;
-  // private app: App,
+  fs2: any;
+  areWeLocal: boolean;
 
   constructor(
     public navCtrl: NavController,
@@ -27,10 +28,23 @@ export class HomePage {
     this.getCat();
   }
 
+  ionViewWillEnter() {
+    this.checkDb();
+  }
+
   checkFs() {
     // File.getFreeDiskSpace().then((data: any) => {
     //   this.bytes_free = data;
     // });
+    try {
+      this.areWeLocal = false;
+      this.fs2 = cordova.file.externalDataDirectory;
+    } catch (e) {
+      this.areWeLocal = true;
+      this.fs2 = "assets/";
+    } finally {
+      console.log(`Home: Today's FS2 is: ${this.fs2}`);
+    } //try
   }
 
   emptyDatabase() {
@@ -48,14 +62,27 @@ export class HomePage {
   }
 
   checkDb() {
-    this.db.keys().then((ret) => {
-      this.meta.allkeys = ret;
-      // console.log(`allkeys: ${JSON.stringify(this.meta.allkeys)}`);
-      if (this.meta.allkeys.length == 0) {
-        this.meta.showStart = true;
-        this.tabs.select(2);
-      }
-    })
+    this.db.keys()
+      .then((ret) => {
+        this.meta.allkeys = ret;
+        // console.log(`allkeys: ${JSON.stringify(this.meta.allkeys)}`);
+        if (this.meta.allkeys.length == 0) {
+          this.meta.showStart = true;
+          this.tabs.select(2);
+        } else {
+          this.meta.showStart = false;
+          this.db.get("dbglob")
+            .then((res) => {
+              console.log(`Home,checkDb,dbglob ${JSON.stringify(res)}`);
+
+              if (res == undefined) {
+                // do nothing
+              } else {
+                this.meta.glob = res;
+              }
+            })
+        }
+      });
   }
 
   ex1() {

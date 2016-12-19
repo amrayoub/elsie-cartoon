@@ -26,11 +26,12 @@
     </ion-fab-list>
   </ion-fab>
 
-  <p><strong>Status:</strong> Most recent Box, Thing, Badge -- and some numbers.
-    <code>Ionic Storage driver: asyncStorage</code>
-  </p>
+  <p> <code>Ionic Storage driver: asyncStorage</code> </p>
 
   <p *ngIf="meta.showStart"> Make a new "box" </p>
-
+  <p *ngIf="meta.glob">
+    <img [src]="fs2+meta.glob.curBoxBadge" alt="Box Badge" style="max-width:180px; max-height:120px;">
+<br> <strong>The Open Box</strong>
+</p>
 
 </ion-content>
