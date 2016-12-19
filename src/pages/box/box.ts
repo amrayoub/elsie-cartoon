@@ -17,7 +17,7 @@ declare var cordova: any;
  * the Multi- returns tripe such as this:
  * file:/storage/emulated/0/DCIM/Camera/<name>.jpg */
 export class BoxPage {
-  meta: any;
+  meta: any = {glob:"empty"};
   images: any[];
   curBox: any;
   fromPath: any;
@@ -37,6 +37,7 @@ export class BoxPage {
   ) {
     this.cats = ["cats-1.jpg", "cats-2.jpg", "cats-3.jpg", "cats-4.jpg", "cats-5.jpg", "cats-6.jpg", "cats-7.jpg", "cats-8.jpg"];
     try {
+      this.areWeLocal = false;
       this.fs2 = cordova.file.externalDataDirectory;
     } catch (e) {
       this.areWeLocal = true;
@@ -58,7 +59,7 @@ export class BoxPage {
   }
 
   singlePix() {
-    try {
+    if (this.areWeLocal == false) {
       let deviceFailureFlag = cordova.file.externalDataDirectory;
       Camera.getPicture({
         destinationType: Camera.DestinationType.FILE_URI,
@@ -66,23 +67,19 @@ export class BoxPage {
       }).then((result) => {
         // result is file:///storage/emulated/0/Android/data/com.whatever/cache/imagenumber.jpg
         this.rawImage = this.slashName(result);
+        this.box.badge = this.rawImage.name;
+        this.box.box = this.rawImage.name;
+        this.mvImageToSafePlace();
       }, (err) => {
         console.log(err);
       });
-    } catch (e) {
+    } else {
       // fake result is file:/storage/emulated/0/DCIM/Camera/<name>.jpg
       this.areWeLocal = true;
       let thisCat = "assets/" + this.cats[Math.floor(Math.random() * this.cats.length)];
       this.rawImage = this.slashName(thisCat);
-    } finally {
-      /**
-       * Need to move away from using badge as a unique identifier.
-       *   - works in Cordovaville
-       *   - not in Browserville. We use duplicate images here in Browserville.
-       */
       this.box.badge = this.rawImage.name;
       this.box.box = this.rawImage.name;
-
       this.mvImageToSafePlace();
     }
   } //singlePix()
@@ -107,51 +104,78 @@ export class BoxPage {
       .then((res) => {
         this.db.get(this.dbId)
           .then((res) => {
-            console.log(`save/db.get ${this.dbId} -=> ${JSON.stringify(res.signetHuman)}`);
+            if (this.areWeLocal) {
+              console.log(`save/db.get ${this.dbId} -=> ${JSON.stringify(res.signetHuman)}`);
+            } else {
+              console.log(`save/db.get ${this.dbId} -=> ${JSON.stringify(res)}`);
+            }
             this.dbCheck(); // refresh current data; I wish it really did...
           });
       });
   }
 
+  /**
+   * EVERYTIME
+   * 1. get the keys of the database
+   * 2. use keys to create Boxes array (why? for the box.html list of boxes)
+   * 3. use keys to fetch Current/Status record, update in-memory Status
+   */
+
   dbCheck(): void {
     this.meta = {};
     this.dbBoxes = [];
-    this.db.keys().then((ret) => {
-      this.meta.allkeys = ret;
-      if (this.meta.allkeys.length == 0) {
-        this.meta.showStart = true;
-        this.freshDatabase();
-      } else {
-        // console.log(`db meta: ${JSON.stringify(this.meta.allkeys)} `);
-        console.log(`db has: ${JSON.stringify(this.meta.allkeys.length)} records.`);
-        this.meta.allkeys.forEach((k) => {
-          this.db.get(k).then((record) => {
-            if (record.action == "nuBox" || record.action == "unBox") {
-              this.dbBoxes.push(record);
-              // console.log(`dbBoxes.push( ${JSON.stringify(record)}`);
-            }
-          }); //db.get
+    let dbGlobLocated = false;
+    this.db.keys()
+      .then((ret) => {
+        this.meta.allkeys = ret;
+        if (this.meta.allkeys.length == 0) {
+          this.meta.showStart = true;
+          this.freshDatabase();
+        } else {
+          console.log(`db has: ${JSON.stringify(this.meta.allkeys.length)} records.`);
+          console.log(`reminder, fs2 is ${this.fs2}`);
 
-        }); //allkeys.foreach
-
-        for (let i = this.meta.allkeys.length - 1; i >= 0; i--) {
-          let rowNumber = this.meta.allkeys[i];
-          this.db.get(rowNumber).then((record) => {
-            if (record && record.hasOwnProperty('action')) {
-              console.log(`${i} : ${rowNumber} : ${record.action} : ${record.badge} `);
-            } else {
-              console.log(`might be a global constant...`);
-            }
-          });
-          // more statements
+          for (let i = this.meta.allkeys.length - 1; i >= 0; i--) {
+            let rowNumber = this.meta.allkeys[i];
+            this.db.get(rowNumber).then((record) => {
+              // IS IT ONE OF OURS?
+              if (record && record.hasOwnProperty('action')) {
+                console.log(`${i} : ${rowNumber} : ${record.action} : ${record.badge} : ${this.myTime(record.signetValue)}`);
+                // IS IT A BOX?
+                if (record.action == "nuBox" || record.action == "unBox") {
+                  this.dbBoxes.push(record);
+                }
+              } else {
+                console.log(`${rowNumber} might be our global constant...`);
+                if (rowNumber == "dbglob") {
+                  // do something with dbglob, perhaps,
+                  dbGlobLocated = true
+                }
+              } // one of ours?
+            });
+          } // done with allkeys
+          if (dbGlobLocated == false) {
+            this.db.set("dbglob", {"hello": "world"})
+            .then((ret)=>{
+              this.db.get("dbglob")
+              .then((rec)=>{
+                console.log(` "dbglob: ${JSON.stringify(rec)}`);
+                this.meta.glob = rec;
+                console.log(` "meta: ${JSON.stringify(this.meta)}`);
+              })
+            });
+          }
         }
-      }
-    }); //dbkeys.then
+      }); //dbkeys()
   }
-
   /**
    * End of the Actions --------------------
    */
+
+  myTime(t: string): string {
+    let slag = new Date(Number(t));
+    return ("0" + slag.getHours()).slice(-2) + ":" + ("0" + slag.getMinutes()).slice(-2) + ":" + ("0" + slag.getSeconds()).slice(-2) + "." + ("00" + slag.getUTCMilliseconds()).slice(-3);
+  }
 
   slashName(path) {
     let n = path.split('/').pop();
