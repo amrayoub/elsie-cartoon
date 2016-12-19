@@ -13,6 +13,7 @@ declare var cordova: any;
 })
 
 export class HomePage {
+
   nubNotes: string;
   meta: any = {};
   bytes_free: any;
@@ -25,7 +26,6 @@ export class HomePage {
     private tabs: Tabs) {
     this.checkDb();
     this.checkFs();
-    this.getCat();
   }
 
   ionViewWillEnter() {
@@ -57,10 +57,6 @@ export class HomePage {
     });
   }
 
-  getCat() {
-
-  }
-
   checkDb() {
     this.db.keys()
       .then((ret) => {
@@ -74,7 +70,6 @@ export class HomePage {
           this.db.get("dbglob")
             .then((res) => {
               console.log(`Home,checkDb,dbglob ${JSON.stringify(res)}`);
-
               if (res == undefined) {
                 // do nothing
               } else {
@@ -85,37 +80,37 @@ export class HomePage {
       });
   }
 
-  ex1() {
-    let jay = new Badger();
-    console.log('b4 ' + JSON.stringify(jay));
-    jay.box = "jayBox"
-    console.log('h4 ' + JSON.stringify(jay));
-  } // ex1
+  // ex1() {
+  //   let jay = new Badger();
+  //   console.log('b4 ' + JSON.stringify(jay));
+  //   jay.box = "jayBox"
+  //   console.log('h4 ' + JSON.stringify(jay));
+  // } // ex1
 
-  ex2() {
-    console.log('wait for it...');
+  // ex2() {
+  //   console.log('wait for it...');
 
-    setTimeout(function () {
-      let bill = new Badger();
-      console.log('b4 ' + JSON.stringify(bill));
-      bill.box = "BillBox"
-      console.log('h4 ' + JSON.stringify(bill));
+  //   setTimeout(function () {
+  //     let bill = new Badger();
+  //     console.log('b4 ' + JSON.stringify(bill));
+  //     bill.box = "BillBox"
+  //     console.log('h4 ' + JSON.stringify(bill));
 
-    }, 5000);
-  } // ex2
+  //   }, 5000);
+  // } // ex2
 
-  toNewBox() {
-    // this.navCtrl.getByIndex(2);
-    // this.navCtrl.push(2)
-    // let nav = this.app.getRootNav();
-    // nav.push(BoxPage);
-    this.tabs.select(2);
-  }
+  // toNewBox() {
+  //   // this.navCtrl.getByIndex(2);
+  //   // this.navCtrl.push(2)
+  //   // let nav = this.app.getRootNav();
+  //   // nav.push(BoxPage);
+  //   this.tabs.select(2);
+  // }
 
-  nuBox() {
-    this.nubNotes = "1) new Badger, 2) 'nuBox', 3)start Camera, 3) move image to 'files/badge.jpg'";
+  // nuBox() {
+  //   this.nubNotes = "1) new Badger, 2) 'nuBox', 3)start Camera, 3) move image to 'files/badge.jpg'";
 
-  }
+  // }
 
 
 } // HomePage class
