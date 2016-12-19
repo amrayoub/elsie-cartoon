@@ -43,7 +43,7 @@ export class HomePage {
       this.areWeLocal = true;
       this.fs2 = "assets/";
     } finally {
-      console.log(`Home: Today's FS2 is: ${this.fs2}`);
+      // console.log(`Home: Today's FS2 is: ${this.fs2}`);
     } //try
   }
 
@@ -69,7 +69,7 @@ export class HomePage {
           this.meta.showStart = false;
           this.db.get("dbglob")
             .then((res) => {
-              console.log(`Home,checkDb,dbglob ${JSON.stringify(res)}`);
+              // console.log(`Home,checkDb,dbglob ${JSON.stringify(res)}`);
               if (res == undefined) {
                 // do nothing
               } else {

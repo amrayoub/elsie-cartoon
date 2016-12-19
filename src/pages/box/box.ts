@@ -60,6 +60,9 @@ export class BoxPage {
     this.singlePix();
   }
 
+  /**
+   * file:///storage/emulated/0/Android/data/ <name> /cache/imagenumber.jpg
+   */
   singlePix() {
     if (this.areWeLocal == false) {
       let deviceFailureFlag = cordova.file.externalDataDirectory;
@@ -67,7 +70,7 @@ export class BoxPage {
         destinationType: Camera.DestinationType.FILE_URI,
         correctOrientation: true
       }).then((result) => {
-        // result is file:///storage/emulated/0/Android/data/com.whatever/cache/imagenumber.jpg
+
         this.rawImage = this.slashName(result);
         this.box.badge = this.rawImage.name;
         this.box.box = this.rawImage.name;
