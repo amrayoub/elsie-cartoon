@@ -15,12 +15,10 @@ export class CamPage {
 
   meta: any = {};
   fs2: any;
-  thg: Badger;
-  dbId: string;
-  areWeLocal: boolean;
-  showCurBox: boolean = false;
-  thePix: any[] = [];
   cats: string[];
+  areWeLocal: boolean;
+  thePix: any[] = []; // badge nlet nuThgId: string; // temp var, really
+  showCurBox: boolean = false;
 
   constructor(public navCtrl: NavController, public db: Storage) {
     this.checkDb();
@@ -66,9 +64,6 @@ export class CamPage {
 
   addThing() {
     this.thePix = []; // Thing-based pix, we're talking about here.
-    this.thg = new Badger();
-    this.thg.action = "nuThg";
-    this.dbId = new Date().valueOf().toString();
     this.multiPix();
   }
 
@@ -82,14 +77,14 @@ export class CamPage {
         .then(
         (data: MediaFile[]) => {
           this.thePix = data;
-          console.log(`${this.dbId} << thePix: ${JSON.stringify(this.thePix)}`);
+          console.log(`*** thePix: ${JSON.stringify(this.thePix)}`);
           this.multiStep2();
         },
         (err: CaptureError) => { console.error(err) }
         );
     } else {
+
       this.areWeLocal = true; // a friendly reminder
-      // let thisCat = "assets/" + this.cats[Math.floor(Math.random() * this.cats.length)];
       let theirNames: string[] = this.shuffleCats(this.cats);
       theirNames.forEach(element => {
         this.thePix.push(this.fs2 + element);
@@ -102,20 +97,68 @@ export class CamPage {
 
 
   multiStep2() {
-    // TODO: Ought I be devising a db-based getter and setter for these two? I tink so...
+    let localTestIds: any[] = [];
+    // TODO: Ought I be devising a db-based getter and setter for these two?
     this.meta.glob.curThg = false;
     this.meta.glob.curThgBadge = false;
-    if(this.areWeLocal == false) {
+    if (this.areWeLocal == false) {
+      this.thePix.forEach((v, i) => {
+        let rawImage = this.slashName(v);
+
+      });
 
     } else {
       // yes, we are local.
-    this.thePix.forEach(v => {
-      let rawImage = this.slashName(v);
-      // console.log(`ms2/rawimage: ${JSON.stringify(rawImage)}`);
+      let shoMe: any[] = [];
+      let nuThgId: string = new Date().valueOf().toString();
+      let moThgId: string = new Date().valueOf().toString();
+      let thingLeader = '';
+      this.thePix.forEach((v, i) => {
+        let rawImage = this.slashName(v);
+        // console.log(`ms2/rawimage: ${i} --- ${JSON.stringify(rawImage)}`);
+        if (i == 0) {
+          thingLeader = rawImage.name;
+          let xxThg: Badger = new Badger();
+          xxThg.action = "nuThg";
+          // console.log(`${this.xxThg.action} ${rawImage.path}${rawImage.name}`);
+          xxThg.thing = rawImage.name;
+          xxThg.badge = rawImage.name;
+          // shoMe.push({ [nuThgId] : this.xxThg });
+          this.db.set(nuThgId, xxThg)
+            .then((res) => {
+              console.log(`aargh0 ${nuThgId}`);
+              localTestIds.push(nuThgId);
+            });
+
+        } else {
+          moThgId = (Number(moThgId) + 13).toString();
+          let xxThg: Badger = new Badger();
+          xxThg.action = "moThg";
+          xxThg.thing = thingLeader;
+          xxThg.badge = rawImage.name;
+          // shoMe.push({ [moThgId]: this.xxThg });
+          this.db.set(moThgId, xxThg)
+            .then((res) => {
+              console.log(`aargh1 ${moThgId}`);
+              localTestIds.push(moThgId);
+            });
+        }
+
+
+      }) //thePix loop
+      // console.log(`shoMe ${JSON.stringify(shoMe)}`);
+      console.log(`LTI ${JSON.stringify(localTestIds)}`);
+      localTestIds.forEach((v) => {
+        this.db.get(v)
+          .then((ret) => {
+            console.log(`db: ${JSON.stringify(ret)}`);
+          })
+
+      })
 
 
 
-    }) //thePix loop
+
 
       // File.moveFile(this.fromPath, shot.name, this.fs2, shot.name).then(
       //   (val: Entry) => {
