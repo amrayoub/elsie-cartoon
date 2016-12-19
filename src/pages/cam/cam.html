@@ -9,15 +9,15 @@
 <ion-content padding>
 
     <ion-fab right middle>
-    <button ion-fab (click)="addBox()" color="secondary">
+    <button ion-fab (click)="addThing()" color="secondary">
      <ion-icon name="add-circle"></ion-icon>
      </button><br>
-    <span class="one-shot">New Thing</span>
+    <span class="one-shot">Add Thing</span>
   </ion-fab>
 
-<p>Must have an Open Box</p>
+<p *ngIf="!showCurBox" >Must have an Open Box</p>
 
- <p *ngIf="meta.glob && meta.glob.curBoxBadge">
+ <p *ngIf="showCurBox">
     <img [src]="fs2+meta.glob.curBoxBadge" alt="Box Badge" style="max-width:120px; max-height:90px;">
     <br>
     The Open Box

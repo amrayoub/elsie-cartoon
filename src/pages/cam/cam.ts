@@ -14,6 +14,7 @@ export class CamPage {
   meta: any = {};
   fs2: any;
   areWeLocal: boolean;
+  showCurBox: boolean = false;
 
   constructor(
     public navCtrl: NavController,
@@ -22,6 +23,10 @@ export class CamPage {
     this.checkDb();
   }
 
+
+  addThing() {
+
+  }
 
   ionViewWillEnter() {
     this.checkDb();
@@ -60,6 +65,9 @@ export class CamPage {
                 // do nothing
               } else {
                 this.meta.glob = res;
+                if (this.meta.glob.curBoxBadge) {
+                  this.showCurBox = true;
+                }
               }
             })
         }
