@@ -1,7 +1,38 @@
 
 import { Injectable } from '@angular/core';
 
-export class DRing<Object> {
+export class Ute {
+  constructor(public starter:Date=new Date()) { }
+
+/**
+ * Returns an array of unique Date.valueOf strings.
+ * Created by arithmetic so's they're unique.
+ * @param starter: an optional Date value.
+ */
+  ids(): string[] {
+    let stack=[];
+    let base = this.starter.valueOf();
+    for(let i=0; i<100; i++) {
+      base = base + 13;
+      stack.push( base.toString() );
+    }
+    return stack;
+  }
+
+/**
+ * Receive the usual Camera-style date value.
+ * Show Time with milliseconds
+ * @param t: as in Date().valueOf().toString()
+ */
+  myTime(t: string): string {
+    let slag = new Date(Number(t));
+    return ("0" + slag.getHours()).slice(-2) + ":" + ("0" + slag.getMinutes()).slice(-2) + ":" + ("0" + slag.getSeconds()).slice(-2) + "." + ("00" + slag.getUTCMilliseconds()).slice(-3);
+  }
+
+
+}
+
+export class DRing {
   public value: string;
   public human: string;
   constructor() {
@@ -10,7 +41,8 @@ export class DRing<Object> {
     // let h = when.toString();
     return ({ value: when.valueOf().toString(), human: when.toString() })
   }
-}
+} // DRing
+
 
 @Injectable()
 export class Badger {
@@ -31,5 +63,9 @@ export class Badger {
     // this.badge = jam.value + ".jpg"; // No. Let Camera decide.
   }
 
-}
+  myTime(t: string): string {
+    let slag = new Date(Number(t));
+    return ("0" + slag.getHours()).slice(-2) + ":" + ("0" + slag.getMinutes()).slice(-2) + ":" + ("0" + slag.getSeconds()).slice(-2) + "." + ("00" + slag.getUTCMilliseconds()).slice(-3);
+  }
 
+}

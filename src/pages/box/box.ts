@@ -37,7 +37,7 @@ export class BoxPage {
   ) {
     this.cats = ["cats-1.jpg", "cats-2.jpg", "cats-3.jpg", "cats-4.jpg", "cats-5.jpg", "cats-6.jpg", "cats-7.jpg", "cats-8.jpg"];
     this.meta = { glob: { curBox: false, curBoxBadge: false, curThg: false, curThgBadge:false }, stanley: "steamer" };
-    console.log(`constructed with  ${JSON.stringify(this.meta)}`);
+    // console.log(`constructed with  ${JSON.stringify(this.meta)}`);
     try {
       this.areWeLocal = false;
       this.fs2 = cordova.file.externalDataDirectory;
@@ -45,7 +45,7 @@ export class BoxPage {
       this.areWeLocal = true;
       this.fs2 = "assets/";
     } finally {
-      console.log(`Today's FS2 is: ${this.fs2}`);
+      // console.log(`Today's FS2 is: ${this.fs2}`);
     } //try
   }
   ionViewDidEnter() {
@@ -60,6 +60,9 @@ export class BoxPage {
     this.singlePix();
   }
 
+  /**
+   * file:///storage/emulated/0/Android/data/ <name> /cache/imagenumber.jpg
+   */
   singlePix() {
     if (this.areWeLocal == false) {
       let deviceFailureFlag = cordova.file.externalDataDirectory;
@@ -67,7 +70,7 @@ export class BoxPage {
         destinationType: Camera.DestinationType.FILE_URI,
         correctOrientation: true
       }).then((result) => {
-        // result is file:///storage/emulated/0/Android/data/com.whatever/cache/imagenumber.jpg
+
         this.rawImage = this.slashName(result);
         this.box.badge = this.rawImage.name;
         this.box.box = this.rawImage.name;
@@ -88,11 +91,11 @@ export class BoxPage {
 
   mvImageToSafePlace() {
     if (this.fs2 !== this.rawImage.path) {
-      console.log(`--Fr: ${this.rawImage.path} ${this.rawImage.name}`);
-      console.log(`--To: ${this.fs2} ${this.rawImage.name}`);
+      // console.log(`--Fr: ${this.rawImage.path} ${this.rawImage.name}`);
+      // console.log(`--To: ${this.fs2} ${this.rawImage.name}`);
       File.moveFile(this.rawImage.path, this.rawImage.name, this.fs2, this.rawImage.name).then(
         (val: Entry) => {
-          console.log("** File.moveFile OK " + JSON.stringify(val));
+          // console.log("** File.moveFile OK " + JSON.stringify(val));
         },
         (err: FileError) => { console.log(`FileError ${JSON.stringify(err)}`); }
       );
@@ -109,9 +112,9 @@ export class BoxPage {
         this.db.get(this.dbId)
           .then((res) => {
             if (this.areWeLocal) {
-              console.log(`save/db.get ${this.dbId} -=> ${JSON.stringify(res.signetHuman)}`);
+              // console.log(`save/db.get ${this.dbId} -=> ${JSON.stringify(res.signetHuman)}`);
             } else {
-              console.log(`save/db.get ${this.dbId} -=> ${JSON.stringify(res)}`);
+              // console.log(`save/db.get ${this.dbId} -=> ${JSON.stringify(res)}`);
             }
 
             this.checkDb(); // refresh current data; I wish it really did...
@@ -169,21 +172,21 @@ export class BoxPage {
           this.meta.showStart = true;
           this.freshDatabase();
         } else {
-          console.log(`db has: ${JSON.stringify(this.meta.allkeys.length)} records.`);
-          console.log(`reminder, fs2 is ${this.fs2}`);
+          // console.log(`db has: ${JSON.stringify(this.meta.allkeys.length)} records.`);
+          // console.log(`reminder, fs2 is ${this.fs2}`);
 
           for (let i = this.meta.allkeys.length - 1; i >= 0; i--) {
             let rowNumber = this.meta.allkeys[i];
             this.db.get(rowNumber).then((record) => {
               // IS IT ONE OF OURS?
               if (record && record.hasOwnProperty('action')) {
-                console.log(`${i} : ${rowNumber} : ${record.action} : ${record.badge} : ${this.myTime(record.signetValue)}`);
+                // console.log(`${i} : ${rowNumber} : ${record.action} : ${record.badge} : ${this.myTime(record.signetValue)}`);
                 // IS IT A BOX?
                 if (record.action == "nuBox" || record.action == "unBox") {
                   this.dbBoxes.push(record);
                 }
               } else {
-                console.log(`${rowNumber} might be our global constant...`);
+                // console.log(`${rowNumber} might be our global constant...`);
                 if (rowNumber == "dbglob") {
                   // do something with dbglob, perhaps,
                   dbGlobLocated = true
@@ -199,8 +202,8 @@ export class BoxPage {
               .then((ret) => {
                 this.db.get("dbglob")
                   .then((rec) => {
-                    console.log(` "dbglob: ${JSON.stringify(rec)}`);
-                    console.log(` "meta: ${JSON.stringify(this.meta)}`);
+                    // console.log(` "dbglob: ${JSON.stringify(rec)}`);
+                    // console.log(` "meta: ${JSON.stringify(this.meta)}`);
                   })
               });
           }
