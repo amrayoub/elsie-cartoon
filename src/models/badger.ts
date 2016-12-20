@@ -20,7 +20,23 @@ export class Ute {
         resolve(res);
       })
     })
+  }
 
+  dbGetGlob(): Promise<any> {
+    console.log(`Ute.dbGetGlob1 `);
+    return new Promise((resolve) => {
+      this.db.get("dbglob")
+        .then((res) => {
+          if (res === undefined || res == '' || res == {} ||  res == null)
+          { res = "n/a" }
+          console.log(`Ute.dbGetGlob2 ${JSON.stringify(res)}`);
+          resolve(res);
+        })
+        // .catch((err) => {
+        //   console.log(`Ute.dbGetGlob2 ${JSON.stringify(err)}`);
+        //   reject(err);
+        // })
+    })
   }
 
   iR(): Promise<string> {

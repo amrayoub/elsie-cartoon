@@ -38,26 +38,50 @@ export class HomePage {
 
   jKeys(): Promise<string> {
     return new Promise((resolve) => {
-
-      // let tool = new Ute();
       new Ute().dbKeys().then((res) => {
         resolve(res);
       });
-
     })
+  }
+  jGetGlob(): Promise<Object> {
+    console.log(`Home.jGetGlob `);
+
+    return new Promise((resolve) => {
+      new Ute().dbGetGlob().then((res) => {
+        console.log(`Home.jGetGlob2 ${JSON.stringify(res)}`);
+        resolve(res);
+      })
+    });
   }
 
   async makeJayson() {
-    let joe = "b4";
-    console.log(`what is Ute? ${JSON.stringify(joe)}`);
-    await this.jKeys().then((res) => { joe = res; });
-    console.log(`what is Ute? ${JSON.stringify(joe)}`);
 
+    let [moe, curly] = await Promise.all([
+      this.jGetGlob(), this.jKeys()
+    ]);
+
+    console.log(`moe Ute? ${JSON.stringify(moe)}`);
+    console.log(`curly Ute? ${JSON.stringify(curly)}`);
+
+  }
+
+  async oldmakeJayson() {
+    let joe = "b4";
+    let moe = {};
+    let curly = {};
+    console.log(`moe Ute? ${JSON.stringify(moe)}`);
+    await this.jGetGlob().then((res) => { moe = res });
+    console.log(`moe Ute? ${JSON.stringify(moe)}`);
+
+    // console.log(`joe Ute? ${JSON.stringify(joe)}`);
+    console.log(`curly Ute? ${JSON.stringify(curly)}`);
+    await this.jGetGlob().then((res) => { curly = res });
+    console.log(`curly Ute? ${JSON.stringify(curly)}`);
+    // await this.jKeys().then((res) => { joe = res; });
+    // console.log(`joe Ute? ${JSON.stringify(joe)}`);
     // await
     // console.log(`there are bob ${bob.length} keys ----------------`);
     // console.log(`${ret.id} : ${ret.action} : ${ret.badge}`);
-
-
   }
 
   checkFs() {
