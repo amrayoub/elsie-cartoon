@@ -4,20 +4,23 @@ import { Storage } from '@ionic/storage';
 import { File, Entry, FileError } from 'ionic-native';
 import { MediaCapture, MediaFile, CaptureImageOptions, CaptureError } from 'ionic-native';
 
-import { Badger } from '../../models/badger';
+import { Ute, Badger, DRing } from '../../models/badger';
+
 declare var cordova: any;
 
 @Component({
   selector: 'page-about',
   templateUrl: 'cam.html'
 })
+
 export class CamPage {
 
   meta: any = {};
   fs2: any;
   cats: string[];
   areWeLocal: boolean;
-  thePix: any[] = []; // badge nlet nuThgId: string; // temp var, really
+  thePix: any[] = [];
+  freshIds: string[] = [];
   showCurBox: boolean = false;
 
   constructor(public navCtrl: NavController, public db: Storage) {
@@ -34,11 +37,10 @@ export class CamPage {
     } //try
   }
 
-  ionViewWillEnter() { this.checkDb(); this.checkFs(); }
-
-
-
-
+  ionViewWillEnter() {
+    this.checkDb();
+    this.checkFs();
+  }
 
   shuffleCats(arr) {
     var shuffled = arr.slice(0), i = arr.length, temp, index;
@@ -52,18 +54,9 @@ export class CamPage {
   }
 
 
-
-
-
-
-
-
-
-
-
-
   addThing() {
-    this.thePix = []; // Thing-based pix, we're talking about here.
+    this.thePix = [];
+    this.freshIds = new Ute().ids(); // use slice(0,1)
     this.multiPix();
   }
 
@@ -82,6 +75,7 @@ export class CamPage {
         },
         (err: CaptureError) => { console.error(err) }
         );
+
     } else {
 
       this.areWeLocal = true; // a friendly reminder
@@ -98,9 +92,12 @@ export class CamPage {
 
   multiStep2() {
     let localTestIds: any[] = [];
+    let memBadgers: Badger[] = [];
+
     // TODO: Ought I be devising a db-based getter and setter for these two?
     this.meta.glob.curThg = false;
     this.meta.glob.curThgBadge = false;
+
     if (this.areWeLocal == false) {
       this.thePix.forEach((v, i) => {
         let rawImage = this.slashName(v);
@@ -109,52 +106,51 @@ export class CamPage {
 
     } else {
       // yes, we are local.
-      let shoMe: any[] = [];
-      let nuThgId: string = new Date().valueOf().toString();
-      let moThgId: string = new Date().valueOf().toString();
-      let thingLeader = '';
+      let thingFirstImage = '';
       this.thePix.forEach((v, i) => {
         let rawImage = this.slashName(v);
-        // console.log(`ms2/rawimage: ${i} --- ${JSON.stringify(rawImage)}`);
         if (i == 0) {
-          thingLeader = rawImage.name;
+          thingFirstImage = rawImage.name;
           let xxThg: Badger = new Badger();
+          xxThg.id = this.freshIds.splice(0,1).pop();
           xxThg.action = "nuThg";
-          // console.log(`${this.xxThg.action} ${rawImage.path}${rawImage.name}`);
+          xxThg.box = this.meta.glob.curBox;
           xxThg.thing = rawImage.name;
           xxThg.badge = rawImage.name;
-          // shoMe.push({ [nuThgId] : this.xxThg });
-          this.db.set(nuThgId, xxThg)
-            .then((res) => {
-              console.log(`aargh0 ${nuThgId}`);
-              localTestIds.push(nuThgId);
-            });
+          memBadgers.push(xxThg);
+          localTestIds.push(xxThg.id);
 
         } else {
-          moThgId = (Number(moThgId) + 13).toString();
           let xxThg: Badger = new Badger();
+          xxThg.id = this.freshIds.splice(0,1).pop();
           xxThg.action = "moThg";
-          xxThg.thing = thingLeader;
+          xxThg.box = this.meta.glob.curBox;
+          xxThg.thing = thingFirstImage;
           xxThg.badge = rawImage.name;
-          // shoMe.push({ [moThgId]: this.xxThg });
-          this.db.set(moThgId, xxThg)
-            .then((res) => {
-              console.log(`aargh1 ${moThgId}`);
-              localTestIds.push(moThgId);
-            });
+          memBadgers.push(xxThg);
+          localTestIds.push(xxThg.id);
         }
 
 
       }) //thePix loop
-      // console.log(`shoMe ${JSON.stringify(shoMe)}`);
-      console.log(`LTI ${JSON.stringify(localTestIds)}`);
-      localTestIds.forEach((v) => {
-        this.db.get(v)
-          .then((ret) => {
-            console.log(`db: ${JSON.stringify(ret)}`);
-          })
 
+      memBadgers.forEach((obj) => {
+        let key = obj.id;
+        this.db.set(key, obj)
+          .then((ret) => {
+            // console.log(`retx ${obj.action} ${obj.id} `);
+          });
       })
+      setTimeout(() => {
+        localTestIds.forEach((key) => {
+          this.db.get(key)
+            .then((ret) => {
+              // console.log(`${key} -- ${ret.id} ${ret.action} ${ret.box} ${ret.thing} ${ret.badge}`);
+
+            })
+        });
+      }, 1000);
+
 
 
 
@@ -167,7 +163,7 @@ export class CamPage {
       //   (err: FileError) => { console.log("** mPP BAD MOVE ** " + err.message) }
       // );
 
-    }
+    } // are we local?
 
 
 
@@ -258,7 +254,7 @@ export class CamPage {
           this.meta.showStart = false;
           this.db.get("dbglob")
             .then((res) => {
-              // console.log(`Cam,checkDb,dbglob ${JSON.stringify(res)}`);
+              // console.log(`Cam,checkDb,get(dbglob) ${JSON.stringify(res)}`);
               if (res == undefined) {
                 // do nothing
               } else {
