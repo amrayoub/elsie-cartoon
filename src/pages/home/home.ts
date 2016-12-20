@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { App, NavController, Tabs } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
-import { Badger } from '../../models/badger';
+import { Ute, Badger } from '../../models/badger';
 import { File, Entry, FileError } from 'ionic-native';
 
 declare var cordova: any;
@@ -12,6 +12,8 @@ declare var cordova: any;
   providers: []
 })
 
+
+
 export class HomePage {
 
   nubNotes: string;
@@ -20,10 +22,12 @@ export class HomePage {
   fs2: any;
   areWeLocal: boolean;
 
-  constructor(
+  constructor
+    (
     public navCtrl: NavController,
     public db: Storage,
-    private tabs: Tabs) {
+    private tabs: Tabs
+    ) {
     this.checkDb();
     this.checkFs();
   }
@@ -32,24 +36,28 @@ export class HomePage {
     this.checkDb();
   }
 
-  makeJayson() {
-    this.db.keys()
-      .then((res) => {
-        let bob = res;
-        console.log(`there are bob ${bob.length} keys ----------------`);
+  jKeys(): Promise<string> {
+    return new Promise((resolve) => {
 
-        bob.forEach((k) => {
-          // console.log(`${JSON.stringify(k)}`);
-          if (k !== "dbglob") {
-            this.db.get(k)
-              .then((ret) => {
-                console.log(`${ret.action} : ${ret.box} : ${ret.badge}`);
-              })
-          }
-        });
+      // let tool = new Ute();
+      new Ute().dbKeys().then((res) => {
+        resolve(res);
+      });
+
+    })
+  }
+
+  async makeJayson() {
+    let joe = "b4";
+    console.log(`what is Ute? ${JSON.stringify(joe)}`);
+    await this.jKeys().then((res) => { joe = res; });
+    console.log(`what is Ute? ${JSON.stringify(joe)}`);
+
+    // await
+    // console.log(`there are bob ${bob.length} keys ----------------`);
+    // console.log(`${ret.id} : ${ret.action} : ${ret.badge}`);
 
 
-      }); //db.keys()
   }
 
   checkFs() {

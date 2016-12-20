@@ -53,6 +53,11 @@ export class CamPage {
     return shuffled;
   }
 
+  test() {
+    console.log(`Cam. test() does nothing. :(`);
+
+  }
+
 
   addThing() {
     this.thePix = [];
