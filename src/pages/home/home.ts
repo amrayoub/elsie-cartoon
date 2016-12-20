@@ -46,7 +46,6 @@ export class HomePage {
   }
   jGetGlob(): Promise<Object> {
     console.log(`Home.jGetGlob `);
-
     return new Promise((resolve) => {
       new Ute().dbGetGlob().then((res) => {
         console.log(`Home.jGetGlob2 ${JSON.stringify(res)}`);
@@ -54,13 +53,27 @@ export class HomePage {
       })
     });
   }
+  jSetGlob(key,val): Promise<Object> {
+    console.log(`Home.jSetGlob(), ignoring key: ${key} `);
+    return new Promise((resolve) => {
+      new Ute().dbSetGlob(key,val).then((res) => {
+        console.log(`Home.jSetGlob2 ${JSON.stringify(res)}`);
+        resolve(res);
+      })
+    });
+  }
+
+
 
   async makeJayson() {
-
-    let [moe, curly] = await Promise.all([
-      this.jGetGlob(), this.jKeys()
+    let obj = {name:'silly', walk:'erratic', best:'not very'}
+    let [larry, moe, curly] = await Promise.all([
+      this.jSetGlob("petunia", obj),
+      this.jGetGlob(),
+      this.jKeys()
     ]);
 
+    console.log(`larry Ute? ${JSON.stringify(larry)}`);
     console.log(`moe Ute? ${JSON.stringify(moe)}`);
     console.log(`curly Ute? ${JSON.stringify(curly)}`);
 

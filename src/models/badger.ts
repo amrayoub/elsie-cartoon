@@ -17,7 +17,7 @@ export class Ute {
           resolve(res);
         })
         .catch((err) => {
-          console.log(`Ute.dbGetGlob2 ${JSON.stringify(err)}`);
+          // console.log(`Ute.dbGetGlob2 ${JSON.stringify(err)}`);
           reject(err);
         })
 
@@ -41,6 +41,24 @@ export class Ute {
         })
     })
   }
+
+  dbSetGlob(key, val): Promise<any> {
+    console.log(`Ute.dbSetGlob1, ignoring 'key' for now. `);
+    return new Promise((resolve, reject) => {
+      this.db.set("dbglob", val)
+        .then((res) => {
+          if (res === undefined || res == '' || res == {} || res == null)
+          { res = "n/a" }
+          console.log(`Ute.dbSetGlob2 ${JSON.stringify(res)}`);
+          resolve(res);
+        })
+        .catch((err) => {
+          console.log(`Ute.dbSetGlob2 ${JSON.stringify(err)}`);
+          reject(err);
+        })
+    })
+  }
+
 
   iR(): Promise<string> {
     return new Promise((resolve) => {
