@@ -88,7 +88,7 @@ export class BoxPage {
       this.mvImageToSafePlace();
 
 /**
- * box ought to be an ID, not this name. Or does it?
+ * box ought to be an image name. nuThg is wrong.
  */
       // nuBox : cats-2.jpg : cats-2.jpg
       // nuThg : 1482200392582 : food-8.jpg

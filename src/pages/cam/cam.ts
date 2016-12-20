@@ -243,6 +243,11 @@ export class CamPage {
     } //try
   }
 
+/**
+ * get the keys, check for db.empty.
+ * get dbglob, check for current Box.
+ */
+
   checkDb() {
     this.db.keys()
       .then((ret) => {
