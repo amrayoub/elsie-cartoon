@@ -4,38 +4,41 @@ import { Storage } from '@ionic/storage';
 
 export class Ute {
   db: any;
-  constructor(
-    public starter: Date = new Date()
-  ) {
+  constructor() {
     console.log(`Ute is building new Storage facility`);
-
     this.db = new Storage;
   }
 
   /** Return the keys */
-
   dbKeys(): Promise<any> {
-    return new Promise((resolve) => {
-      this.db.keys().then((res) => {
-        resolve(res);
-      })
+    return new Promise((resolve, reject) => {
+      this.db.keys()
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((err) => {
+          console.log(`Ute.dbGetGlob2 ${JSON.stringify(err)}`);
+          reject(err);
+        })
+
     })
   }
 
+  /** return the "global" record */
   dbGetGlob(): Promise<any> {
     console.log(`Ute.dbGetGlob1 `);
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.db.get("dbglob")
         .then((res) => {
-          if (res === undefined || res == '' || res == {} ||  res == null)
+          if (res === undefined || res == '' || res == {} || res == null)
           { res = "n/a" }
           console.log(`Ute.dbGetGlob2 ${JSON.stringify(res)}`);
           resolve(res);
         })
-        // .catch((err) => {
-        //   console.log(`Ute.dbGetGlob2 ${JSON.stringify(err)}`);
-        //   reject(err);
-        // })
+        .catch((err) => {
+          console.log(`Ute.dbGetGlob2 ${JSON.stringify(err)}`);
+          reject(err);
+        })
     })
   }
 
@@ -50,9 +53,9 @@ export class Ute {
    * Created by arithmetic so's they're unique.
    * @param starter: an optional Date value.
    */
-  ids(): string[] {
+  ids(starter: Date = new Date()): string[] {
     let stack = [];
-    let base = this.starter.valueOf();
+    let base = starter.valueOf();
     for (let i = 0; i < 100; i++) {
       base = base + 13;
       stack.push(base.toString());

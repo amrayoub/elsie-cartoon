@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { App, NavController, Tabs } from 'ionic-angular';
+// import { App, NavController, Tabs } from 'ionic-angular';
+import { NavController, Tabs } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
-import { Ute, Badger } from '../../models/badger';
+import { Ute } from '../../models/badger';
 import { File, Entry, FileError } from 'ionic-native';
 
 declare var cordova: any;
@@ -65,24 +66,24 @@ export class HomePage {
 
   }
 
-  async oldmakeJayson() {
-    let joe = "b4";
-    let moe = {};
-    let curly = {};
-    console.log(`moe Ute? ${JSON.stringify(moe)}`);
-    await this.jGetGlob().then((res) => { moe = res });
-    console.log(`moe Ute? ${JSON.stringify(moe)}`);
+  // async oldmakeJayson() {
+  //   let joe = "b4";
+  //   let moe = {};
+  //   let curly = {};
+  //   console.log(`moe Ute? ${JSON.stringify(moe)}`);
+  //   await this.jGetGlob().then((res) => { moe = res });
+  //   console.log(`moe Ute? ${JSON.stringify(moe)}`);
 
-    // console.log(`joe Ute? ${JSON.stringify(joe)}`);
-    console.log(`curly Ute? ${JSON.stringify(curly)}`);
-    await this.jGetGlob().then((res) => { curly = res });
-    console.log(`curly Ute? ${JSON.stringify(curly)}`);
-    // await this.jKeys().then((res) => { joe = res; });
-    // console.log(`joe Ute? ${JSON.stringify(joe)}`);
-    // await
-    // console.log(`there are bob ${bob.length} keys ----------------`);
-    // console.log(`${ret.id} : ${ret.action} : ${ret.badge}`);
-  }
+  //   // console.log(`joe Ute? ${JSON.stringify(joe)}`);
+  //   console.log(`curly Ute? ${JSON.stringify(curly)}`);
+  //   await this.jGetGlob().then((res) => { curly = res });
+  //   console.log(`curly Ute? ${JSON.stringify(curly)}`);
+  //   // await this.jKeys().then((res) => { joe = res; });
+  //   // console.log(`joe Ute? ${JSON.stringify(joe)}`);
+  //   // await
+  //   // console.log(`there are bob ${bob.length} keys ----------------`);
+  //   // console.log(`${ret.id} : ${ret.action} : ${ret.badge}`);
+  // }
 
   checkFs() {
     // File.getFreeDiskSpace().then((data: any) => {

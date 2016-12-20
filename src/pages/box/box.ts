@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, ToastController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
-import { Badger, DRing } from '../../models/badger';
+import { Badger } from '../../models/badger';
 import { MediaCapture, MediaFile, CaptureError } from 'ionic-native';
 import { File, Entry, FileError, Camera } from 'ionic-native';
 
@@ -29,6 +29,7 @@ export class BoxPage {
   dbBoxes: any[];
   dbId: any;
   areWeLocal: boolean;
+  deviceFailureFlag:any;
 
   constructor(
     public navCtrl: NavController,
@@ -47,6 +48,7 @@ export class BoxPage {
     } finally {
       // console.log(`Today's FS2 is: ${this.fs2}`);
     } //try
+
   }
   ionViewDidEnter() {
     this.checkDb();
@@ -148,7 +150,6 @@ export class BoxPage {
   openBox(boxSignet) {
     this.db.keys()
       .then((res) => {
-        let ak = res;
         res.forEach(oneKey => {
           this.db.get(oneKey)
             .then((ret) => {

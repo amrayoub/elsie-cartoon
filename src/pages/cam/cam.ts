@@ -4,7 +4,7 @@ import { Storage } from '@ionic/storage';
 import { File, Entry, FileError } from 'ionic-native';
 import { MediaCapture, MediaFile, CaptureImageOptions, CaptureError } from 'ionic-native';
 
-import { Ute, Badger, DRing } from '../../models/badger';
+import { Ute, Badger } from '../../models/badger';
 
 declare var cordova: any;
 
@@ -62,6 +62,7 @@ export class CamPage {
   addThing() {
     this.thePix = [];
     this.freshIds = new Ute().ids(); // use slice(0,1)
+    console.log(`fresh Ids ${this.freshIds}`);
     this.multiPix();
   }
 
@@ -105,7 +106,7 @@ export class CamPage {
 
     if (this.areWeLocal == false) {
       this.thePix.forEach((v, i) => {
-        let rawImage = this.slashName(v);
+        // let rawImage = this.slashName(v);
 
       });
 
