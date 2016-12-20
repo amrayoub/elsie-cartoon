@@ -32,6 +32,26 @@ export class HomePage {
     this.checkDb();
   }
 
+  makeJayson() {
+    this.db.keys()
+      .then((res) => {
+        let bob = res;
+        console.log(`there are bob ${bob.length} keys ----------------`);
+
+        bob.forEach((k) => {
+          // console.log(`${JSON.stringify(k)}`);
+          if (k !== "dbglob") {
+            this.db.get(k)
+              .then((ret) => {
+                console.log(`${ret.action} : ${ret.box} : ${ret.badge}`);
+              })
+          }
+        });
+
+
+      }); //db.keys()
+  }
+
   checkFs() {
     // File.getFreeDiskSpace().then((data: any) => {
     //   this.bytes_free = data;

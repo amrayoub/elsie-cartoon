@@ -86,6 +86,14 @@ export class BoxPage {
       this.box.badge = this.rawImage.name;
       this.box.box = this.rawImage.name;
       this.mvImageToSafePlace();
+
+/**
+ * box ought to be an ID, not this name. Or does it?
+ */
+      // nuBox : cats-2.jpg : cats-2.jpg
+      // nuThg : 1482200392582 : food-8.jpg
+
+
     }
   } //singlePix()
 
