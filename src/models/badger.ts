@@ -5,55 +5,52 @@ import { Storage } from '@ionic/storage';
 export class Ute {
   db: any;
   constructor() {
-    console.log(`Ute is building new Storage facility`);
+    // console.log(`Ute is building new Storage facility`);
     this.db = new Storage;
   }
 
-  /** Return the keys */
+  /** Returns {dbKeys:[keys,keys,keys...]} */
   dbKeys(): Promise<any> {
     return new Promise((resolve, reject) => {
       this.db.keys()
         .then((res) => {
-          resolve(res);
+          // console.log(`Ute.dbKeys ${JSON.stringify(res)}`);
+          resolve({dbKeys: res});
         })
         .catch((err) => {
-          // console.log(`Ute.dbGetGlob2 ${JSON.stringify(err)}`);
+          console.log(`Ute.dbKeys EE ${JSON.stringify(err)}`);
           reject(err);
         })
-
     })
   }
 
   /** return the "global" record */
-  dbGetGlob(): Promise<any> {
+  dbGetGlob(key): Promise<any> {
     console.log(`Ute.dbGetGlob1 `);
     return new Promise((resolve, reject) => {
-      this.db.get("dbglob")
+      this.db.get(key)
         .then((res) => {
           if (res === undefined || res == '' || res == {} || res == null)
           { res = "n/a" }
           console.log(`Ute.dbGetGlob2 ${JSON.stringify(res)}`);
-          resolve(res);
+          resolve({dbglob: res});
         })
         .catch((err) => {
-          console.log(`Ute.dbGetGlob2 ${JSON.stringify(err)}`);
+          console.log(`Ute.dbGetGlob2 EE ${JSON.stringify(err)}`);
           reject(err);
         })
     })
   }
 
   dbSetGlob(key, val): Promise<any> {
-    console.log(`Ute.dbSetGlob1, ignoring 'key' for now. `);
     return new Promise((resolve, reject) => {
-      this.db.set("dbglob", val)
+      this.db.set(key, val)
         .then((res) => {
-          if (res === undefined || res == '' || res == {} || res == null)
-          { res = "n/a" }
-          console.log(`Ute.dbSetGlob2 ${JSON.stringify(res)}`);
-          resolve(res);
+          // console.log(`Ute.dbSetGlob2 ${JSON.stringify(res)}`);
+          resolve({status: "OK"});
         })
         .catch((err) => {
-          console.log(`Ute.dbSetGlob2 ${JSON.stringify(err)}`);
+          console.log(`Ute.dbSetGlob2 EE ${JSON.stringify(err)}`);
           reject(err);
         })
     })

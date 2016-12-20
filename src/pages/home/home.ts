@@ -23,6 +23,10 @@ export class HomePage {
   fs2: any;
   areWeLocal: boolean;
 
+  larry: any;
+  moe: any;
+  curly: any;
+
   constructor
     (
     public navCtrl: NavController,
@@ -47,37 +51,57 @@ export class HomePage {
   jGetGlob(): Promise<Object> {
     console.log(`Home.jGetGlob `);
     return new Promise((resolve) => {
-      new Ute().dbGetGlob().then((res) => {
+      new Ute().dbGetGlob("dbglob").then((res) => {
         console.log(`Home.jGetGlob2 ${JSON.stringify(res)}`);
         resolve(res);
       })
     });
   }
-  jSetGlob(key,val): Promise<Object> {
+  jSetGlob(key, val): Promise<Object> {
     console.log(`Home.jSetGlob(), ignoring key: ${key} `);
     return new Promise((resolve) => {
-      new Ute().dbSetGlob(key,val).then((res) => {
+      new Ute().dbSetGlob(key, val).then((res) => {
         console.log(`Home.jSetGlob2 ${JSON.stringify(res)}`);
         resolve(res);
       })
     });
   }
 
-
-
   async makeJayson() {
-    let obj = {name:'silly', walk:'erratic', best:'not very'}
+    let jef = new Ute();
+    // await new Ute().dbKeys().then((res) => {
+    //   curly = res;
+    // });
+    [this.larry, this.moe, this.curly] = await Promise.all([
+      jef.dbSetGlob("dbglob", { monster: "bait and switch" })
+        .then((res) => {
+          this.larry = Object.assign({}, res);
+          console.log(`L ${JSON.stringify(this.larry)}`);
+        }),
+      jef.dbGetGlob("dbglob").then((res) => {
+        this.moe = Object.assign({}, res);
+        console.log(`M ${JSON.stringify(this.moe)}`);
+      }),
+      jef.dbKeys().then((res) => {
+        this.curly = Object.assign({}, res);
+        console.log(`C ${JSON.stringify(this.curly)}`);
+      })
+    ]);
+  }
+
+  async makeJaysonWORKS() {
+    let obj = { name: 'silly', walk: 'erratic', best: 'not very' }
     let [larry, moe, curly] = await Promise.all([
       this.jSetGlob("petunia", obj),
       this.jGetGlob(),
       this.jKeys()
     ]);
-
     console.log(`larry Ute? ${JSON.stringify(larry)}`);
     console.log(`moe Ute? ${JSON.stringify(moe)}`);
     console.log(`curly Ute? ${JSON.stringify(curly)}`);
-
   }
+
+
 
   // async oldmakeJayson() {
   //   let joe = "b4";
