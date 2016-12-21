@@ -9,6 +9,45 @@ export class Ute {
     this.db = new Storage;
   }
 
+  /**
+   * get the keys, check for db.empty.
+   * get dbglob, check for current Box & Thing.
+   */
+  async dbChekFAIL() {
+    let bif: any;
+    let baz: any;
+    let answer: any;
+    let tellem: any;
+    [bif, baz] = await Promise.all([
+      this.db.keys().then((ret)=>{
+        if (ret.length === 0) {
+          answer="empty";
+        } else {
+          answer= ret.length + " entries"
+        }
+        console.log(`bif ret ${JSON.stringify(answer)}`);
+        return bif = Object.assign({}, answer);
+      }),
+      this.db.get("dbglob").then((res)=>{
+        console.log(`baz ret ${JSON.stringify(res)}`);
+        return baz = Object.assign({},res);
+      })
+    ])
+  }
+
+    // return new Promise((resolve, reject) => {
+    //   this.db.keys()
+    //     .then((res) => {
+    //       // console.log(`Ute.dbKeys ${JSON.stringify(res)}`);
+    //       resolve({ dbKeys: res });
+    //     })
+    //     .catch((err) => {
+    //       console.log(`Ute.dbKeys EE ${JSON.stringify(err)}`);
+    //       reject(err);
+    //     })
+    // })
+
+
   /** Returns {dbKeys:[keys,keys,keys...]} */
   dbKeys(): Promise<any> {
     return new Promise((resolve, reject) => {

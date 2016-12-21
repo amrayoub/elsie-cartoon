@@ -20,6 +20,7 @@ export class HomePage {
   bytes_free: any;
   fs2: any;
   areWeLocal: boolean;
+  ute: any;
 
   larry: any;
   moe: any;
@@ -31,6 +32,7 @@ export class HomePage {
     public db: Storage,
     private tabs: Tabs
     ) {
+    this.ute = new Ute();
     this.checkDb();
     this.checkFs();
   }
@@ -39,8 +41,38 @@ export class HomePage {
     this.checkDb();
   }
 
-  test() {
-    console.log(`Home.test() reporting for duty, Sir.`);
+  async test() {
+    let ans1: any;
+    let ans2: any;
+    await this.ute.dbKeys().then((res) => {
+      if (res.dbKeys.length > 0) {
+        ans1 = "OK"
+      } else {
+        ans1 = "no"
+      }
+      return ans1
+    });
+    await this.ute.dbGetGlob().then((res) => {
+      console.log(`ans2 ${JSON.stringify(res)}`);
+      ans2 = {};
+      if (res.dbglob.curBox && res.dbglob.curBoxBadge) {
+        ans2.curBox = res.dbglob.curBox;
+      }
+      if (res.dbglob.curThg && res.dbglob.curThgBadge) {
+        ans2.curThg = res.dbglob.curThg;
+      }
+      return ans2
+    })
+    console.log(`ans1 ${ans1}, ans2 ${JSON.stringify(ans2)}`);
+
+  }
+
+
+  testFAIL() {
+    console.log(`Home.test() moving checkDb into Ute!`);
+    new Ute().dbChekFAIL().then((res) => {
+      console.log(`Ute.dbChek says ${JSON.stringify(res)}`)
+    })
 
   }
 
@@ -164,51 +196,51 @@ export class HomePage {
 
   // }
 
-/**
- * the "j" series do/did work, but with a
- *    whole 'nother layer of Promises in teh middle.
+  /**
+   * the "j" series do/did work, but with a
+   *    whole 'nother layer of Promises in teh middle.
 
-  jKeys(): Promise<string> {
-    return new Promise((resolve) => {
-      new Ute().dbKeys().then((res) => {
-        resolve(res);
+    jKeys(): Promise<string> {
+      return new Promise((resolve) => {
+        new Ute().dbKeys().then((res) => {
+          resolve(res);
+        });
+      })
+    }
+    jGetGlob(): Promise<Object> {
+      console.log(`Home.jGetGlob `);
+      return new Promise((resolve) => {
+        new Ute().dbGetGlob("dbglob").then((res) => {
+          console.log(`Home.jGetGlob2 ${JSON.stringify(res)}`);
+          resolve(res);
+        })
       });
-    })
-  }
-  jGetGlob(): Promise<Object> {
-    console.log(`Home.jGetGlob `);
-    return new Promise((resolve) => {
-      new Ute().dbGetGlob("dbglob").then((res) => {
-        console.log(`Home.jGetGlob2 ${JSON.stringify(res)}`);
-        resolve(res);
-      })
-    });
-  }
-  jSetGlob(key, val): Promise<Object> {
-    console.log(`Home.jSetGlob(), ignoring key: ${key} `);
-    return new Promise((resolve) => {
-      new Ute().dbSetGlob(key, val).then((res) => {
-        console.log(`Home.jSetGlob2 ${JSON.stringify(res)}`);
-        resolve(res);
-      })
-    });
-  }
+    }
+    jSetGlob(key, val): Promise<Object> {
+      console.log(`Home.jSetGlob(), ignoring key: ${key} `);
+      return new Promise((resolve) => {
+        new Ute().dbSetGlob(key, val).then((res) => {
+          console.log(`Home.jSetGlob2 ${JSON.stringify(res)}`);
+          resolve(res);
+        })
+      });
+    }
 
-  async makeJaysonWORKS() {
-    let obj = { name: 'silly', walk: 'erratic', best: 'not very' }
-    let [larry, moe, curly] = await Promise.all([
-      this.jSetGlob("petunia", obj),
-      this.jGetGlob(),
-      this.jKeys()
-    ]);
-    console.log(`larry Ute? ${JSON.stringify(larry)}`);
-    console.log(`moe Ute? ${JSON.stringify(moe)}`);
-    console.log(`curly Ute? ${JSON.stringify(curly)}`);
-  }
+    async makeJaysonWORKS() {
+      let obj = { name: 'silly', walk: 'erratic', best: 'not very' }
+      let [larry, moe, curly] = await Promise.all([
+        this.jSetGlob("petunia", obj),
+        this.jGetGlob(),
+        this.jKeys()
+      ]);
+      console.log(`larry Ute? ${JSON.stringify(larry)}`);
+      console.log(`moe Ute? ${JSON.stringify(moe)}`);
+      console.log(`curly Ute? ${JSON.stringify(curly)}`);
+    }
 
 
 
- */
+   */
 
 
 

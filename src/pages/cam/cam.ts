@@ -243,7 +243,7 @@ export class CamPage {
 
   /**
    * get the keys, check for db.empty.
-   * get dbglob, check for current Box.
+   * get dbglob, check for current Box & Thing.
    */
 
   checkDb() {
