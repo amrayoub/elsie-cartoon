@@ -25,6 +25,7 @@ export class HomePage {
   larry: any;
   moe: any;
   curly: any;
+  bozo: any;
 
   constructor
     (
@@ -41,30 +42,28 @@ export class HomePage {
     this.checkDb();
   }
 
+  testBOZOWORKS() {
+    this.ute.bozo().then((res) => {
+      console.log(`bozo sent us ${res}`);
+      this.bozo = res;
+    }).catch((err) => { this.bozo = err; });
+  }
+
   async test() {
-    let ans1: any;
-    let ans2: any;
     await this.ute.dbKeys().then((res) => {
       if (res.dbKeys.length > 0) {
-        ans1 = "OK"
       } else {
-        ans1 = "no"
+        this.meta.showStart = true;
+        this.tabs.select(2);
       }
-      return ans1
+      this.meta.allkeys = res.dbKeys;
     });
     await this.ute.dbGetGlob().then((res) => {
       console.log(`ans2 ${JSON.stringify(res)}`);
-      ans2 = {};
-      if (res.dbglob.curBox && res.dbglob.curBoxBadge) {
-        ans2.curBox = res.dbglob.curBox;
-      }
-      if (res.dbglob.curThg && res.dbglob.curThgBadge) {
-        ans2.curThg = res.dbglob.curThg;
-      }
-      return ans2
-    })
-    console.log(`ans1 ${ans1}, ans2 ${JSON.stringify(ans2)}`);
+      this.meta.dbglob = res.dbglob;
+    });
 
+    console.log(`meta ${this.meta.allkeys.length} keys, glob: ${JSON.stringify(this.meta.glob)}`);
   }
 
 
