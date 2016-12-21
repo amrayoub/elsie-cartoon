@@ -45,7 +45,7 @@ export class CamPage {
   async test() {
     // let baz = new Ute();
     console.log(`Cam. test() does llittle. :(`);
-    await new Ute().dbKeys().then((ret) => {
+    await new Ute().dbGetGlob().then((ret) => {
       console.log(`cam. test() ${JSON.stringify(ret)}`);
     });
     console.log(`Cam. test() is donee. :(`);

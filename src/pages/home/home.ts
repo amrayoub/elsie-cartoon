@@ -39,6 +39,11 @@ export class HomePage {
     this.checkDb();
   }
 
+  test() {
+    console.log(`Home.test() reporting for duty, Sir.`);
+
+  }
+
   async makeJayson() {
     let jef = new Ute();
     [this.larry, this.moe, this.curly] = await Promise.all([

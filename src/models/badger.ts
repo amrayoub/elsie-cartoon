@@ -25,14 +25,13 @@ export class Ute {
   }
 
   /** return the "global" record */
-  dbGetGlob(key): Promise<any> {
-    console.log(`Ute.dbGetGlob1 `);
+  dbGetGlob(key: string = "dbglob"): Promise<any> {
     return new Promise((resolve, reject) => {
       this.db.get(key)
         .then((res) => {
           if (res === undefined || res == '' || res == {} || res == null)
           { res = "n/a" }
-          console.log(`Ute.dbGetGlob2 ${JSON.stringify(res)}`);
+          // console.log(`Ute.dbGetGlob2 ${JSON.stringify(res)}`);
           resolve({ dbglob: res });
         })
         .catch((err) => {
