@@ -10,8 +10,8 @@
 
   <ion-toolbar>
     <ion-buttons>
-      <button ion-button>
-        <ion-icon name="ionic" item-left></ion-icon>d
+      <button ion-button  (click)="fetchBoxes()" >
+        <ion-icon name="ionic" item-left></ion-icon>fB
         </button>
       <button ion-button>
         <ion-icon name="ionic" item-left></ion-icon>d
@@ -22,8 +22,8 @@
     </ion-buttons>
   </ion-toolbar>
 
-  curBox: {{ meta.glob.curBox }},
-  curThg: {{ meta.glob.curThg }}
+  curBox: {{ meta.glob?.curBox }}, {{ meta.glob?.curBoxBadge }} <br>
+  curThg: {{ meta.glob?.curThg }}, {{ meta.glob?.curThgBadge }} <br>
 
   <ion-fab left middle>
     <button ion-fab (click)="addBox()" color="light">

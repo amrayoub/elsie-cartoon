@@ -34,6 +34,7 @@ export class HomePage {
     private tabs: Tabs
     ) {
     this.ute = new Ute();
+
     this.checkDb();
     this.checkFs();
   }
@@ -49,7 +50,7 @@ export class HomePage {
     }).catch((err) => { this.bozo = err; });
   }
 
-  async test() {
+  async checkDb() {
     await this.ute.dbKeys().then((res) => {
       if (res.dbKeys.length > 0) {
       } else {
@@ -59,20 +60,17 @@ export class HomePage {
       this.meta.allkeys = res.dbKeys;
     });
     await this.ute.dbGetGlob().then((res) => {
-      console.log(`ans2 ${JSON.stringify(res)}`);
-      this.meta.dbglob = res.dbglob;
+      this.meta.glob = res.dbglob;
     });
-
     console.log(`meta ${this.meta.allkeys.length} keys, glob: ${JSON.stringify(this.meta.glob)}`);
   }
 
 
   testFAIL() {
-    console.log(`Home.test() moving checkDb into Ute!`);
-    new Ute().dbChekFAIL().then((res) => {
-      console.log(`Ute.dbChek says ${JSON.stringify(res)}`)
-    })
-
+    // console.log(`Home.test() moving checkDb into Ute!`);
+    // new Ute().dbChekFAIL().then((res) => {
+    //   console.log(`Ute.dbChek says ${JSON.stringify(res)}`)
+    // })
   }
 
   async makeJayson() {
@@ -93,8 +91,6 @@ export class HomePage {
       })
     ]);
   }
-
-
 
   // async oldmakeJayson() {
   //   let joe = "b4";
@@ -140,73 +136,75 @@ export class HomePage {
     });
   }
 
-  checkDb() {
-    this.db.keys()
-      .then((ret) => {
-        this.meta.allkeys = ret;
-        // console.log(`allkeys: ${JSON.stringify(this.meta.allkeys)}`);
-        if (this.meta.allkeys.length == 0) {
-          this.meta.showStart = true;
-          this.tabs.select(2);
-        } else {
-          this.meta.showStart = false;
-          this.db.get("dbglob")
-            .then((res) => {
-              // console.log(`Home,checkDb,dbglob ${JSON.stringify(res)}`);
-              if (res == undefined) {
-                // do nothing
-              } else {
-                this.meta.glob = res;
-              }
-            })
-        }
-      });
+  oldcheckDb() {
+    // this.db.keys()
+    //   .then((ret) => {
+    //     this.meta.allkeys = ret;
+    //     // console.log(`allkeys: ${JSON.stringify(this.meta.allkeys)}`);
+    //     if (this.meta.allkeys.length == 0) {
+    //       this.meta.showStart = true;
+    //       this.tabs.select(2);
+    //     } else {
+    //       this.meta.showStart = false;
+    //       this.db.get("dbglob")
+    //         .then((res) => {
+    //           // console.log(`Home,checkDb,dbglob ${JSON.stringify(res)}`);
+    //           if (res == undefined) {
+    //             // do nothing
+    //           } else {
+    //             this.meta.glob = res;
+    //           }
+    //         })
+    //     }
+    //   });
   }
 
-  // ex1() {
-  //   let jay = new Badger();
-  //   console.log('b4 ' + JSON.stringify(jay));
-  //   jay.box = "jayBox"
-  //   console.log('h4 ' + JSON.stringify(jay));
-  // } // ex1
+  oldex1() {
 
-  // ex2() {
-  //   console.log('wait for it...');
+    //   let jay = new Badger();
+    //   console.log('b4 ' + JSON.stringify(jay));
+    //   jay.box = "jayBox"
+    //   console.log('h4 ' + JSON.stringify(jay));
+    // } // ex1
 
-  //   setTimeout(function () {
-  //     let bill = new Badger();
-  //     console.log('b4 ' + JSON.stringify(bill));
-  //     bill.box = "BillBox"
-  //     console.log('h4 ' + JSON.stringify(bill));
+    // ex2() {
+    //   console.log('wait for it...');
 
-  //   }, 5000);
-  // } // ex2
+    //   setTimeout(function () {
+    //     let bill = new Badger();
+    //     console.log('b4 ' + JSON.stringify(bill));
+    //     bill.box = "BillBox"
+    //     console.log('h4 ' + JSON.stringify(bill));
 
-  // toNewBox() {
-  //   // this.navCtrl.getByIndex(2);
-  //   // this.navCtrl.push(2)
-  //   // let nav = this.app.getRootNav();
-  //   // nav.push(BoxPage);
-  //   this.tabs.select(2);
-  // }
+    //   }, 5000);
+    // } // ex2
 
-  // nuBox() {
-  //   this.nubNotes = "1) new Badger, 2) 'nuBox', 3)start Camera, 3) move image to 'files/badge.jpg'";
+    // toNewBox() {
+    //   // this.navCtrl.getByIndex(2);
+    //   // this.navCtrl.push(2)
+    //   // let nav = this.app.getRootNav();
+    //   // nav.push(BoxPage);
+    //   this.tabs.select(2);
+  }
 
-  // }
+  oldnuBox() {
+    //   this.nubNotes = "1) new Badger, 2) 'nuBox', 3)start Camera, 3) move image to 'files/badge.jpg'";
+
+  }
 
   /**
    * the "j" series do/did work, but with a
    *    whole 'nother layer of Promises in teh middle.
+   */
 
-    jKeys(): Promise<string> {
+    oldjKeys(): Promise<string> {
       return new Promise((resolve) => {
         new Ute().dbKeys().then((res) => {
           resolve(res);
         });
       })
     }
-    jGetGlob(): Promise<Object> {
+    oldjGetGlob(): Promise<Object> {
       console.log(`Home.jGetGlob `);
       return new Promise((resolve) => {
         new Ute().dbGetGlob("dbglob").then((res) => {
@@ -215,7 +213,7 @@ export class HomePage {
         })
       });
     }
-    jSetGlob(key, val): Promise<Object> {
+    oldjSetGlob(key, val): Promise<Object> {
       console.log(`Home.jSetGlob(), ignoring key: ${key} `);
       return new Promise((resolve) => {
         new Ute().dbSetGlob(key, val).then((res) => {
@@ -225,21 +223,18 @@ export class HomePage {
       });
     }
 
-    async makeJaysonWORKS() {
+    async oldmakeJaysonWORKS() {
       let obj = { name: 'silly', walk: 'erratic', best: 'not very' }
       let [larry, moe, curly] = await Promise.all([
-        this.jSetGlob("petunia", obj),
-        this.jGetGlob(),
-        this.jKeys()
+        this.oldjSetGlob("petunia", obj),
+        this.oldjGetGlob(),
+        this.oldjKeys()
       ]);
       console.log(`larry Ute? ${JSON.stringify(larry)}`);
       console.log(`moe Ute? ${JSON.stringify(moe)}`);
       console.log(`curly Ute? ${JSON.stringify(curly)}`);
     }
 
-
-
-   */
 
 
 

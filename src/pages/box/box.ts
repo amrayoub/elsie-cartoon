@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, ToastController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
-import { Badger } from '../../models/badger';
+import { Ute, Badger } from '../../models/badger';
 import { MediaCapture, MediaFile, CaptureError } from 'ionic-native';
 import { File, Entry, FileError, Camera } from 'ionic-native';
 
@@ -18,6 +18,12 @@ declare var cordova: any;
  * file:/storage/emulated/0/DCIM/Camera/<name>.jpg */
 export class BoxPage {
   meta: any = {};
+  gcurBox: any;
+  gcurBoxBadge: any;
+  gcurThg: any;
+  gcurThgBadge: any;
+  ute: any;
+  yeah: any;
   images: any[];
   curBox: any;
   fromPath: any;
@@ -29,15 +35,16 @@ export class BoxPage {
   dbBoxes: any[];
   dbId: any;
   areWeLocal: boolean;
-  deviceFailureFlag:any;
+  deviceFailureFlag: any;
 
   constructor(
     public navCtrl: NavController,
     public db: Storage,
     public toastCtrl: ToastController
   ) {
+    this.ute = new Ute();
     this.cats = ["cats-1.jpg", "cats-2.jpg", "cats-3.jpg", "cats-4.jpg", "cats-5.jpg", "cats-6.jpg", "cats-7.jpg", "cats-8.jpg"];
-    this.meta = { glob: { curBox: false, curBoxBadge: false, curThg: false, curThgBadge:false }, stanley: "steamer" };
+    // this.meta = { glob: { curBox: false, curBoxBadge: false, curThg: false, curThgBadge: false }, stanley: "steamer" };
     // console.log(`constructed with  ${JSON.stringify(this.meta)}`);
     try {
       this.areWeLocal = false;
@@ -89,9 +96,9 @@ export class BoxPage {
       this.box.box = this.rawImage.name;
       this.mvImageToSafePlace();
 
-/**
- * box ought to be an image name. nuThg is wrong.
- */
+      /**
+       * box ought to be an image name. nuThg is wrong.
+       */
       // nuBox : cats-2.jpg : cats-2.jpg
       // nuThg : 1482200392582 : food-8.jpg
 
@@ -170,7 +177,67 @@ export class BoxPage {
    * 3. use keys to fetch Current/Status record, update in-memory Status
    */
 
-  checkDb(): void {
+
+
+
+  async checkDb() {
+    await this.ute.dbKeys().then((res) => {
+      if (res.dbKeys.length > 0) {
+      } else {
+        this.meta.showStart = true;
+      }
+      console.log(`(((1)))`);
+      this.meta.allkeys = res.dbKeys
+    });
+    await this.ute.dbGetGlob().then((res) => {
+      console.log(`(((2)))`);
+      this.meta.glob = res.dbglob;
+    });
+    await this.justBoxes().then((rv) => {
+      console.log(`(((3)))`);
+      console.log(`why are you doing this ${rv}?`);
+    });
+  }
+
+  fetchBoxes() {
+    console.log(`meta.glob: ${JSON.stringify(this.meta.glob)}`);
+    console.log(`meta: ${JSON.stringify(this.meta)}`);
+  }
+
+  justBoxes(): Promise<any> {
+    return new Promise((resolve) => {
+      this.dbBoxes = [];
+      this.meta.allkeys.forEach((v) => {
+        this.db.get(v)
+          .then((ray) => {
+            if (ray.hasOwnProperty('action')) {
+              console.log(`ray.action ${JSON.stringify(ray.action)}`);
+              if (ray.action == "nuBox" || ray.action == "unBox") {
+                console.log(`action equals ${JSON.stringify(ray.action)}`);
+                // this.dbBoxes.push(Object.assign({}, ray)); //no difference :/
+                this.dbBoxes.push(ray);
+                console.log(`dbBoxes[]? ${JSON.stringify(this.dbBoxes)}`);
+              }
+            }
+          })
+      })
+      resolve()
+    })
+  }
+
+
+  /** fetchBoxes isn't working as desired.
+   *    ute.dbFetchBoxes sends [] for results. :(
+   */
+  // fetchBoxes(): void {
+  //   this.ute.dbFetchBoxes().then((xyz)=>{
+  //     console.log(`fB sent us ${JSON.stringify(xyz)}`);
+  //     this.yeah = "too soonn?";
+  //   })
+  // }
+
+
+  oldcheckDb(): void {
     this.meta.allkeys = [];
     this.dbBoxes = [];
     let dbGlobLocated = false;

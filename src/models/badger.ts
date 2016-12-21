@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 
 export class Ute {
+  holder: any;
   db: any;
   constructor() {
     // console.log(`Ute is building new Storage facility`);
@@ -70,6 +71,70 @@ export class Ute {
         })
         .catch((err) => {
           console.log(`Ute.dbKeys EE ${JSON.stringify(err)}`);
+          reject(err);
+        })
+    })
+  }
+
+  /** fetch boxes -- see box.ts#fetchBoxes()
+   *    not working as intended.
+   */
+  // async dbFetchBoxes() {
+  //   let fbKeys = [];
+  //   await this.db.keys().then((res) => {
+  //     fbKeys = res;
+  //   });
+  //   await this.localBoxes(fbKeys);
+  //   return { tehBoxers: this.holder, didjawait: 'maybe' }
+  // }
+  // localBoxes(kz): Promise<any> {
+  //   return new Promise((resolve) => {
+  //     this.holder = [];
+  //     this.holder.push({ thisis: "hello" });
+
+  //     kz.forEach((v, k) => {
+  //       this.db.get(v).then((rex) => {
+  //         console.log(`{ k: ${k}, rex: ${JSON.stringify(rex)} }`);
+  //         if (rex.hasOwnProperty('action')) {
+  //           if (rex.action == "nuBox" || rex.action == "unBox") {
+  //             this.holder.push(Object.assign({}, rex)); //zilch
+  //             this.holder.push( rex ); //
+  //             console.log(`gold ${JSON.stringify(rex)}`);
+  //           }
+  //         }
+  //       })
+  //     });//forEach
+  //     // resolve({ kzBoxes: this.holder })
+  //     resolve()
+  //   });//Promis
+  // }
+
+  borkydbFetchBoxes(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      // let fboxes: any[] = [];
+      this.holder = [];
+      this.db.keys()
+        .then((res) => {
+          res.forEach((v) => {
+            this.db.get(v).then((ret) => {
+              // console.log(`ret ${JSON.stringify(ret)}`);
+              if (ret.hasOwnProperty('action')) {
+                console.log(`ret.action ${JSON.stringify(ret.action)}`);
+                if (ret.action === "nuBox" || ret.action === "unBox") {
+                  console.log(`action equals ${JSON.stringify(ret.action)}`);
+                  this.holder.push(Object.assign({}, ret)); //no difference :/
+                  this.holder.push(ret);
+                  console.log(`holder ${JSON.stringify(this.holder)}`);
+                }
+              }
+            })
+          })
+          console.log(`ready to resolve ${JSON.stringify(this.holder)}`);
+
+          resolve({ boxers: this.holder })
+        })
+        .catch((err) => {
+          console.log(err);
           reject(err);
         })
     })
