@@ -15,7 +15,7 @@ export class Ute {
       this.db.keys()
         .then((res) => {
           // console.log(`Ute.dbKeys ${JSON.stringify(res)}`);
-          resolve({dbKeys: res});
+          resolve({ dbKeys: res });
         })
         .catch((err) => {
           console.log(`Ute.dbKeys EE ${JSON.stringify(err)}`);
@@ -33,7 +33,7 @@ export class Ute {
           if (res === undefined || res == '' || res == {} || res == null)
           { res = "n/a" }
           console.log(`Ute.dbGetGlob2 ${JSON.stringify(res)}`);
-          resolve({dbglob: res});
+          resolve({ dbglob: res });
         })
         .catch((err) => {
           console.log(`Ute.dbGetGlob2 EE ${JSON.stringify(err)}`);
@@ -47,7 +47,7 @@ export class Ute {
       this.db.set(key, val)
         .then((res) => {
           // console.log(`Ute.dbSetGlob2 ${JSON.stringify(res)}`);
-          resolve({status: "OK"});
+          resolve({ status: "OK" });
         })
         .catch((err) => {
           console.log(`Ute.dbSetGlob2 EE ${JSON.stringify(err)}`);
@@ -68,7 +68,19 @@ export class Ute {
    * Created by arithmetic so's they're unique.
    * @param starter: an optional Date value.
    */
-  ids(starter: Date = new Date()): string[] {
+  ids(starter: Date = new Date()): Promise<any> {
+    return new Promise((resolve) => {
+      let stack = [];
+      let base = starter.valueOf();
+      for (let i = 0; i < 100; i++) {
+        base = base + 13;
+        stack.push(base.toString());
+      }
+      resolve(stack);
+    })
+  }
+
+  idsWORKS(starter: Date = new Date()): string[] {
     let stack = [];
     let base = starter.valueOf();
     for (let i = 0; i < 100; i++) {
@@ -88,8 +100,8 @@ export class Ute {
     return ("0" + slag.getHours()).slice(-2) + ":" + ("0" + slag.getMinutes()).slice(-2) + ":" + ("0" + slag.getSeconds()).slice(-2) + "." + ("00" + slag.getUTCMilliseconds()).slice(-3);
   }
 
-
 }
+
 
 export class DRing {
   public value: string;

@@ -42,6 +42,15 @@ export class CamPage {
     this.checkFs();
   }
 
+  async test() {
+    // let baz = new Ute();
+    console.log(`Cam. test() does llittle. :(`);
+    await new Ute().dbKeys().then((ret) => {
+      console.log(`cam. test() ${JSON.stringify(ret)}`);
+    });
+    console.log(`Cam. test() is donee. :(`);
+  }
+
   shuffleCats(arr) {
     var shuffled = arr.slice(0), i = arr.length, temp, index;
     while (i--) {
@@ -53,17 +62,11 @@ export class CamPage {
     return shuffled;
   }
 
-  test() {
-    console.log(`Cam. test() does nothing. :(`);
-
-  }
-
-
-  addThing() {
-    this.thePix = [];
-    this.freshIds = new Ute().ids(); // use slice(0,1)
-    console.log(`fresh Ids ${this.freshIds}`);
-    this.multiPix();
+  async addThing() {
+    // this.thePix = [];
+    // await this.freshIds = new Ute().ids(); // use slice(0,1)
+    // console.log(`fresh Ids ${this.freshIds}`);
+    // this.multiPix();
   }
 
   /** the Multi returns tripe such as this:
@@ -118,7 +121,7 @@ export class CamPage {
         if (i == 0) {
           thingFirstImage = rawImage.name;
           let xxThg: Badger = new Badger();
-          xxThg.id = this.freshIds.splice(0,1).pop();
+          xxThg.id = this.freshIds.splice(0, 1).pop();
           xxThg.action = "nuThg";
           xxThg.box = this.meta.glob.curBox;
           xxThg.thing = rawImage.name;
@@ -128,7 +131,7 @@ export class CamPage {
 
         } else {
           let xxThg: Badger = new Badger();
-          xxThg.id = this.freshIds.splice(0,1).pop();
+          xxThg.id = this.freshIds.splice(0, 1).pop();
           xxThg.action = "moThg";
           xxThg.box = this.meta.glob.curBox;
           xxThg.thing = thingFirstImage;
@@ -249,10 +252,10 @@ export class CamPage {
     } //try
   }
 
-/**
- * get the keys, check for db.empty.
- * get dbglob, check for current Box.
- */
+  /**
+   * get the keys, check for db.empty.
+   * get dbglob, check for current Box.
+   */
 
   checkDb() {
     this.db.keys()

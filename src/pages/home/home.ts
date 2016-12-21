@@ -13,8 +13,6 @@ declare var cordova: any;
   providers: []
 })
 
-
-
 export class HomePage {
 
   nubNotes: string;
@@ -41,37 +39,8 @@ export class HomePage {
     this.checkDb();
   }
 
-  jKeys(): Promise<string> {
-    return new Promise((resolve) => {
-      new Ute().dbKeys().then((res) => {
-        resolve(res);
-      });
-    })
-  }
-  jGetGlob(): Promise<Object> {
-    console.log(`Home.jGetGlob `);
-    return new Promise((resolve) => {
-      new Ute().dbGetGlob("dbglob").then((res) => {
-        console.log(`Home.jGetGlob2 ${JSON.stringify(res)}`);
-        resolve(res);
-      })
-    });
-  }
-  jSetGlob(key, val): Promise<Object> {
-    console.log(`Home.jSetGlob(), ignoring key: ${key} `);
-    return new Promise((resolve) => {
-      new Ute().dbSetGlob(key, val).then((res) => {
-        console.log(`Home.jSetGlob2 ${JSON.stringify(res)}`);
-        resolve(res);
-      })
-    });
-  }
-
   async makeJayson() {
     let jef = new Ute();
-    // await new Ute().dbKeys().then((res) => {
-    //   curly = res;
-    // });
     [this.larry, this.moe, this.curly] = await Promise.all([
       jef.dbSetGlob("dbglob", { monster: "bait and switch" })
         .then((res) => {
@@ -87,18 +56,6 @@ export class HomePage {
         console.log(`C ${JSON.stringify(this.curly)}`);
       })
     ]);
-  }
-
-  async makeJaysonWORKS() {
-    let obj = { name: 'silly', walk: 'erratic', best: 'not very' }
-    let [larry, moe, curly] = await Promise.all([
-      this.jSetGlob("petunia", obj),
-      this.jGetGlob(),
-      this.jKeys()
-    ]);
-    console.log(`larry Ute? ${JSON.stringify(larry)}`);
-    console.log(`moe Ute? ${JSON.stringify(moe)}`);
-    console.log(`curly Ute? ${JSON.stringify(curly)}`);
   }
 
 
@@ -201,6 +158,53 @@ export class HomePage {
   //   this.nubNotes = "1) new Badger, 2) 'nuBox', 3)start Camera, 3) move image to 'files/badge.jpg'";
 
   // }
+
+/**
+ * the "j" series do/did work, but with a
+ *    whole 'nother layer of Promises in teh middle.
+
+  jKeys(): Promise<string> {
+    return new Promise((resolve) => {
+      new Ute().dbKeys().then((res) => {
+        resolve(res);
+      });
+    })
+  }
+  jGetGlob(): Promise<Object> {
+    console.log(`Home.jGetGlob `);
+    return new Promise((resolve) => {
+      new Ute().dbGetGlob("dbglob").then((res) => {
+        console.log(`Home.jGetGlob2 ${JSON.stringify(res)}`);
+        resolve(res);
+      })
+    });
+  }
+  jSetGlob(key, val): Promise<Object> {
+    console.log(`Home.jSetGlob(), ignoring key: ${key} `);
+    return new Promise((resolve) => {
+      new Ute().dbSetGlob(key, val).then((res) => {
+        console.log(`Home.jSetGlob2 ${JSON.stringify(res)}`);
+        resolve(res);
+      })
+    });
+  }
+
+  async makeJaysonWORKS() {
+    let obj = { name: 'silly', walk: 'erratic', best: 'not very' }
+    let [larry, moe, curly] = await Promise.all([
+      this.jSetGlob("petunia", obj),
+      this.jGetGlob(),
+      this.jKeys()
+    ]);
+    console.log(`larry Ute? ${JSON.stringify(larry)}`);
+    console.log(`moe Ute? ${JSON.stringify(moe)}`);
+    console.log(`curly Ute? ${JSON.stringify(curly)}`);
+  }
+
+
+
+ */
+
 
 
 } // HomePage class
