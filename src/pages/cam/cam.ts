@@ -63,16 +63,22 @@ export class CamPage {
   }
 
   async addThing() {
-    // this.thePix = [];
-    // await this.freshIds = new Ute().ids(); // use slice(0,1)
-    // console.log(`fresh Ids ${this.freshIds}`);
-    // this.multiPix();
+    this.thePix = [];
+    this.freshIds = [];
+    console.log(`addThing begins: thePix ${JSON.stringify(this.thePix)}, freshIds ${this.freshIds}`);
+    await new Ute().ids()
+      .then((ret) => {
+        this.freshIds = ret;
+        // this.freshIds = Object.assign({}, ret); // turns 'em into tuples (?)
+      }); // use slice(0,1)
+    this.multiPix();
   }
 
   /** the Multi returns tripe such as this:
    *  file:/storage/emulated/0/DCIM/Camera/<name>.jpg
    *  */
   multiPix() {
+    // console.log(`addThing continues: thePix ${JSON.stringify(this.thePix)}, freshIds ${JSON.stringify(this.freshIds)}`);
     if (this.areWeLocal == false) {
       let opt: CaptureImageOptions = { limit: 3 };
       MediaCapture.captureImage(opt)
@@ -92,9 +98,9 @@ export class CamPage {
       theirNames.forEach(element => {
         this.thePix.push(this.fs2 + element);
       });
-      // console.log(`THING: ${JSON.stringify(theirNames)}`);
 
       this.multiStep2();
+
     } // areWeLocal?
   } // multiPix()
 
@@ -119,6 +125,7 @@ export class CamPage {
       this.thePix.forEach((v, i) => {
         let rawImage = this.slashName(v);
         if (i == 0) {
+          // first image is special
           thingFirstImage = rawImage.name;
           let xxThg: Badger = new Badger();
           xxThg.id = this.freshIds.splice(0, 1).pop();
@@ -128,8 +135,8 @@ export class CamPage {
           xxThg.badge = rawImage.name;
           memBadgers.push(xxThg);
           localTestIds.push(xxThg.id);
-
         } else {
+          // subsequent images are special too
           let xxThg: Badger = new Badger();
           xxThg.id = this.freshIds.splice(0, 1).pop();
           xxThg.action = "moThg";
@@ -140,7 +147,6 @@ export class CamPage {
           localTestIds.push(xxThg.id);
         }
 
-
       }) //thePix loop
 
       memBadgers.forEach((obj) => {
@@ -150,18 +156,6 @@ export class CamPage {
             // console.log(`retx ${obj.action} ${obj.id} `);
           });
       })
-      setTimeout(() => {
-        localTestIds.forEach((key) => {
-          this.db.get(key)
-            .then((ret) => {
-              // console.log(`${key} -- ${ret.id} ${ret.action} ${ret.box} ${ret.thing} ${ret.badge}`);
-
-            })
-        });
-      }, 1000);
-
-
-
 
 
 
@@ -175,13 +169,8 @@ export class CamPage {
     } // are we local?
 
 
-
     // first image = curThg
     // let tmp = this.slashName(this.images[0].fullPath)
-
-
-
-
 
 
     // console.log('** multiPostProcessing - this.curThg, Path: ' + this.curThg + " | " + this.fromPath);
