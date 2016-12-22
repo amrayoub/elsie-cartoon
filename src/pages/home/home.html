@@ -11,17 +11,13 @@
       <ion-icon name="add"></ion-icon>
       </button>
     <ion-fab-list>
-      <button ion-fab (click)="test()" >
-        <ion-icon name="beaker"></ion-icon>
+      <button ion-fab (click)="test1()" ><span class="monofett">1</span>
         </button>
-      <button ion-fab (click)="testAllKeys()" >
-        <ion-icon name="logo-googleplus"></ion-icon>
+      <button ion-fab (click)="test2()" ><span class="monofett">2</span>
         </button>
-      <button ion-fab (click)="testBadgers()" >
-        <ion-icon name="logo-youtube"></ion-icon>
+      <button ion-fab (click)="test3()" ><span class="monofett">3</span>
         </button>
-      <button ion-fab>
-        <ion-icon name="logo-twitter"></ion-icon>
+      <button ion-fab (click)="test4()" ><span class="monofett">4</span>
         </button>
       <button ion-fab color="danger" (click)="emptyDatabase()">
         <ion-icon name="trash"></ion-icon>
@@ -30,7 +26,7 @@
   </ion-fab>
 
   <p> <code>Ionic Storage driver: asyncStorage</code> </p>
-
+<p class="monofett">Does this font look silly?</p>
   <p *ngIf="showStart"> Make a new "box" </p>
 
   <p *ngIf="mm?.curBoxBadge">

@@ -77,8 +77,8 @@ export class HomePage {
   }
 
   testAllKeys() {
-    this.db.get('mmJustBoxes').then((res) => {
-      console.log(`mmJustBoxes ${JSON.stringify(res)}`);
+    this.db.get('mmBadgers').then((res) => {
+      console.log(`mmBadgers ${JSON.stringify(res)}`);
       // let findee = "1482435462163";
       // let openee = res.find(x => x.signetValue === findee);
       // console.log(`mmJustBoxes openee ${JSON.stringify(openee)}`);
