@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, ToastController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { Badger, DRing } from '../../models/badger';
+import { MM } from '../../models/mm';
 import { MediaCapture, MediaFile, CaptureError } from 'ionic-native';
 import { File, Entry, FileError, Camera } from 'ionic-native';
 
@@ -29,6 +30,7 @@ export class BoxPage {
   dbBoxes: any[];
   dbId: any;
   areWeLocal: boolean;
+  mm: any; // the meta.glob replacement
 
   constructor(
     public navCtrl: NavController,
@@ -36,7 +38,7 @@ export class BoxPage {
     public toastCtrl: ToastController
   ) {
     this.cats = ["cats-1.jpg", "cats-2.jpg", "cats-3.jpg", "cats-4.jpg", "cats-5.jpg", "cats-6.jpg", "cats-7.jpg", "cats-8.jpg"];
-    this.meta = { glob: { curBox: false, curBoxBadge: false, curThg: false, curThgBadge:false }, stanley: "steamer" };
+    this.meta = { glob: { curBox: false, curBoxBadge: false, curThg: false, curThgBadge: false }, stanley: "steamer" };
     // console.log(`constructed with  ${JSON.stringify(this.meta)}`);
     try {
       this.areWeLocal = false;
@@ -48,9 +50,22 @@ export class BoxPage {
       // console.log(`Today's FS2 is: ${this.fs2}`);
     } //try
   }
-  ionViewDidEnter() {
-    this.checkDb();
+
+  ionViewWillEnter() {
+    this.mm = MM.getInstance();
+    this.mm.mmRead();
   }
+
+  ionViewDidEnter() {
+    if (this.mm && this.mm.justBoxes && this.mm.justBoxes.length === 0) {
+      this.toastEmptyDatabase();
+    }
+  }
+
+  ionViewWillLeave() {
+    this.mm.mmWrite();
+  }
+
   addBox() {
     this.box = new Badger();
     this.box.action = "nuBox"
@@ -90,6 +105,7 @@ export class BoxPage {
   } //singlePix()
 
   mvImageToSafePlace() {
+    console.log(` fs2 + box.badge  ${this.fs2} + ${this.box.badge}`);
     if (this.fs2 !== this.rawImage.path) {
       // console.log(`--Fr: ${this.rawImage.path} ${this.rawImage.name}`);
       // console.log(`--To: ${this.fs2} ${this.rawImage.name}`);
@@ -105,37 +121,21 @@ export class BoxPage {
   }
 
   saveBoxObject() {
-    this.meta.glob.curBox = this.dbId;
-    this.meta.glob.curBoxBadge = this.box.badge;
-    this.db.set(this.dbId, this.box)
-      .then((res) => {
-        this.db.get(this.dbId)
-          .then((res) => {
-            if (this.areWeLocal) {
-              // console.log(`save/db.get ${this.dbId} -=> ${JSON.stringify(res.signetHuman)}`);
-            } else {
-              // console.log(`save/db.get ${this.dbId} -=> ${JSON.stringify(res)}`);
-            }
+    this.mm.curBox = this.dbId;
+    this.mm.curBoxBadge = this.box.badge;
+    this.mm.badgers.push(this.box);
+    this.mm.justBoxes.push(this.box);
+    console.log(`box ${JSON.stringify(this.box)}`);
+    console.log(`bds ${JSON.stringify(this.mm.badgers)}`);
 
-            this.checkDb(); // refresh current data; I wish it really did...
-
-            // this.db.get("dbglob")
-            //   .then((res) => {
-            //     // look at res.curBox, res.curThg
-
-            //     asdfasdf
-            //   })
-            //   .then((x) => {
-            //     this.db.set("dbglob", something);
-            // })
-
-          })
-      });
   }
+
 
   /**
    * @param b is actually signetValue, so...
    *    let's loop thru the database to find a key in the haystack...
+   *
+   * NO. Let's look in this.mm.justBoxes.
    */
   openBox(boxSignet) {
     this.db.keys()
@@ -155,62 +155,6 @@ export class BoxPage {
   }
 
   /**
-   * EVERYTIME
-   * 1. get the keys of the database
-   * 2. use keys to create Boxes array (why? for the box.html list of boxes)
-   * 3. use keys to fetch Current/Status record, update in-memory Status
-   */
-
-  checkDb(): void {
-    this.meta.allkeys = [];
-    this.dbBoxes = [];
-    let dbGlobLocated = false;
-    this.db.keys()
-      .then((ret) => {
-        this.meta.allkeys = ret;
-        if (this.meta.allkeys.length == 0) {
-          this.meta.showStart = true;
-          this.freshDatabase();
-        } else {
-          // console.log(`db has: ${JSON.stringify(this.meta.allkeys.length)} records.`);
-          // console.log(`reminder, fs2 is ${this.fs2}`);
-
-          for (let i = this.meta.allkeys.length - 1; i >= 0; i--) {
-            let rowNumber = this.meta.allkeys[i];
-            this.db.get(rowNumber).then((record) => {
-              // IS IT ONE OF OURS?
-              if (record && record.hasOwnProperty('action')) {
-                // console.log(`${i} : ${rowNumber} : ${record.action} : ${record.badge} : ${this.myTime(record.signetValue)}`);
-                // IS IT A BOX?
-                if (record.action == "nuBox" || record.action == "unBox") {
-                  this.dbBoxes.push(record);
-                }
-              } else {
-                // console.log(`${rowNumber} might be our global constant...`);
-                if (rowNumber == "dbglob") {
-                  // do something with dbglob, perhaps,
-                  dbGlobLocated = true
-                }
-              } // one of ours?
-            });
-          } // done with allkeys
-
-          // this.meta.glob.curBox;
-
-          if (dbGlobLocated == false) {
-            this.db.set("dbglob", this.meta.glob)
-              .then((ret) => {
-                this.db.get("dbglob")
-                  .then((rec) => {
-                    // console.log(` "dbglob: ${JSON.stringify(rec)}`);
-                    // console.log(` "meta: ${JSON.stringify(this.meta)}`);
-                  })
-              });
-          }
-        }
-      }); //dbkeys()
-  }
-  /**
    * End of the Actions --------------------
    */
 
@@ -226,7 +170,7 @@ export class BoxPage {
     return { 'name': n, 'path': p };
   }
 
-  freshDatabase(): void {
+  toastEmptyDatabase(): void {
     let toast = this.toastCtrl.create({
       message: 'Database Empty. U Make New Box.',
       duration: 2000,
@@ -235,7 +179,120 @@ export class BoxPage {
     });
     toast.onDidDismiss(() => { /** console.log('Dismissed toast');*/ });
     toast.present();
-  } //freshDatabase()
+  }
+
+  /**
+   * EVERYTIME
+   * 1. get the keys of the database
+   * 2. use keys to create Boxes array (why? for the box.html list of boxes)
+   * 3. use keys to fetch Current/Status record, update in-memory Status
+   */
+  retiredcheckDb() {
+    this.db.keys()
+      .then((ret) => {
+        this.meta.allkeys = ret;
+        // console.log(`allkeys: ${JSON.stringify(this.meta.allkeys)}`);
+        // console.log(`allkeys: ${JSON.stringify(this.meta.allkeys.length)}`);
+        // if (this.meta.allkeys.length == 0) {
+        //   this.meta.showStart = true;
+        //   // this.tabs.select(2);
+        //   this.toastEmptyDatabase);
+        // } else {
+        //   this.meta.showStart = false;
+        //   this.db.get("dbglob")
+        //     .then((res) => {
+        //       console.log(`Home,checkDb,dbglob ${JSON.stringify(res)}`);
+        //       if (res == undefined) {
+        //         // do nothing
+        //       } else {
+        //         this.meta.glob = res;
+        //       }
+        //     })
+        // }
+      });
+  }
+
+  oldersaveBoxObject() {
+    this.meta.glob.curBox = this.dbId;
+    this.meta.glob.curBoxBadge = this.box.badge;
+    this.db.set(this.dbId, this.box)
+      .then((res) => {
+        this.db.get(this.dbId)
+          .then((res) => {
+            if (this.areWeLocal) {
+              // console.log(`save/db.get ${this.dbId} -=> ${JSON.stringify(res.signetHuman)}`);
+            } else {
+              // console.log(`save/db.get ${this.dbId} -=> ${JSON.stringify(res)}`);
+            }
+
+            this.oldcheckDb(); // refresh current data; I wish it really did...
+
+            // this.db.get("dbglob")
+            //   .then((res) => {
+            //     // look at res.curBox, res.curThg
+
+            //     asdfasdf
+            //   })
+            //   .then((x) => {
+            //     this.db.set("dbglob", something);
+            // })
+
+          })
+      });
+  }
+
+  retiredrayBoxes() {
+    for (let i = this.meta.allkeys.length - 1; i >= 0; i--) {
+      let rowNumber = this.meta.allkeys[i];
+      this.db.get(rowNumber).then((record) => {
+        // IS IT ONE OF OURS?
+        if (record && record.hasOwnProperty('action')) {
+          // console.log(`${i} : ${rowNumber} : ${record.action} : ${record.badge} : ${this.myTime(record.signetValue)}`);
+          // IS IT A BOX?
+          if (record.action == "nuBox" || record.action == "unBox") {
+            this.dbBoxes.push(record);
+          }
+        } else {
+          // console.log(`${rowNumber} might be our global constant...`);
+          if (rowNumber == "dbglob") {
+            // do something with dbglob, perhaps,
+            // dbGlobLocated = true
+            console.log(`rayBoxes > dbglob ${JSON.stringify(record)}`);
+          }
+        } // one of ours?
+      });
+    } // done with allkeys
+
+  }
+
+  oldcheckDb(): void {
+    this.meta.allkeys = [];
+    this.dbBoxes = [];
+    let dbGlobLocated = false;
+    this.db.keys()
+      .then((ret) => {
+        this.meta.allkeys = ret;
+        if (this.meta.allkeys.length == 0) {
+          this.meta.showStart = true;
+          this.toastEmptyDatabase();
+        } else {
+          // console.log(`db has: ${JSON.stringify(this.meta.allkeys.length)} records.`);
+          // console.log(`reminder, fs2 is ${this.fs2}`);
+          // this.meta.glob.curBox;
+
+          if (dbGlobLocated == false) {
+            this.db.set("dbglob", this.meta.glob)
+              .then((ret) => {
+                this.db.get("dbglob")
+                  .then((rec) => {
+                    // console.log(` "dbglob: ${JSON.stringify(rec)}`);
+                    // console.log(` "meta: ${JSON.stringify(this.meta)}`);
+                  })
+              });
+          }
+        }
+      }); //this.db.keys()
+  } //oldcheckDb
 
 } // BoxPage
 
@@ -258,3 +315,6 @@ cordova-plugin-sqlite 1.0.3 "Cordova Sqllite Plugine"
 cordova-plugin-statusbar 2.2.0 "StatusBar"
 cordova-plugin-whitelist 1.3.0 "Whitelist"
 ionic-plugin-keyboard 2.2.1 "Keyboard" */
+
+
+
