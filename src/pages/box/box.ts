@@ -77,9 +77,6 @@ export class BoxPage {
     this.singlePix();
   }
 
-  /**
-   * file:///storage/emulated/0/Android/data/ <name> /cache/imagenumber.jpg
-   */
   singlePix() {
     if (this.areWeLocal == false) {
       let deviceFailureFlag = cordova.file.externalDataDirectory;
@@ -128,37 +125,22 @@ export class BoxPage {
     this.mm.badgers.push(this.box);
     this.mm.justBoxes.push(this.box);
     // mmwrite here?
-    console.log(`box ${JSON.stringify(this.box)}`);
-    console.log(`bds ${JSON.stringify(this.mm.badgers)}`);
+    // console.log(`box ${JSON.stringify(this.box)}`);
+    // console.log(`bds ${JSON.stringify(this.mm.badgers)}`);
   }
 
-
-  /**
-   * @param b is actually signetValue, so...
-   *    let's loop thru the database to find a key in the haystack...
-   *
-   * NO. Let's look in this.mm.justBoxes.
-   */
   openBox(boxSignet) {
-    this.db.keys()
-      .then((res) => {
-        let ak = res;
-        res.forEach(oneKey => {
-          this.db.get(oneKey)
-            .then((ret) => {
-              if (ret.signetValue == boxSignet) {
-                this.meta.glob.curBox = oneKey;
-                this.meta.glob.curBoxBadge = ret.badge;
-              }
-              this.db.set("dbglob", this.meta.glob); // set and forget?
-            });
-        });
-      })
+    console.log(`mm.curBox ${this.mm.curBox} --> ${boxSignet}`);
+    this.db.get('mmJustBoxes').then((res) => {
+      let openee = res.find(x => x.signetValue === boxSignet);
+      this.mm.curBox = openee.signetValue;
+      this.mm.curBoxBadge = openee.badge;
+      console.log(`mmJustBoxes openee ${JSON.stringify(openee)}`);
+      console.log(`mm.curBox ${this.mm.curBox}`);
+    })
   }
 
-  /**
-   * End of the Actions --------------------
-   */
+  /** End of the Actions -------------------- */
 
   myTime(t: string): string {
     let slag = new Date(Number(t));
@@ -183,12 +165,33 @@ export class BoxPage {
     toast.present();
   }
 
+
+  /** file:///storage/emulated/0/Android/data/ <name> /cache/imagenumber.jpg  */
+
   /**
    * EVERYTIME
    * 1. get the keys of the database
    * 2. use keys to create Boxes array (why? for the box.html list of boxes)
    * 3. use keys to fetch Current/Status record, update in-memory Status
    */
+
+  formeropenBox(boxSignet) {
+    this.db.keys()
+      .then((res) => {
+        let ak = res;
+        res.forEach(oneKey => {
+          this.db.get(oneKey)
+            .then((ret) => {
+              if (ret.signetValue == boxSignet) {
+                this.meta.glob.curBox = oneKey;
+                this.meta.glob.curBoxBadge = ret.badge;
+              }
+              this.db.set("dbglob", this.meta.glob); // set and forget?
+            });
+        });
+      })
+  }
+
   retiredcheckDb() {
     this.db.keys()
       .then((ret) => {

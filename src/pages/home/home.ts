@@ -17,10 +17,11 @@ export class HomePage {
 
   nubNotes: string;
   meta: any = {};
+  showStart:boolean;
   bytes_free: any;
   fs2: any;
   areWeLocal: boolean;
-  mm:any;
+  mm: any;
 
   constructor(
     public navCtrl: NavController,
@@ -71,10 +72,10 @@ export class HomePage {
         this.meta.allkeys = ret;
         // console.log(`allkeys: ${JSON.stringify(this.meta.allkeys)}`);
         if (this.meta.allkeys.length == 0) {
-          this.meta.showStart = true;
+          this.showStart = true;
           this.tabs.select(2);
         } else {
-          this.meta.showStart = false;
+          this.showStart = false;
           this.db.get("dbglob")
             .then((res) => {
               console.log(`Home,checkDb,dbglob ${JSON.stringify(res)}`);
@@ -97,15 +98,17 @@ export class HomePage {
   }
 
   testAllKeys() {
-    this.db.keys().then((res)=>{
-    console.log(`db.keys ${JSON.stringify(res)}`);
+    this.db.get('mmJustBoxes').then((res) => {
+      console.log(`mmJustBoxes ${JSON.stringify(res)}`);
+      let findee = "1482435462163";
+      let openee = res.find(x => x.signetValue === findee);
+      console.log(`mmJustBoxes openee ${JSON.stringify(openee)}`);
     })
   }
 
-  testJustBoxes() {
-    this.db.get('mmJustBoxes').then((res)=>{
-      console.log(`mmJustBoxes ${JSON.stringify(res)}`);
-
+  testBadgers() {
+    this.db.get('mmBadgers').then((res) => {
+      console.log(`mmBadgers ${JSON.stringify(res)}`);
     })
   }
 
