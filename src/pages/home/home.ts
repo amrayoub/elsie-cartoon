@@ -15,11 +15,13 @@ declare var cordova: any;
 
 export class HomePage {
 
+  tattler: any = '';
   areWeLocal: boolean;
   bytes_free: any;
   meta: any = {};
   ute: any;
   fs2: any;
+  justkeys: any[];
 
   constructor
     (
@@ -28,11 +30,46 @@ export class HomePage {
     private tabs: Tabs
     ) {
     this.ute = new Ute();
-    this.checkDb();
+    // this.checkDb();
     this.checkFs();
   }
 
   ionViewWillEnter() { this.checkDb(); }
+
+
+
+ workMyCollection(justkeys) {
+    return Promise.all(justkeys.map(function(item) {
+        return this.db.get(item);
+    }));
+}
+
+
+  async makeJayson() {
+    console.log(`(((1)))`);
+    await this.ute.dbKeys().then((res) => {
+      this.meta.allkeys = res.dbKeys;
+      console.log(`(((2))) ${JSON.stringify(this.meta.allkeys)}`);
+    });
+    console.log('(((3)))');
+    this.meta.allkeys.forEach((key) => {
+
+
+
+
+
+
+
+
+
+      if (v.hasOwnProperty('action')) {
+        this.tattler += ".";
+      } else {
+        this.tattler += "x";
+      }
+
+    })
+  }
 
   async checkDb() {
     await this.ute.dbKeys().then((res) => {
@@ -86,7 +123,7 @@ export class HomePage {
   curly: any;
   bozo: any;
 
-  async makeJayson() {
+  async makeJaysonPromises() {
     let jef = new Ute();
     [this.larry, this.moe, this.curly] = await Promise.all([
       jef.dbSetGlob("dbglob", { monster: "bait and switch" })
@@ -111,7 +148,6 @@ export class HomePage {
       this.bozo = res;
     }).catch((err) => { this.bozo = err; });
   }
-
 
   testFAIL() {
     // console.log(`Home.test() moving checkDb into Ute!`);
@@ -234,4 +270,6 @@ export class HomePage {
   }
 
 } // HomePage class
+
+
 
