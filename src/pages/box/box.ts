@@ -188,8 +188,8 @@ export class BoxPage {
       this.meta.glob = res.dbglob;
     });
     await this.justBoxes().then((rv) => {
-      console.log(`justBoxes returns ${rv}, but...`);
-      console.log(`-- this.dbBoxes has ${this.dbBoxes.length} elements.`);
+      // console.log(`justBoxes returns ${rv}, but...`);
+      // console.log(`-- this.dbBoxes has ${this.dbBoxes.length} elements.`);
 
     });
     // console.log(`Box#meta ${this.meta.allkeys.length} keys, #glob: ${JSON.stringify(this.meta.glob)}`);
@@ -203,12 +203,12 @@ export class BoxPage {
         this.db.get(v)
           .then((ray) => {
             if (ray.hasOwnProperty('action')) {
-              console.log(`ray.action ${JSON.stringify(ray.action)}`);
+              // console.log(`ray.action ${JSON.stringify(ray.action)}`);
               if (ray.action == "nuBox" || ray.action == "unBox") {
-                console.log(`action equals ${JSON.stringify(ray.action)}`);
+                // console.log(`action equals ${JSON.stringify(ray.action)}`);
                 // this.dbBoxes.push(Object.assign({}, ray)); //no difference :/
                 this.dbBoxes.push(ray);
-                console.log(`dbBoxes[]? ${JSON.stringify(this.dbBoxes)}`);
+                // console.log(`dbBoxes[]? ${JSON.stringify(this.dbBoxes)}`);
               }
             }
           })

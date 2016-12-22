@@ -35,8 +35,13 @@
   <ion-list>
     <ion-item *ngFor="let box of dbBoxes">
       <img [src]="fs2 + box.badge" alt="cat" style="max-width:90px; max-height:60px;">
-      <button ion-button (click)="openBox(box.signetValue)" ><ion-icon name="open"></ion-icon></button>
-      {{ box.action }} {{ box.badge }}
+
+
+      <button ion-button
+      *ngIf="box.badge !== meta.glob?.curBoxBadge"
+      (click)="openBox(box.signetValue)" ><ion-icon name="open"></ion-icon></button>
+
+      {{ box.badge }} {{ box.id }}
     </ion-item>
   </ion-list>
 
