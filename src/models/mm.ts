@@ -33,7 +33,7 @@ export class MM {
     this.mmdb.set('mmThgBadge', this.curThgBadge);
     this.mmdb.set('mmJustBoxes', this.justBoxes)
       .then((res) => {
-        console.log(`mmWrite ${JSON.stringify(res)}`);
+        // console.log(`mmWrite ${JSON.stringify(res)}`);
       });
   }
 

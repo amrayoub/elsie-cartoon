@@ -17,7 +17,7 @@ export class HomePage {
 
   nubNotes: string;
   meta: any = {};
-  showStart:boolean;
+  showStart: boolean;
   bytes_free: any;
   fs2: any;
   areWeLocal: boolean;
@@ -27,23 +27,6 @@ export class HomePage {
     public navCtrl: NavController,
     public db: Storage,
     private tabs: Tabs) {
-    this.checkFs();
-  }
-
-  ionViewWillEnter() {
-    this.checkDb();
-    this.mm = MM.getInstance();
-    this.mm.mmRead();
-  }
-
-  ionViewWillLeave() {
-    // this.mm.mmWrite();
-  }
-
-  checkFs() {
-    // File.getFreeDiskSpace().then((data: any) => {
-    //   this.bytes_free = data;
-    // });
     try {
       this.areWeLocal = false;
       this.fs2 = cordova.file.externalDataDirectory;
@@ -55,6 +38,25 @@ export class HomePage {
     } //try
   }
 
+  ionViewWillEnter() {
+    this.mm = MM.getInstance();
+    this.mm.mmRead();
+  }
+
+  ionViewDidEnter() {
+
+  }
+
+  ionViewDidLoad() {
+    if (this.mm && this.mm.justBoxes && this.mm.justBoxes.length === 0) {
+      this.tabs.select(2);
+    }
+  }
+
+  ionViewWillLeave() {
+    // this.mm.mmWrite();
+  }
+
 
   emptyDatabase() {
     this.db.clear().then(() => {
@@ -64,6 +66,37 @@ export class HomePage {
       // This code runs if there were any errors
       console.log(err);
     });
+  }
+
+  test() {
+    console.log(`jsn ${JSON.stringify(this.mm.badgers)}`);
+    console.log(`box ${this.mm.curBox}`);
+    console.log(`box ${this.mm.curBoxBadge}`);
+    console.log(`box ${this.mm.curThg}`);
+    console.log(`box ${this.mm.curThgBadge}`);
+  }
+
+  testAllKeys() {
+    this.db.get('mmJustBoxes').then((res) => {
+      console.log(`mmJustBoxes ${JSON.stringify(res)}`);
+      // let findee = "1482435462163";
+      // let openee = res.find(x => x.signetValue === findee);
+      // console.log(`mmJustBoxes openee ${JSON.stringify(openee)}`);
+    })
+  }
+
+  testBadgers() {
+    this.db.get('mmBadgers').then((res) => {
+      console.log(`mmBadgers ${JSON.stringify(res)}`);
+    })
+  }
+
+  /** OLD CODE HOME --------------- */
+
+  checkFs() {
+    // File.getFreeDiskSpace().then((data: any) => {
+    //   this.bytes_free = data;
+    // });
   }
 
   checkDb() {
@@ -82,34 +115,11 @@ export class HomePage {
               if (res == undefined) {
                 // do nothing
               } else {
-                this.meta.glob = res;
+                // this.meta.glob = res;
               }
             })
         }
       });
-  }
-
-  test() {
-    console.log(`jsn ${JSON.stringify(this.mm.badgers)}`);
-    console.log(`box ${this.mm.curBox}`);
-    console.log(`box ${this.mm.curBoxBadge}`);
-    console.log(`box ${this.mm.curThg}`);
-    console.log(`box ${this.mm.curThgBadge}`);
-  }
-
-  testAllKeys() {
-    this.db.get('mmJustBoxes').then((res) => {
-      console.log(`mmJustBoxes ${JSON.stringify(res)}`);
-      let findee = "1482435462163";
-      let openee = res.find(x => x.signetValue === findee);
-      console.log(`mmJustBoxes openee ${JSON.stringify(openee)}`);
-    })
-  }
-
-  testBadgers() {
-    this.db.get('mmBadgers').then((res) => {
-      console.log(`mmBadgers ${JSON.stringify(res)}`);
-    })
   }
 
   ex1() {

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, ToastController } from 'ionic-angular';
+import { NavController, ToastController, Tabs } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { Badger, DRing } from '../../models/badger';
 import { MM } from '../../models/mm';
@@ -18,28 +18,24 @@ declare var cordova: any;
  * the Multi- returns tripe such as this:
  * file:/storage/emulated/0/DCIM/Camera/<name>.jpg */
 export class BoxPage {
-  meta: any = {};
-  images: any[];
-  curBox: any;
-  fromPath: any;
-  fs2: any;
   cats: string[];
   thePhoto: any;
   rawImage: any;
   box: Badger;
-  dbBoxes: any[];
   dbId: any;
+
+  fs2: any;
+  dbBoxes: any[];
   areWeLocal: boolean;
   mm: any; // the meta.glob replacement
 
   constructor(
     public navCtrl: NavController,
     public db: Storage,
-    public toastCtrl: ToastController
+    public toastCtrl: ToastController,
+    private tabs: Tabs
   ) {
     this.cats = ["cats-1.jpg", "cats-2.jpg", "cats-3.jpg", "cats-4.jpg", "cats-5.jpg", "cats-6.jpg", "cats-7.jpg", "cats-8.jpg"];
-    this.meta = { glob: { curBox: false, curBoxBadge: false, curThg: false, curThgBadge: false }, stanley: "steamer" };
-    // console.log(`constructed with  ${JSON.stringify(this.meta)}`);
     try {
       this.areWeLocal = false;
       this.fs2 = cordova.file.externalDataDirectory;
@@ -52,19 +48,19 @@ export class BoxPage {
   }
 
   ionViewWillEnter() {
-    console.log(`box.ts will enereter`);
+    // console.log(`box.ts will enereter`);
     this.mm = MM.getInstance();
     this.mm.mmRead();
   }
 
-  ionViewDidEnter() {
+  ionViewDidLoad() {
     if (this.mm && this.mm.justBoxes && this.mm.justBoxes.length === 0) {
       this.toastEmptyDatabase();
     }
   }
 
   ionViewWillLeave() {
-    console.log(`box.ts will leave`);
+    // console.log(`box.ts will leave`);
     this.mm.mmWrite();
   }
 
@@ -135,8 +131,8 @@ export class BoxPage {
       let openee = res.find(x => x.signetValue === boxSignet);
       this.mm.curBox = openee.signetValue;
       this.mm.curBoxBadge = openee.badge;
-      console.log(`mmJustBoxes openee ${JSON.stringify(openee)}`);
-      console.log(`mm.curBox ${this.mm.curBox}`);
+      // console.log(`mmJustBoxes openee ${JSON.stringify(openee)}`);
+      // console.log(`mm.curBox ${this.mm.curBox}`);
     })
   }
 
@@ -174,6 +170,9 @@ export class BoxPage {
    * 2. use keys to create Boxes array (why? for the box.html list of boxes)
    * 3. use keys to fetch Current/Status record, update in-memory Status
    */
+
+  meta: any = {};
+
 
   formeropenBox(boxSignet) {
     this.db.keys()

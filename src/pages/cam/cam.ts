@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, Tabs } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { File, Entry, FileError } from 'ionic-native';
 import { MediaCapture, MediaFile, CaptureImageOptions, CaptureError } from 'ionic-native';
 
 import { Ute, Badger, DRing } from '../../models/badger';
+import { MM } from '../../models/mm';
 
 declare var cordova: any;
 
@@ -15,17 +16,17 @@ declare var cordova: any;
 
 export class CamPage {
 
-  meta: any = {};
-  fs2: any;
-  cats: string[];
-  areWeLocal: boolean;
+  foods: string[];
   thePix: any[] = [];
+  memBadgers: Badger[] = [];
   freshIds: string[] = [];
-  showCurBox: boolean = false;
+  fs2: any;
+  dbBoxes: any[];
+  areWeLocal: boolean;
+  mm: any;
 
-  constructor(public navCtrl: NavController, public db: Storage) {
-    this.checkDb();
-    this.cats = ["food-1.jpg", "food-2.jpg", "food-3.jpg", "food-4.jpg", "food-5.jpg", "food-6.jpg", "food-7.jpg", "food-8.jpg", "food-9.jpg"];
+  constructor(public navCtrl: NavController, public db: Storage, private tabs: Tabs) {
+    this.foods = ["food-1.jpg", "food-2.jpg", "food-3.jpg", "food-4.jpg", "food-5.jpg", "food-6.jpg", "food-7.jpg", "food-8.jpg", "food-9.jpg"];
     try {
       this.areWeLocal = false;
       this.fs2 = cordova.file.externalDataDirectory;
@@ -38,11 +39,22 @@ export class CamPage {
   }
 
   ionViewWillEnter() {
-    this.checkDb();
-    this.checkFs();
+    this.mm = MM.getInstance();
+    this.mm.mmRead();
   }
 
-  shuffleCats(arr) {
+  ionViewDidLoad() {
+    if (this.mm && this.mm.justBoxes && this.mm.justBoxes.length === 0) {
+      this.tabs.select(2);
+    }
+  }
+
+  ionViewWillLeave() {
+    // console.log(`box.ts will leave`);
+    this.mm.mmWrite();
+  }
+
+  shuffleFoods(arr) {
     var shuffled = arr.slice(0), i = arr.length, temp, index;
     while (i--) {
       index = Math.floor(i * Math.random());
@@ -52,7 +64,6 @@ export class CamPage {
     }
     return shuffled;
   }
-
 
   addThing() {
     this.thePix = [];
@@ -79,7 +90,7 @@ export class CamPage {
     } else {
 
       this.areWeLocal = true; // a friendly reminder
-      let theirNames: string[] = this.shuffleCats(this.cats);
+      let theirNames: string[] = this.shuffleFoods(this.foods);
       theirNames.forEach(element => {
         this.thePix.push(this.fs2 + element);
       });
@@ -91,12 +102,10 @@ export class CamPage {
 
 
   multiStep2() {
-    let localTestIds: any[] = [];
-    let memBadgers: Badger[] = [];
+    this.memBadgers = [];
 
-    // TODO: Ought I be devising a db-based getter and setter for these two?
-    this.meta.glob.curThg = false;
-    this.meta.glob.curThgBadge = false;
+    this.mm.curThg = false;
+    this.mm.curThgBadge = false;
 
     if (this.areWeLocal == false) {
       this.thePix.forEach((v, i) => {
@@ -112,48 +121,56 @@ export class CamPage {
         if (i == 0) {
           thingFirstImage = rawImage.name;
           let xxThg: Badger = new Badger();
-          xxThg.id = this.freshIds.splice(0,1).pop();
+          xxThg.id = this.freshIds.splice(0, 1).pop();
+          xxThg.signetValue = xxThg.id;
           xxThg.action = "nuThg";
-          xxThg.box = this.meta.glob.curBox;
+          xxThg.box = this.mm.curBox;
           xxThg.thing = rawImage.name;
           xxThg.badge = rawImage.name;
-          memBadgers.push(xxThg);
-          localTestIds.push(xxThg.id);
+          this.mm.curThg = xxThg.signetValue;
+          this.mm.curThgBadge = xxThg.badge;
+          this.mm.badgers.push(xxThg);
+          this.memBadgers.push(xxThg);
 
         } else {
           let xxThg: Badger = new Badger();
-          xxThg.id = this.freshIds.splice(0,1).pop();
+          xxThg.id = this.freshIds.splice(0, 1).pop();
+          xxThg.signetValue = xxThg.id;
           xxThg.action = "moThg";
-          xxThg.box = this.meta.glob.curBox;
+          xxThg.box = this.mm.curBox;
           xxThg.thing = thingFirstImage;
           xxThg.badge = rawImage.name;
-          memBadgers.push(xxThg);
-          localTestIds.push(xxThg.id);
-        }
+          this.mm.curThg = xxThg.signetValue;
+          this.mm.curThgBadge = xxThg.badge;
+          this.mm.badgers.push(xxThg);
+          this.memBadgers.push(xxThg);
 
+        }
 
       }) //thePix loop
 
-      memBadgers.forEach((obj) => {
-        let key = obj.id;
-        this.db.set(key, obj)
-          .then((ret) => {
-            // console.log(`retx ${obj.action} ${obj.id} `);
-          });
-      })
-      setTimeout(() => {
-        localTestIds.forEach((key) => {
-          this.db.get(key)
-            .then((ret) => {
-              // console.log(`${key} -- ${ret.id} ${ret.action} ${ret.box} ${ret.thing} ${ret.badge}`);
+      console.log(`memBadgers ${JSON.stringify(this.memBadgers)}`);
 
+
+      /**
+       *
+            memBadgers.forEach((obj) => {
+              let key = obj.id;
+              this.db.set(key, obj)
+                .then((ret) => {
+                  // console.log(`retx ${obj.action} ${obj.id} `);
+                });
             })
-        });
-      }, 1000);
 
-
-
-
+            setTimeout(() => {
+              localTestIds.forEach((key) => {
+                this.db.get(key)
+                  .then((ret) => {
+                    // console.log(`${key} -- ${ret.id} ${ret.action} ${ret.box} ${ret.thing} ${ret.badge}`);
+                  })
+              });
+            }, 1000);
+       */
 
 
       // File.moveFile(this.fromPath, shot.name, this.fs2, shot.name).then(
@@ -165,15 +182,64 @@ export class CamPage {
 
     } // are we local?
 
-
-
     // first image = curThg
     // let tmp = this.slashName(this.images[0].fullPath)
 
+  } // multiStep2()
+
+  slashName(path) {
+    let n = path.split('/').pop();
+    let o = path.split('/').slice(0, -1).join('/') + '/';
+    let p = o.replace(':', '://');
+    return { 'name': n, 'path': p };
+  }
+
+  /** * OLD CODES HOME */
+
+  checkFs() {
+    // File.getFreeDiskSpace().then((data: any) => {
+    //   this.bytes_free = data;
+    // });
+    try {
+      this.areWeLocal = false;
+      this.fs2 = cordova.file.externalDataDirectory;
+    } catch (e) {
+      this.areWeLocal = true;
+      this.fs2 = "assets/";
+    } finally {
+      // console.log(`Cam: Today's FS2 is: ${this.fs2}`);
+    } //try
+  }
+
+  meta: any = {};
+
+  checkDb() {
+    this.db.keys()
+      .then((ret) => {
+        this.meta.allkeys = ret;
+        // console.log(`allkeys: ${JSON.stringify(this.meta.allkeys)}`);
+        if (this.meta.allkeys.length == 0) {
+          this.meta.showStart = true;
+        } else {
+          this.meta.showStart = false;
+          this.db.get("dbglob")
+            .then((res) => {
+              // console.log(`Cam,checkDb,get(dbglob) ${JSON.stringify(res)}`);
+              if (res == undefined) {
+                // do nothing
+              } else {
+                this.meta.glob = res;
+                if (this.meta.glob.curBoxBadge) {
+                  // this.showCurBox = true;
+                }
+              }
+            })
+        }
+      });
+  }
 
 
-
-
+} //CamPage
 
     // console.log('** multiPostProcessing - this.curThg, Path: ' + this.curThg + " | " + this.fromPath);
 
@@ -219,55 +285,3 @@ export class CamPage {
     // }); // images.forEach
     // /** I think this will asynch itself out of position, but... */
     // this.showThing(this.curThg);
-  } // multiStep2()
-
-  slashName(path) {
-    let n = path.split('/').pop();
-    let o = path.split('/').slice(0, -1).join('/') + '/';
-    let p = o.replace(':', '://');
-    return { 'name': n, 'path': p };
-  }
-
-  checkFs() {
-    // File.getFreeDiskSpace().then((data: any) => {
-    //   this.bytes_free = data;
-    // });
-    try {
-      this.areWeLocal = false;
-      this.fs2 = cordova.file.externalDataDirectory;
-    } catch (e) {
-      this.areWeLocal = true;
-      this.fs2 = "assets/";
-    } finally {
-      // console.log(`Cam: Today's FS2 is: ${this.fs2}`);
-    } //try
-  }
-
-  checkDb() {
-    this.db.keys()
-      .then((ret) => {
-        this.meta.allkeys = ret;
-        // console.log(`allkeys: ${JSON.stringify(this.meta.allkeys)}`);
-        if (this.meta.allkeys.length == 0) {
-          this.meta.showStart = true;
-        } else {
-          this.meta.showStart = false;
-          this.db.get("dbglob")
-            .then((res) => {
-              // console.log(`Cam,checkDb,get(dbglob) ${JSON.stringify(res)}`);
-              if (res == undefined) {
-                // do nothing
-              } else {
-                this.meta.glob = res;
-                if (this.meta.glob.curBoxBadge) {
-                  this.showCurBox = true;
-                }
-              }
-            })
-        }
-      });
-  }
-
-
-} //CamPage
-
