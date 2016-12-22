@@ -34,7 +34,7 @@
   </ion-fab>
 
   <ion-list>
-    <ion-item *ngFor="let box of dbBoxes">
+    <ion-item *ngFor="let box of mm?.justBoxes">
 
       <!-- TODO: +Box action places image in fs2 but image not visible. Race? -->
       <img [src]="fs2 + box.badge" alt="cat" style="max-width:90px; max-height:60px;">

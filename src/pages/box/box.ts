@@ -52,6 +52,7 @@ export class BoxPage {
   }
 
   ionViewWillEnter() {
+    console.log(`box.ts will enereter`);
     this.mm = MM.getInstance();
     this.mm.mmRead();
   }
@@ -63,6 +64,7 @@ export class BoxPage {
   }
 
   ionViewWillLeave() {
+    console.log(`box.ts will leave`);
     this.mm.mmWrite();
   }
 
@@ -125,9 +127,9 @@ export class BoxPage {
     this.mm.curBoxBadge = this.box.badge;
     this.mm.badgers.push(this.box);
     this.mm.justBoxes.push(this.box);
+    // mmwrite here?
     console.log(`box ${JSON.stringify(this.box)}`);
     console.log(`bds ${JSON.stringify(this.mm.badgers)}`);
-
   }
 
 

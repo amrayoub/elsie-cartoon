@@ -36,7 +36,7 @@ export class HomePage {
   }
 
   ionViewWillLeave() {
-    this.mm.mmWrite();
+    // this.mm.mmWrite();
   }
 
   checkFs() {

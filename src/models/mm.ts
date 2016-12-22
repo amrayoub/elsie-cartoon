@@ -31,32 +31,35 @@ export class MM {
     this.mmdb.set('mmBoxBadge', this.curBoxBadge);
     this.mmdb.set('mmThg', this.curThg);
     this.mmdb.set('mmThgBadge', this.curThgBadge);
-    this.mmdb.set('mmJustBoxes', this.justBoxes);
+    this.mmdb.set('mmJustBoxes', this.justBoxes)
+      .then((res) => {
+        console.log(`mmWrite ${JSON.stringify(res)}`);
+      });
   }
 
   mmRead() {
-    this.mmdb.get('mmKeys').then((ret)=>{
-      if(ret == null) { ret = []; }
+    this.mmdb.get('mmKeys').then((ret) => {
+      if (ret == null) { ret = []; }
       this.allKeys = ret;
     });
-    this.mmdb.get('mmBadgers').then((ret)=>{
-      if(ret == null) { ret = []; }
+    this.mmdb.get('mmBadgers').then((ret) => {
+      if (ret == null) { ret = []; }
       this.badgers = ret;
     });
-    this.mmdb.get('mmBox').then((ret)=>{
+    this.mmdb.get('mmBox').then((ret) => {
       this.curBox = ret;
     });
-    this.mmdb.get('mmBoxBadge').then((ret)=>{
+    this.mmdb.get('mmBoxBadge').then((ret) => {
       this.curBoxBadge = ret;
     });
-    this.mmdb.get('mmThg').then((ret)=>{
+    this.mmdb.get('mmThg').then((ret) => {
       this.curThg = ret;
     });
-    this.mmdb.get('mmThgBadge').then((ret)=>{
+    this.mmdb.get('mmThgBadge').then((ret) => {
       this.curThgBadge = ret;
     });
-    this.mmdb.get('mmJustBoxes').then((ret)=>{
-      if(ret == null) { ret = []; }
+    this.mmdb.get('mmJustBoxes').then((ret) => {
+      if (ret == null) { ret = []; }
       this.justBoxes = ret;
     });
   }
