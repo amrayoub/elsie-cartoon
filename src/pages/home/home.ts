@@ -68,27 +68,39 @@ export class HomePage {
     });
   }
 
-  test() {
-    console.log(`jsn ${JSON.stringify(this.mm.badgers)}`);
+  test1() {
+    console.log(`test1() CURRENTs`);
     console.log(`box ${this.mm.curBox}`);
     console.log(`box ${this.mm.curBoxBadge}`);
     console.log(`box ${this.mm.curThg}`);
     console.log(`box ${this.mm.curThgBadge}`);
   }
 
-  testAllKeys() {
+  test2() {
+    console.log(`test2() doing nothin for now`);
+
+  }
+
+  test3() {
+    console.log(`test3() BADGERS`);
     this.db.get('mmBadgers').then((res) => {
       console.log(`mmBadgers ${JSON.stringify(res)}`);
-      // let findee = "1482435462163";
-      // let openee = res.find(x => x.signetValue === findee);
-      // console.log(`mmJustBoxes openee ${JSON.stringify(openee)}`);
     })
   }
 
-  testBadgers() {
+  test4() {
+    console.log(`test4() `);
+  }
+
+  writeJayson() {
+    let jay = [];
     this.db.get('mmBadgers').then((res) => {
-      console.log(`mmBadgers ${JSON.stringify(res)}`);
-    })
+      jay = JSON.parse(JSON.stringify(res));
+      jay.map((line => {
+        line.id = undefined;
+      }))
+      console.log(`JAY ${JSON.stringify(jay)}`);
+    });
   }
 
   /** OLD CODE HOME --------------- */
