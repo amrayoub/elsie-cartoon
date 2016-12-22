@@ -15,17 +15,11 @@ declare var cordova: any;
 
 export class HomePage {
 
-  nubNotes: string;
-  meta: any = {};
-  bytes_free: any;
-  fs2: any;
   areWeLocal: boolean;
+  bytes_free: any;
+  meta: any = {};
   ute: any;
-
-  larry: any;
-  moe: any;
-  curly: any;
-  bozo: any;
+  fs2: any;
 
   constructor
     (
@@ -34,21 +28,11 @@ export class HomePage {
     private tabs: Tabs
     ) {
     this.ute = new Ute();
-
     this.checkDb();
     this.checkFs();
   }
 
-  ionViewWillEnter() {
-    this.checkDb();
-  }
-
-  testBOZOWORKS() {
-    this.ute.bozo().then((res) => {
-      console.log(`bozo sent us ${res}`);
-      this.bozo = res;
-    }).catch((err) => { this.bozo = err; });
-  }
+  ionViewWillEnter() { this.checkDb(); }
 
   async checkDb() {
     await this.ute.dbKeys().then((res) => {
@@ -62,54 +46,12 @@ export class HomePage {
     await this.ute.dbGetGlob().then((res) => {
       this.meta.glob = res.dbglob;
     });
-    console.log(`meta ${this.meta.allkeys.length} keys, glob: ${JSON.stringify(this.meta.glob)}`);
+    //
+    //
+    //
+    //
+    // console.log(`Home#meta ${this.meta.allkeys.length} keys, #glob: ${JSON.stringify(this.meta.glob)}`);
   }
-
-
-  testFAIL() {
-    // console.log(`Home.test() moving checkDb into Ute!`);
-    // new Ute().dbChekFAIL().then((res) => {
-    //   console.log(`Ute.dbChek says ${JSON.stringify(res)}`)
-    // })
-  }
-
-  async makeJayson() {
-    let jef = new Ute();
-    [this.larry, this.moe, this.curly] = await Promise.all([
-      jef.dbSetGlob("dbglob", { monster: "bait and switch" })
-        .then((res) => {
-          this.larry = Object.assign({}, res);
-          console.log(`L ${JSON.stringify(this.larry)}`);
-        }),
-      jef.dbGetGlob("dbglob").then((res) => {
-        this.moe = Object.assign({}, res);
-        console.log(`M ${JSON.stringify(this.moe)}`);
-      }),
-      jef.dbKeys().then((res) => {
-        this.curly = Object.assign({}, res);
-        console.log(`C ${JSON.stringify(this.curly)}`);
-      })
-    ]);
-  }
-
-  // async oldmakeJayson() {
-  //   let joe = "b4";
-  //   let moe = {};
-  //   let curly = {};
-  //   console.log(`moe Ute? ${JSON.stringify(moe)}`);
-  //   await this.jGetGlob().then((res) => { moe = res });
-  //   console.log(`moe Ute? ${JSON.stringify(moe)}`);
-
-  //   // console.log(`joe Ute? ${JSON.stringify(joe)}`);
-  //   console.log(`curly Ute? ${JSON.stringify(curly)}`);
-  //   await this.jGetGlob().then((res) => { curly = res });
-  //   console.log(`curly Ute? ${JSON.stringify(curly)}`);
-  //   // await this.jKeys().then((res) => { joe = res; });
-  //   // console.log(`joe Ute? ${JSON.stringify(joe)}`);
-  //   // await
-  //   // console.log(`there are bob ${bob.length} keys ----------------`);
-  //   // console.log(`${ret.id} : ${ret.action} : ${ret.badge}`);
-  // }
 
   checkFs() {
     // File.getFreeDiskSpace().then((data: any) => {
@@ -136,6 +78,48 @@ export class HomePage {
     });
   }
 
+
+  /** some retired, some just for fun */
+
+  larry: any;
+  moe: any;
+  curly: any;
+  bozo: any;
+
+  async makeJayson() {
+    let jef = new Ute();
+    [this.larry, this.moe, this.curly] = await Promise.all([
+      jef.dbSetGlob("dbglob", { monster: "bait and switch" })
+        .then((res) => {
+          this.larry = Object.assign({}, res);
+          console.log(`L ${JSON.stringify(this.larry)}`);
+        }),
+      jef.dbGetGlob("dbglob").then((res) => {
+        this.moe = Object.assign({}, res);
+        console.log(`M ${JSON.stringify(this.moe)}`);
+      }),
+      jef.dbKeys().then((res) => {
+        this.curly = Object.assign({}, res);
+        console.log(`C ${JSON.stringify(this.curly)}`);
+      })
+    ]);
+  }
+
+  testBOZOWORKS() {
+    this.ute.bozo().then((res) => {
+      console.log(`bozo sent us ${res}`);
+      this.bozo = res;
+    }).catch((err) => { this.bozo = err; });
+  }
+
+
+  testFAIL() {
+    // console.log(`Home.test() moving checkDb into Ute!`);
+    // new Ute().dbChekFAIL().then((res) => {
+    //   console.log(`Ute.dbChek says ${JSON.stringify(res)}`)
+    // })
+  }
+
   oldcheckDb() {
     // this.db.keys()
     //   .then((ret) => {
@@ -158,7 +142,6 @@ export class HomePage {
     //     }
     //   });
   }
-
   oldex1() {
 
     //   let jay = new Badger();
@@ -186,7 +169,6 @@ export class HomePage {
     //   // nav.push(BoxPage);
     //   this.tabs.select(2);
   }
-
   oldnuBox() {
     //   this.nubNotes = "1) new Badger, 2) 'nuBox', 3)start Camera, 3) move image to 'files/badge.jpg'";
 
@@ -196,47 +178,60 @@ export class HomePage {
    * the "j" series do/did work, but with a
    *    whole 'nother layer of Promises in teh middle.
    */
-
-    oldjKeys(): Promise<string> {
-      return new Promise((resolve) => {
-        new Ute().dbKeys().then((res) => {
-          resolve(res);
-        });
+  oldjKeys(): Promise<string> {
+    return new Promise((resolve) => {
+      new Ute().dbKeys().then((res) => {
+        resolve(res);
+      });
+    })
+  }
+  oldjGetGlob(): Promise<Object> {
+    console.log(`Home.jGetGlob `);
+    return new Promise((resolve) => {
+      new Ute().dbGetGlob("dbglob").then((res) => {
+        console.log(`Home.jGetGlob2 ${JSON.stringify(res)}`);
+        resolve(res);
       })
-    }
-    oldjGetGlob(): Promise<Object> {
-      console.log(`Home.jGetGlob `);
-      return new Promise((resolve) => {
-        new Ute().dbGetGlob("dbglob").then((res) => {
-          console.log(`Home.jGetGlob2 ${JSON.stringify(res)}`);
-          resolve(res);
-        })
-      });
-    }
-    oldjSetGlob(key, val): Promise<Object> {
-      console.log(`Home.jSetGlob(), ignoring key: ${key} `);
-      return new Promise((resolve) => {
-        new Ute().dbSetGlob(key, val).then((res) => {
-          console.log(`Home.jSetGlob2 ${JSON.stringify(res)}`);
-          resolve(res);
-        })
-      });
-    }
+    });
+  }
+  oldjSetGlob(key, val): Promise<Object> {
+    console.log(`Home.jSetGlob(), ignoring key: ${key} `);
+    return new Promise((resolve) => {
+      new Ute().dbSetGlob(key, val).then((res) => {
+        console.log(`Home.jSetGlob2 ${JSON.stringify(res)}`);
+        resolve(res);
+      })
+    });
+  }
+  async oldmakeJaysonWORKS() {
+    let obj = { name: 'silly', walk: 'erratic', best: 'not very' }
+    let [larry, moe, curly] = await Promise.all([
+      this.oldjSetGlob("petunia", obj),
+      this.oldjGetGlob(),
+      this.oldjKeys()
+    ]);
+    console.log(`larry Ute? ${JSON.stringify(larry)}`);
+    console.log(`moe Ute? ${JSON.stringify(moe)}`);
+    console.log(`curly Ute? ${JSON.stringify(curly)}`);
+  }
+  async oldmakeJayson() {
+    //   let joe = "b4";
+    //   let moe = {};
+    //   let curly = {};
+    //   console.log(`moe Ute? ${JSON.stringify(moe)}`);
+    //   await this.jGetGlob().then((res) => { moe = res });
+    //   console.log(`moe Ute? ${JSON.stringify(moe)}`);
 
-    async oldmakeJaysonWORKS() {
-      let obj = { name: 'silly', walk: 'erratic', best: 'not very' }
-      let [larry, moe, curly] = await Promise.all([
-        this.oldjSetGlob("petunia", obj),
-        this.oldjGetGlob(),
-        this.oldjKeys()
-      ]);
-      console.log(`larry Ute? ${JSON.stringify(larry)}`);
-      console.log(`moe Ute? ${JSON.stringify(moe)}`);
-      console.log(`curly Ute? ${JSON.stringify(curly)}`);
-    }
-
-
-
+    //   // console.log(`joe Ute? ${JSON.stringify(joe)}`);
+    //   console.log(`curly Ute? ${JSON.stringify(curly)}`);
+    //   await this.jGetGlob().then((res) => { curly = res });
+    //   console.log(`curly Ute? ${JSON.stringify(curly)}`);
+    //   // await this.jKeys().then((res) => { joe = res; });
+    //   // console.log(`joe Ute? ${JSON.stringify(joe)}`);
+    //   // await
+    //   // console.log(`there are bob ${bob.length} keys ----------------`);
+    //   // console.log(`${ret.id} : ${ret.action} : ${ret.badge}`);
+  }
 
 } // HomePage class
 

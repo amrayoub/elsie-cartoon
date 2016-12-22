@@ -18,10 +18,6 @@ declare var cordova: any;
  * file:/storage/emulated/0/DCIM/Camera/<name>.jpg */
 export class BoxPage {
   meta: any = {};
-  gcurBox: any;
-  gcurBoxBadge: any;
-  gcurThg: any;
-  gcurThgBadge: any;
   ute: any;
   yeah: any;
   images: any[];
@@ -37,15 +33,16 @@ export class BoxPage {
   areWeLocal: boolean;
   deviceFailureFlag: any;
 
-  constructor(
+  constructor
+    (
     public navCtrl: NavController,
     public db: Storage,
     public toastCtrl: ToastController
-  ) {
+    ) {
     this.ute = new Ute();
+    // this.checkDb();
+    this.checkFs();
     this.cats = ["cats-1.jpg", "cats-2.jpg", "cats-3.jpg", "cats-4.jpg", "cats-5.jpg", "cats-6.jpg", "cats-7.jpg", "cats-8.jpg"];
-    // this.meta = { glob: { curBox: false, curBoxBadge: false, curThg: false, curThgBadge: false }, stanley: "steamer" };
-    // console.log(`constructed with  ${JSON.stringify(this.meta)}`);
     try {
       this.areWeLocal = false;
       this.fs2 = cordova.file.externalDataDirectory;
@@ -55,11 +52,10 @@ export class BoxPage {
     } finally {
       // console.log(`Today's FS2 is: ${this.fs2}`);
     } //try
+  }
 
-  }
-  ionViewDidEnter() {
-    this.checkDb();
-  }
+  ionViewDidEnter() { this.checkDb(); }
+
   addBox() {
     this.box = new Badger();
     this.box.action = "nuBox"
@@ -101,8 +97,6 @@ export class BoxPage {
        */
       // nuBox : cats-2.jpg : cats-2.jpg
       // nuThg : 1482200392582 : food-8.jpg
-
-
     }
   } //singlePix()
 
@@ -122,8 +116,12 @@ export class BoxPage {
   }
 
   saveBoxObject() {
-    this.meta.glob.curBox = this.dbId;
+    this.meta.glob.curBox = this.dbId; // TODO: save these to DB?
     this.meta.glob.curBoxBadge = this.box.badge;
+    this.ute.dbSetGlob("dbglob", this.meta.glob)
+      .then((reb) => {
+        console.log(`setting db glob`);
+      })
     this.db.set(this.dbId, this.box)
       .then((res) => {
         this.db.get(this.dbId)
@@ -177,31 +175,25 @@ export class BoxPage {
    * 3. use keys to fetch Current/Status record, update in-memory Status
    */
 
-
-
-
   async checkDb() {
     await this.ute.dbKeys().then((res) => {
       if (res.dbKeys.length > 0) {
       } else {
         this.meta.showStart = true;
+        this.freshDatabase(); // already on Tab #2
       }
-      console.log(`(((1)))`);
       this.meta.allkeys = res.dbKeys
     });
     await this.ute.dbGetGlob().then((res) => {
-      console.log(`(((2)))`);
       this.meta.glob = res.dbglob;
     });
     await this.justBoxes().then((rv) => {
-      console.log(`(((3)))`);
-      console.log(`why are you doing this ${rv}?`);
-    });
-  }
+      console.log(`justBoxes returns ${rv}, but...`);
+      console.log(`-- this.dbBoxes has ${this.dbBoxes.length} elements.`);
 
-  fetchBoxes() {
-    console.log(`meta.glob: ${JSON.stringify(this.meta.glob)}`);
-    console.log(`meta: ${JSON.stringify(this.meta)}`);
+    });
+    // console.log(`Box#meta ${this.meta.allkeys.length} keys, #glob: ${JSON.stringify(this.meta.glob)}`);
+
   }
 
   justBoxes(): Promise<any> {
@@ -221,74 +213,27 @@ export class BoxPage {
             }
           })
       })
-      resolve()
+      // resolve(this.dbBoxes);
+      resolve();
     })
   }
 
-
-  /** fetchBoxes isn't working as desired.
-   *    ute.dbFetchBoxes sends [] for results. :(
-   */
-  // fetchBoxes(): void {
-  //   this.ute.dbFetchBoxes().then((xyz)=>{
-  //     console.log(`fB sent us ${JSON.stringify(xyz)}`);
-  //     this.yeah = "too soonn?";
-  //   })
-  // }
-
-
-  oldcheckDb(): void {
-    this.meta.allkeys = [];
-    this.dbBoxes = [];
-    let dbGlobLocated = false;
-    this.db.keys()
-      .then((ret) => {
-        this.meta.allkeys = ret;
-        if (this.meta.allkeys.length == 0) {
-          this.meta.showStart = true;
-          this.freshDatabase();
-        } else {
-          // console.log(`db has: ${JSON.stringify(this.meta.allkeys.length)} records.`);
-          // console.log(`reminder, fs2 is ${this.fs2}`);
-
-          for (let i = this.meta.allkeys.length - 1; i >= 0; i--) {
-            let rowNumber = this.meta.allkeys[i];
-            this.db.get(rowNumber).then((record) => {
-              // IS IT ONE OF OURS?
-              if (record && record.hasOwnProperty('action')) {
-                // console.log(`${i} : ${rowNumber} : ${record.action} : ${record.badge} : ${this.myTime(record.signetValue)}`);
-                // IS IT A BOX?
-                if (record.action == "nuBox" || record.action == "unBox") {
-                  this.dbBoxes.push(record);
-                }
-              } else {
-                // console.log(`${rowNumber} might be our global constant...`);
-                if (rowNumber == "dbglob") {
-                  // do something with dbglob, perhaps,
-                  dbGlobLocated = true
-                }
-              } // one of ours?
-            });
-          } // done with allkeys
-
-          // this.meta.glob.curBox;
-
-          if (dbGlobLocated == false) {
-            this.db.set("dbglob", this.meta.glob)
-              .then((ret) => {
-                this.db.get("dbglob")
-                  .then((rec) => {
-                    // console.log(` "dbglob: ${JSON.stringify(rec)}`);
-                    // console.log(` "meta: ${JSON.stringify(this.meta)}`);
-                  })
-              });
-          }
-        }
-      }); //dbkeys()
+  checkFs() {
+    // File.getFreeDiskSpace().then((data: any) => {
+    //   this.bytes_free = data;
+    // });
+    try {
+      this.areWeLocal = false;
+      this.fs2 = cordova.file.externalDataDirectory;
+    } catch (e) {
+      this.areWeLocal = true;
+      this.fs2 = "assets/";
+    } finally {
+      // console.log(`Box: Today's FS2 is: ${this.fs2}`);
+    } //try
   }
-  /**
-   * End of the Actions --------------------
-   */
+
+  /** UTILITIES */
 
   myTime(t: string): string {
     let slag = new Date(Number(t));
@@ -313,13 +258,80 @@ export class BoxPage {
     toast.present();
   } //freshDatabase()
 
+  fetchBoxes() {
+    console.log(`meta.glob: ${JSON.stringify(this.meta.glob)}`);
+    console.log(`meta: ${JSON.stringify(this.meta)}`);
+  }
+
+  /** fetchBoxes isn't working as desired.
+   *    ute.dbFetchBoxes sends [] for results. :(
+   */
+  anotherfetchBoxes(): void {
+    //   this.ute.dbFetchBoxes().then((xyz)=>{
+    //     console.log(`fB sent us ${JSON.stringify(xyz)}`);
+    //     this.yeah = "too soonn?";
+    //   })
+  }
+  oldcheckDb(): void {
+    // this.meta.allkeys = [];
+    // this.dbBoxes = [];
+    // let dbGlobLocated = false;
+    // this.db.keys()
+    //   .then((ret) => {
+    //     this.meta.allkeys = ret;
+    //     if (this.meta.allkeys.length == 0) {
+    //       this.meta.showStart = true;
+    //       this.freshDatabase();
+    //     } else {
+    //       // console.log(`db has: ${JSON.stringify(this.meta.allkeys.length)} records.`);
+    //       // console.log(`reminder, fs2 is ${this.fs2}`);
+
+    //       for (let i = this.meta.allkeys.length - 1; i >= 0; i--) {
+    //         let rowNumber = this.meta.allkeys[i];
+    //         this.db.get(rowNumber).then((record) => {
+    //           // IS IT ONE OF OURS?
+    //           if (record && record.hasOwnProperty('action')) {
+    //             // console.log(`${i} : ${rowNumber} : ${record.action} : ${record.badge} : ${this.myTime(record.signetValue)}`);
+    //             // IS IT A BOX?
+    //             if (record.action == "nuBox" || record.action == "unBox") {
+    //               this.dbBoxes.push(record);
+    //             }
+    //           } else {
+    //             // console.log(`${rowNumber} might be our global constant...`);
+    //             if (rowNumber == "dbglob") {
+    //               // do something with dbglob, perhaps,
+    //               dbGlobLocated = true
+    //             }
+    //           } // one of ours?
+    //         });
+    //       } // done with allkeys
+
+    //       // this.meta.glob.curBox;
+
+    //       if (dbGlobLocated == false) {
+    //         this.db.set("dbglob", this.meta.glob)
+    //           .then((ret) => {
+    //             this.db.get("dbglob")
+    //               .then((rec) => {
+    //                 // console.log(` "dbglob: ${JSON.stringify(rec)}`);
+    //                 // console.log(` "meta: ${JSON.stringify(this.meta)}`);
+    //               })
+    //           });
+    //       }
+    //     }
+    //   }); //dbkeys()
+  }
+  /**
+   * End of the Actions --------------------
+   */
+
+
 } // BoxPage
 
-        // config.xml
-        // <preference name="AndroidPersistentFileLocation" value="Internal" />
-        // <preference name="iosPersistentFileLocation" value="Library" />
-        // console.log(cordova.file.dataDirectory);
-
+// config.xml
+// <preference name="AndroidPersistentFileLocation" value="Internal" />
+// <preference name="iosPersistentFileLocation" value="Library" />
+// console.log(cordova.file.dataDirectory);
 
 /** from CLACKULATOR
 cordova-plugin-camera 2.3.0 "Camera"
