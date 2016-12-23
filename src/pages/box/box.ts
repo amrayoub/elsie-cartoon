@@ -48,7 +48,6 @@ export class BoxPage {
   }
 
   ionViewWillEnter() {
-    // console.log(`box.ts will enereter`);
     this.mm = MM.getInstance();
     this.mm.mmRead();
   }
@@ -58,6 +57,26 @@ export class BoxPage {
       this.toastEmptyDatabase();
     }
   }
+
+
+/** curBox:, curThg: file///storage/....files/null */
+
+/** after picture, image is broken; has signet & badge, though. Eventually the image arrives */
+
+/** move 'open' button to end, so not under FAB */
+
+/** CAM page: initially respects the "open box" action but then reverts to what it was before */
+
+/** CAM page: after picture, broken "unprocessed" images; nothing above. :( */
+
+/** HOME test3: only boxes shown, no things.  */
+
+/** jayWrite error 12 path_exists_err -- later on it writes, but only boxes as implied elsewhere */
+
+/**
+12-22 22:25:20.481: D/FileUtils(18570): Unrecognized extra filesystem identifier: assets
+12-22 22:25:20.481: D/CordovaWebViewImpl(18570): >>> loadUrl(file:///android_asset/www/index.html)
+ */
 
   ionViewWillLeave() {
     // console.log(`box.ts will leave`);
@@ -143,9 +162,9 @@ export class BoxPage {
     return ("0" + slag.getHours()).slice(-2) + ":" + ("0" + slag.getMinutes()).slice(-2) + ":" + ("0" + slag.getSeconds()).slice(-2) + "." + ("00" + slag.getUTCMilliseconds()).slice(-3);
   }
 
-  slashName(path) {
-    let n = path.split('/').pop();
-    let o = path.split('/').slice(0, -1).join('/') + '/';
+  slashName(boxpath) {
+    let n = boxpath.split('/').pop();
+    let o = boxpath.split('/').slice(0, -1).join('/') + '/';
     let p = o.replace(':', '://');
     return { 'name': n, 'path': p };
   }

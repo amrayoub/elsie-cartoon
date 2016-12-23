@@ -101,98 +101,117 @@ export class CamPage {
   } // multiPix()
 
 
+  /** do the database dance */
   multiStep2() {
     this.memBadgers = [];
+    this.mm.curThg = '';
+    this.mm.curThgBadge = '';
+    let thingFirstImage: string = '';
+    let rawImage: any;
+    this.thePix.forEach((v, i) => {
+      let rawImage = this.slashName(v);
+      let xxThg: Badger = new Badger();
+      xxThg.id = this.freshIds.splice(0, 1).pop();
+      xxThg.signetValue = xxThg.id;
+      xxThg.signetHuman = new Date(Number(xxThg.id)).toString();
+      xxThg.box = this.mm.curBox;
+      xxThg.badge = rawImage.name;
+      this.mm.curThg = xxThg.signetValue;
+      this.mm.curThgBadge = xxThg.badge;
+      this.mm.badgers.push(xxThg);
+      this.memBadgers.push(xxThg);
+      if (i === 0) {
+        xxThg.action = "nuThg";
+        thingFirstImage = rawImage.name;
+        xxThg.thing = rawImage.name;
+      } else {
+        xxThg.action = "moThg";
+        xxThg.thing = thingFirstImage;
+      }
+    }) //thePix loop
+    console.log(`memBadgers: ${JSON.stringify(this.memBadgers.length)} entries`);
 
-    this.mm.curThg = false;
-    this.mm.curThgBadge = false;
+    this.multiStep3();
 
+  } // end.multiStep2()
+
+  /** move the files
+  12-22 22:41:35.331: I/chromium(21323): [INFO:CONSOLE(53746)] "*** thePix: [
+
+    {
+      "name":"1482468073266.jpg",
+      "localURL":"cdvfile://localhost/sdcard/DCIM/Camera/1482468073266.jpg",
+      "type":"image/jpeg",
+      "lastModified":null,
+      "lastModifiedDate":1482468076000,
+      "size":1586866,
+      "start":0,
+      "end":0,
+      "fullPath":"file:///storage/emulated/0/DCIM/Camera/1482468073266.jpg"
+    },
+
+    {"name":"1482468078837.jpg","localURL":"cdvfile://localhost/sdcard/DCIM/Camera/1482468078837.jpg","type":"image/jpeg","lastModified":null,"lastModifiedDate":1482468085000,"size":1990352,"start":0,"end":0,"fullPath":"file:///storage/emulated/0/DCIM/Camera/1482468078837.jpg"},
+
+    {"name":"1482468088035.jpg","localURL":"cdvfile://localhost/sdcard/DCIM/Camera/1482468088035.jpg","type":"image/jpeg","lastModified":null,"lastModifiedDate":1482468091000,"size":2234584,"start":0,"end":0,"fullPath":"file:///storage/emulated/0/DCIM/Camera/1482468088035.jpg"}]",
+
+    source: file:///android_asset/www/build/main.js (53746)
+  12-22 22:41:35.331: I/chromium(21323): [INFO:CONSOLE(53790)] "memBadgers: 3 entries", source: file:///android_asset/www/build/main.js (53790) */
+
+  multiStep3() {
     if (this.areWeLocal == false) {
       this.thePix.forEach((v, i) => {
         let rawImage = this.slashName(v);
-
+        File.moveFile(rawImage.path, rawImage.name, this.fs2, rawImage.name)
+          .then(
+          (val: Entry) => {
+            console.log(`cam.multiStep3 moveFile: ${JSON.stringify(val)}`);
+          },
+          (err: FileError) => { console.log(`cam.multiStep3 moveFile: ${JSON.stringify(err)}`) }
+          );
       });
-
     } else {
-      // yes, we are local.
-      let thingFirstImage = '';
-      this.thePix.forEach((v, i) => {
-        let rawImage = this.slashName(v);
-        if (i == 0) {
-          thingFirstImage = rawImage.name;
-          let xxThg: Badger = new Badger();
-          xxThg.id = this.freshIds.splice(0, 1).pop();
-          xxThg.signetValue = xxThg.id;
-          xxThg.action = "nuThg";
-          xxThg.box = this.mm.curBox;
-          xxThg.thing = rawImage.name;
-          xxThg.badge = rawImage.name;
-          this.mm.curThg = xxThg.signetValue;
-          this.mm.curThgBadge = xxThg.badge;
-          this.mm.badgers.push(xxThg);
-          this.memBadgers.push(xxThg);
-
-        } else {
-          let xxThg: Badger = new Badger();
-          xxThg.id = this.freshIds.splice(0, 1).pop();
-          xxThg.signetValue = xxThg.id;
-          xxThg.action = "moThg";
-          xxThg.box = this.mm.curBox;
-          xxThg.thing = thingFirstImage;
-          xxThg.badge = rawImage.name;
-          this.mm.curThg = xxThg.signetValue;
-          this.mm.curThgBadge = xxThg.badge;
-          this.mm.badgers.push(xxThg);
-          this.memBadgers.push(xxThg);
-
-        }
-
-      }) //thePix loop
-
-      console.log(`memBadgers ${JSON.stringify(this.memBadgers)}`);
-
-
-      /**
-       *
-            memBadgers.forEach((obj) => {
-              let key = obj.id;
-              this.db.set(key, obj)
-                .then((ret) => {
-                  // console.log(`retx ${obj.action} ${obj.id} `);
-                });
-            })
-
-            setTimeout(() => {
-              localTestIds.forEach((key) => {
-                this.db.get(key)
-                  .then((ret) => {
-                    // console.log(`${key} -- ${ret.id} ${ret.action} ${ret.box} ${ret.thing} ${ret.badge}`);
-                  })
-              });
-            }, 1000);
-       */
-
-
-      // File.moveFile(this.fromPath, shot.name, this.fs2, shot.name).then(
-      //   (val: Entry) => {
-      //     // console.log("** mPP Move apparently OK ", JSON.stringify(val));
-      //   },
-      //   (err: FileError) => { console.log("** mPP BAD MOVE ** " + err.message) }
-      // );
-
+      // yes, we are local. Ionic will move the files.
     } // are we local?
+  }
 
-    // first image = curThg
-    // let tmp = this.slashName(this.images[0].fullPath)
+  actualCampath() {
+    let jef = {
+      "name": "1482460786456.jpg",
+      "localURL": "cdvfile://localhost/sdcard/DCIM/Camera/1482460786456.jpg",
+      "type": "image/jpeg",
+      "lastModified": null,
+      "lastModifiedDate": 1482460792000,
+      "size": 2588071,
+      "start": 0,
+      "end": 0,
+      "fullPath": "file:///storage/emulated/0/DCIM/Camera/1482460786456.jpg"
+    }
+  }
 
-  } // multiStep2()
-
-  slashName(path) {
-    let n = path.split('/').pop();
-    let o = path.split('/').slice(0, -1).join('/') + '/';
-    let p = o.replace(':', '://');
+  slashName(campath): any {
+    let n: string = '';
+    let o: string = '';
+    let p: string = '';
+    if (this.areWeLocal == false) {
+      n = campath.name;
+      p = campath.fullPath.split('/').slice(0, -1).join('/') + '/';
+    } else {
+      console.log(`?campath? ${JSON.stringify(campath)}`);
+      n = campath.split('/').pop();
+      console.log(`campath n? ${JSON.stringify(n)}`);
+      o = campath.split('/').slice(0, -1).join('/') + '/';
+      console.log(`campath o? ${JSON.stringify(o)}`);
+      p = o.replace(':', '://');
+      console.log(`campath p? ${JSON.stringify(p)}`);
+    }
     return { 'name': n, 'path': p };
   }
+
+  test() {
+    console.log(`test() is doing nothing right now.`);
+
+  }
+
 
   /** * OLD CODES HOME */
 

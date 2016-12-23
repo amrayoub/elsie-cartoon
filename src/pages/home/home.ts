@@ -71,9 +71,9 @@ export class HomePage {
   test1() {
     console.log(`test1() CURRENTs`);
     console.log(`box ${this.mm.curBox}`);
-    console.log(`box ${this.mm.curBoxBadge}`);
-    console.log(`box ${this.mm.curThg}`);
-    console.log(`box ${this.mm.curThgBadge}`);
+    console.log(`boxbad ${this.mm.curBoxBadge}`);
+    console.log(`thg ${this.mm.curThg}`);
+    console.log(`thgbad ${this.mm.curThgBadge}`);
   }
 
   test2() {
@@ -92,16 +92,76 @@ export class HomePage {
     console.log(`test4() `);
   }
 
-  writeJayson() {
+  //12-22 21:54:50.248: I/chromium(8764): [INFO:CONSOLE(49235)] "Error: Uncaught (in promise): [object Object]
+
+  async writeJayson() {
     let jay = [];
-    this.db.get('mmBadgers').then((res) => {
-      jay = JSON.parse(JSON.stringify(res));
-      jay.map((line => {
-        line.id = undefined;
-      }))
-      console.log(`JAY ${JSON.stringify(jay)}`);
-    });
+
+    await this.db.get('mmBadgers')
+      .then((res) => {
+        jay = JSON.parse(JSON.stringify(res));
+        jay.map((line) => { line.id = undefined; });
+        console.log(` (((1a))) ${JSON.stringify(jay.length)} records to write`);
+        console.log(` (((1b))) prepare to remove file ${this.fs2}jayson.txt`);
+      })
+      .catch((err) => { console.log(`db.get mmBadgers err ${JSON.stringify(err)}`); })
+
+    await File.removeFile(this.fs2, "jayson.txt")
+      .then((res) => {
+        console.log(` (((2))) File.remove says ${JSON.stringify(res)}`);
+      })
+      .catch((err) => { console.log(`File.remove err ${JSON.stringify(err)}`); })
+
+    await File.writeFile(this.fs2, "jayson.txt", JSON.stringify(jay), true)
+      .then((val: Entry) => {
+        console.log(` (((3))) File.write says ${JSON.stringify(val)}`);
+      })
+      .catch((err: FileError) => { console.log(`File.write.err ${JSON.stringify(err)}`); });
+
+    console.log(`did the writing work out okay?`);
+
+
   }
+
+  fileParts() {
+    /**
+    checkFile(path, file) Returns: Promise<boolean|FileError>
+
+    createFile(path, fileName, replace) Returns: Promise<FileEntry|FileError>
+
+    removeFile(path, fileName) Returns: Promise<RemoveResult|FileError>
+
+    writeFile(path, fileName, text, options) Returns: Promise<any> Returns a Promise that resolves to updated file entry or rejects with an error. replace file if 'options' is set to true.
+
+    writeExistingFile(path, fileName, text) Returns: Promise<void> Returns a Promise that resolves or rejects with an error.
+
+    readAsText(path, file) Returns: Promise<string|FileError>
+   */
+  }
+
+  prehistoric() {
+    /**
+    console.log('*maroon* getting ready to write JSON file');
+    var maroonToSave = ({
+      signetValue: signetValue.toString(),
+      action: 'nuThg',
+      badge: maroonie,
+      thing: maroonie,
+      box: $scope.boxKey,
+      signetHuman: sigEstimateHuman
+    });
+    //"signetHuman": "Sat May 02 2015 09:54:12 GMT-0500 (CDT)"
+    dir.getFile("jayson.txt", { create: true },
+      function (file) {
+        file.createWriter(
+          function (fileWriter) {
+            fileWriter.seek(fileWriter.length); fileWriter.write(JSON.stringify(maroonToSave) + "\n");
+          },
+          function (err) { console.log("maroon fileWriter fail"); });
+      }, function (err) { console.log("maroon dir.getfile fail"); });
+       */
+  }
+
 
   /** OLD CODE HOME --------------- */
 
