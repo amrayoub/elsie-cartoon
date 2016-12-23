@@ -151,6 +151,9 @@ export class CamPage {
           .then(
           (val: Entry) => {
             console.log(`cam.multiStep3 moveFile: ${JSON.stringify(val)}`);
+
+            this.writeJayson();
+
           },
           (err: FileError) => { console.log(`cam.multiStep3 moveFile: ${JSON.stringify(err)}`) }
           );
@@ -159,6 +162,39 @@ export class CamPage {
       // yes, we are local. Ionic will move the files.
     } // are we local?
   }
+
+  async writeJayson() {
+    let jay = [];
+
+    await this.db.get('mmBadgers')
+      .then((res) => {
+        jay = JSON.parse(JSON.stringify(res));
+        jay.map((line) => { line.id = undefined; });
+        console.log(` cam(((1a))) ${JSON.stringify(jay.length)} records to write`);
+        console.log(` cam(((1b))) prepare to remove file ${this.fs2}jayson.txt`);
+      })
+      .catch((err) => { console.log(`db.get mmBadgers err ${JSON.stringify(err)}`); })
+
+    await File.removeFile(this.fs2, "jayson.txt")
+      .then((res) => {
+        console.log(` cam(((2))) File.remove says ${JSON.stringify(res)}`);
+      })
+      .catch((err) => { console.log(`File.remove err ${JSON.stringify(err)}`); })
+
+    await File.writeFile(this.fs2, "jayson.txt", JSON.stringify(jay), true)
+      .then((val: Entry) => {
+        console.log(` cam(((3))) File.write says ${JSON.stringify(val)}`);
+      })
+      .catch((err: FileError) => { console.log(`File.write.err ${JSON.stringify(err)}`); });
+
+    console.log(`did the writing work out okay?`);
+
+  }
+
+
+
+
+
 
   actualCampath() {
     let jef = {

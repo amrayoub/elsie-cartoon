@@ -15,12 +15,13 @@
     <span class="one-shot">Add Thing</span>
   </ion-fab>
 
+<!--
   <ion-fab left middle>
     <button ion-fab (click)="test()" color="danger">
      <ion-icon name="beaker"></ion-icon>
      </button>
   </ion-fab>
-
+-->
 
 
   <ion-list *ngIf="mm?.curBoxBadge">
@@ -32,7 +33,7 @@
   <ion-list *ngIf="memBadgers.length>0">
     <ion-item *ngIf="memBadgers.length>0">In the can</ion-item>
     <ion-item *ngFor="let cub of memBadgers">
-      <img alt="Thing Pic" [src]="fs2 + cub?.badge" class="my90x120"><br> {{cub?.signetValue}} {{cub?.badge}}
+      <img alt="Thing Pic" [src]="fs2 + cub?.badge" class="my90x120"><br>{{cub?.badge}}
     </ion-item>
   </ion-list>
 

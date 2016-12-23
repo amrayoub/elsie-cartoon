@@ -7,7 +7,7 @@
 </ion-header>
 
 <ion-content padding>
-
+<!--
   <ion-toolbar>
     <ion-buttons>
       <button ion-button>
@@ -25,6 +25,7 @@
   curBox: {{ mm?.curBox }} {{mm?.curBoxBadge}}, <br>
   curThg: {{ mm?.curThg }} {{mm?.curThgBadge}} <br>
   img: {{fs2 + box?.badge}}
+-->
 
   <ion-fab left middle>
     <button ion-fab (click)="addBox()" color="light">
@@ -34,15 +35,16 @@
   </ion-fab>
 
   <ion-list>
-    <ion-item *ngFor="let box of mm?.justBoxes">
+    <ion-item *ngFor="let box of mm?.justBoxes" text-right>
 
       <img [src]="fs2 + box.badge" alt="cat" class="my90x120"><br>
 
+<!-- ** not until re-openable box code settles down
       <button ion-button (click)="openBox(box.signetValue)" *ngIf="mm?.curBox !== box.signetValue" >
         <ion-icon name="open"></ion-icon>
       </button>
-
-      {{box.signetValue}} {{box.badge}}
+-->
+      {{box.badge}}
     </ion-item>
   </ion-list>
 

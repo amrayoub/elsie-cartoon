@@ -58,21 +58,6 @@ export class BoxPage {
     }
   }
 
-  /** CAM page: initially respects the "open box" action but then reverts to what it was before */
-
-
-  /** curBox:, curThg: file///storage/....files/null */
-
-  /** after picture, image is broken; has signet & badge, though. Eventually the image arrives */
-
-  /** move 'open' button to end, so not under FAB */
-
-  /** CAM page: after picture, broken "unprocessed" images; nothing above. :( */
-
-  /** HOME test3: only boxes shown, no things.  */
-
-  /** jayWrite error 12 path_exists_err -- later on it writes, but only boxes as implied elsewhere */
-
   /**
   12-22 22:25:20.481: D/FileUtils(18570): Unrecognized extra filesystem identifier: assets
   12-22 22:25:20.481: D/CordovaWebViewImpl(18570): >>> loadUrl(file:///android_asset/www/index.html)
