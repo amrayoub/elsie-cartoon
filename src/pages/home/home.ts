@@ -120,7 +120,6 @@ export class HomePage {
 
     console.log(`did the writing work out okay?`);
 
-
   }
 
   fileParts() {

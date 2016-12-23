@@ -30,10 +30,10 @@ export class BoxPage {
   mm: any; // the meta.glob replacement
 
   constructor(
+    private tabs: Tabs,
     public navCtrl: NavController,
-    public db: Storage,
     public toastCtrl: ToastController,
-    private tabs: Tabs
+    public db: Storage
   ) {
     this.cats = ["cats-1.jpg", "cats-2.jpg", "cats-3.jpg", "cats-4.jpg", "cats-5.jpg", "cats-6.jpg", "cats-7.jpg", "cats-8.jpg"];
     try {
@@ -58,25 +58,25 @@ export class BoxPage {
     }
   }
 
+  /** CAM page: initially respects the "open box" action but then reverts to what it was before */
 
-/** curBox:, curThg: file///storage/....files/null */
 
-/** after picture, image is broken; has signet & badge, though. Eventually the image arrives */
+  /** curBox:, curThg: file///storage/....files/null */
 
-/** move 'open' button to end, so not under FAB */
+  /** after picture, image is broken; has signet & badge, though. Eventually the image arrives */
 
-/** CAM page: initially respects the "open box" action but then reverts to what it was before */
+  /** move 'open' button to end, so not under FAB */
 
-/** CAM page: after picture, broken "unprocessed" images; nothing above. :( */
+  /** CAM page: after picture, broken "unprocessed" images; nothing above. :( */
 
-/** HOME test3: only boxes shown, no things.  */
+  /** HOME test3: only boxes shown, no things.  */
 
-/** jayWrite error 12 path_exists_err -- later on it writes, but only boxes as implied elsewhere */
+  /** jayWrite error 12 path_exists_err -- later on it writes, but only boxes as implied elsewhere */
 
-/**
-12-22 22:25:20.481: D/FileUtils(18570): Unrecognized extra filesystem identifier: assets
-12-22 22:25:20.481: D/CordovaWebViewImpl(18570): >>> loadUrl(file:///android_asset/www/index.html)
- */
+  /**
+  12-22 22:25:20.481: D/FileUtils(18570): Unrecognized extra filesystem identifier: assets
+  12-22 22:25:20.481: D/CordovaWebViewImpl(18570): >>> loadUrl(file:///android_asset/www/index.html)
+   */
 
   ionViewWillLeave() {
     // console.log(`box.ts will leave`);
@@ -92,6 +92,45 @@ export class BoxPage {
     this.singlePix();
   }
 
+
+  x() {
+    let xt = "test3() BADGERS"
+    let xmmBadgers = [
+      { "id": "1482509880725", "signetValue": "1482509880725", "action": "nuBox", "badge": "1482509897006.jpg", "thing": "", "box": "1482509897006.jpg", "signetHuman": "Fri Dec 23 2016 10:18:00 GMT-0600 (CST)" },
+      { "id": "1482509944984", "signetValue": "1482509944984", "action": "nuThg", "badge": "1482509937786.jpg", "thing": "1482509937786.jpg", "box": "1482509880725", "signetHuman": "Fri Dec 23 2016 10:19:04 GMT-0600 (CST)" },
+      { "id": "1482509944997", "signetValue": "1482509944997", "action": "nuThg", "badge": "1482509944991.jpg", "thing": "1482509944991.jpg", "box": "1482509880725", "signetHuman": "Fri Dec 23 2016 10:19:04 GMT-0600 (CST)" },
+      { "id": "1482509945010", "signetValue": "1482509945010", "action": "moThg", "badge": "1482509957212.jpg", "thing": "1482509944991.jpg", "box": "1482509880725", "signetHuman": "Fri Dec 23 2016 10:19:05 GMT-0600 (CST)" },
+      { "id": "1482509945023", "signetValue": "1482509945023", "action": "moThg", "badge": "1482509966020.jpg", "thing": "1482509944991.jpg", "box": "1482509880725", "signetHuman": "Fri Dec 23 2016 10:19:05 GMT-0600 (CST)" }
+    ]
+  }
+
+
+
+  /** not the same as campath. Nice one, Cordova gang */
+  slashName(boxpath): Object {
+    let n: string = '';
+    let o: string = '';
+    let p: string = '';
+    if (this.areWeLocal == false) {
+      console.log(`?boxpath? ${JSON.stringify(boxpath)}`);
+      // n = boxpath.name;
+      n = boxpath.split('/').pop();
+      console.log(`boxpath n? ${JSON.stringify(n)}`);
+      // p = boxpath.fullPath.split('/').slice(0, -1).join('/') + '/';
+      p = boxpath.split('/').slice(0, -1).join('/') + '/';
+      console.log(`boxpath p? ${JSON.stringify(p)}`);
+    } else {
+      // console.log(`?boxpath? ${JSON.stringify(boxpath)}`);
+      n = boxpath.split('/').pop();
+      // console.log(`boxpath n? ${JSON.stringify(n)}`);
+      o = boxpath.split('/').slice(0, -1).join('/') + '/';
+      // console.log(`boxpath o? ${JSON.stringify(o)}`);
+      p = o.replace(':', '://');
+      // console.log(`boxpath p? ${JSON.stringify(p)}`);
+    }
+    return { 'name': n, 'path': p };
+  }
+
   singlePix() {
     if (this.areWeLocal == false) {
       let deviceFailureFlag = cordova.file.externalDataDirectory;
@@ -99,8 +138,11 @@ export class BoxPage {
         destinationType: Camera.DestinationType.FILE_URI,
         correctOrientation: true
       }).then((result) => {
+        console.log(`SINGLE PIX result ${JSON.stringify(result)}`);
 
         this.rawImage = this.slashName(result);
+        console.log(`SINGLE PIX rawimage ${JSON.stringify(this.rawImage)}`);
+
         this.box.badge = this.rawImage.name;
         this.box.box = this.rawImage.name;
         this.mvImageToSafePlace();
@@ -118,12 +160,12 @@ export class BoxPage {
     }
   } //singlePix()
 
-  mvImageToSafePlace() {
+  async mvImageToSafePlace() {
     console.log(` fs2 + box.badge  ${this.fs2} + ${this.box.badge}`);
     if (this.fs2 !== this.rawImage.path) {
       // console.log(`--Fr: ${this.rawImage.path} ${this.rawImage.name}`);
       // console.log(`--To: ${this.fs2} ${this.rawImage.name}`);
-      File.moveFile(this.rawImage.path, this.rawImage.name, this.fs2, this.rawImage.name).then(
+      await File.moveFile(this.rawImage.path, this.rawImage.name, this.fs2, this.rawImage.name).then(
         (val: Entry) => {
           // console.log("** File.moveFile OK " + JSON.stringify(val));
         },
@@ -134,25 +176,30 @@ export class BoxPage {
     this.saveBoxObject();
   }
 
-  saveBoxObject() {
+  async saveBoxObject() {
     this.mm.curBox = this.dbId;
     this.mm.curBoxBadge = this.box.badge;
     this.mm.badgers.push(this.box);
     this.mm.justBoxes.push(this.box);
-    // mmwrite here?
-    // console.log(`box ${JSON.stringify(this.box)}`);
-    // console.log(`bds ${JSON.stringify(this.mm.badgers)}`);
+    await this.mm.mmWrite();
   }
 
   openBox(boxSignet) {
     console.log(`mm.curBox ${this.mm.curBox} --> ${boxSignet}`);
-    this.db.get('mmJustBoxes').then((res) => {
-      let openee = res.find(x => x.signetValue === boxSignet);
-      this.mm.curBox = openee.signetValue;
-      this.mm.curBoxBadge = openee.badge;
-      // console.log(`mmJustBoxes openee ${JSON.stringify(openee)}`);
-      // console.log(`mm.curBox ${this.mm.curBox}`);
-    })
+    this.db.get('mmJustBoxes')
+      .then((res) => {
+        try {
+          let openee = res.find(x => x.signetValue === boxSignet);
+          this.mm.curBox = openee.signetValue;
+          this.mm.curBoxBadge = openee.badge;
+        } catch (e) {
+          console.log(`openee err ${e}`);
+          console.log(`openee res ${res}`);
+        }
+      })
+      .catch((err) => {
+        console.log(`openBox.err ${JSON.stringify(err)}`);
+      })
   }
 
   /** End of the Actions -------------------- */
@@ -160,13 +207,6 @@ export class BoxPage {
   myTime(t: string): string {
     let slag = new Date(Number(t));
     return ("0" + slag.getHours()).slice(-2) + ":" + ("0" + slag.getMinutes()).slice(-2) + ":" + ("0" + slag.getSeconds()).slice(-2) + "." + ("00" + slag.getUTCMilliseconds()).slice(-3);
-  }
-
-  slashName(boxpath) {
-    let n = boxpath.split('/').pop();
-    let o = boxpath.split('/').slice(0, -1).join('/') + '/';
-    let p = o.replace(':', '://');
-    return { 'name': n, 'path': p };
   }
 
   toastEmptyDatabase(): void {

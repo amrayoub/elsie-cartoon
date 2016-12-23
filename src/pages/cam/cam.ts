@@ -71,38 +71,43 @@ export class CamPage {
     this.multiPix();
   }
 
-  /** the Multi returns tripe such as this:
-   *  file:/storage/emulated/0/DCIM/Camera/<name>.jpg
-   *  */
-  multiPix() {
+  sMeF() {
+    // *** MediaFile[]:
+    let mf = [{ "name": "1482515754815.jpg", "localURL": "cdvfile://localhost/sdcard/DCIM/Camera/1482515754815.jpg", "type": "image/jpeg", "lastModified": null, "lastModifiedDate": 1482515760000, "size": 2828750, "start": 0, "end": 0, "fullPath": "file:///storage/emulated/0/DCIM/Camera/1482515754815.jpg" }, { "name": "1482515764269.jpg", "localURL": "cdvfile://localhost/sdcard/DCIM/Camera/1482515764269.jpg", "type": "image/jpeg", "lastModified": null, "lastModifiedDate": 1482515767000, "size": 2767202, "start": 0, "end": 0, "fullPath": "file:///storage/emulated/0/DCIM/Camera/1482515764269.jpg" }, { "name": "1482515769877.jpg", "localURL": "cdvfile://localhost/sdcard/DCIM/Camera/1482515769877.jpg", "type": "image/jpeg", "lastModified": null, "lastModifiedDate": 1482515773000, "size": 1858776, "start": 0, "end": 0, "fullPath": "file:///storage/emulated/0/DCIM/Camera/1482515769877.jpg" }]
+    // *** thePix:
+    let tp = [{ "name": "1482515754815.jpg", "localURL": "cdvfile://localhost/sdcard/DCIM/Camera/1482515754815.jpg", "type": "image/jpeg", "lastModified": null, "lastModifiedDate": 1482515760000, "size": 2828750, "start": 0, "end": 0, "fullPath": "file:///storage/emulated/0/DCIM/Camera/1482515754815.jpg" }, { "name": "1482515764269.jpg", "localURL": "cdvfile://localhost/sdcard/DCIM/Camera/1482515764269.jpg", "type": "image/jpeg", "lastModified": null, "lastModifiedDate": 1482515767000, "size": 2767202, "start": 0, "end": 0, "fullPath": "file:///storage/emulated/0/DCIM/Camera/1482515764269.jpg" }, { "name": "1482515769877.jpg", "localURL": "cdvfile://localhost/sdcard/DCIM/Camera/1482515769877.jpg", "type": "image/jpeg", "lastModified": null, "lastModifiedDate": 1482515773000, "size": 1858776, "start": 0, "end": 0, "fullPath": "file:///storage/emulated/0/DCIM/Camera/1482515769877.jpg" }]
+  }
+
+  async  multiPix() {
     if (this.areWeLocal == false) {
       let opt: CaptureImageOptions = { limit: 3 };
-      MediaCapture.captureImage(opt)
-        .then(
-        (data: MediaFile[]) => {
+
+      await MediaCapture.captureImage(opt)
+        .then((data: MediaFile[]) => {
+          console.log(`*** MediaFile[]: ${JSON.stringify(data)}`);
           this.thePix = data;
           console.log(`*** thePix: ${JSON.stringify(this.thePix)}`);
-          this.multiStep2();
         },
         (err: CaptureError) => { console.error(err) }
-        );
+        )
+        .catch((e) => {
+          console.log(`some other multiPix error ${JSON.stringify(e)}`)
+        });
 
     } else {
-
       this.areWeLocal = true; // a friendly reminder
       let theirNames: string[] = this.shuffleFoods(this.foods);
       theirNames.forEach(element => {
         this.thePix.push(this.fs2 + element);
       });
       // console.log(`THING: ${JSON.stringify(theirNames)}`);
-
-      this.multiStep2();
     } // areWeLocal?
+    this.multiStep2();
   } // multiPix()
 
 
   /** do the database dance */
-  multiStep2() {
+  async multiStep2() {
     this.memBadgers = [];
     this.mm.curThg = '';
     this.mm.curThgBadge = '';
@@ -114,7 +119,7 @@ export class CamPage {
       xxThg.id = this.freshIds.splice(0, 1).pop();
       xxThg.signetValue = xxThg.id;
       xxThg.signetHuman = new Date(Number(xxThg.id)).toString();
-      xxThg.box = this.mm.curBox;
+      xxThg.box = this.mm.curBoxBadge;
       xxThg.badge = rawImage.name;
       this.mm.curThg = xxThg.signetValue;
       this.mm.curThgBadge = xxThg.badge;
@@ -129,35 +134,16 @@ export class CamPage {
         xxThg.thing = thingFirstImage;
       }
     }) //thePix loop
+    await this.mm.mmWrite();
     console.log(`memBadgers: ${JSON.stringify(this.memBadgers.length)} entries`);
-
     this.multiStep3();
-
   } // end.multiStep2()
 
-  /** move the files
-  12-22 22:41:35.331: I/chromium(21323): [INFO:CONSOLE(53746)] "*** thePix: [
-
-    {
-      "name":"1482468073266.jpg",
-      "localURL":"cdvfile://localhost/sdcard/DCIM/Camera/1482468073266.jpg",
-      "type":"image/jpeg",
-      "lastModified":null,
-      "lastModifiedDate":1482468076000,
-      "size":1586866,
-      "start":0,
-      "end":0,
-      "fullPath":"file:///storage/emulated/0/DCIM/Camera/1482468073266.jpg"
-    },
-
-    {"name":"1482468078837.jpg","localURL":"cdvfile://localhost/sdcard/DCIM/Camera/1482468078837.jpg","type":"image/jpeg","lastModified":null,"lastModifiedDate":1482468085000,"size":1990352,"start":0,"end":0,"fullPath":"file:///storage/emulated/0/DCIM/Camera/1482468078837.jpg"},
-
-    {"name":"1482468088035.jpg","localURL":"cdvfile://localhost/sdcard/DCIM/Camera/1482468088035.jpg","type":"image/jpeg","lastModified":null,"lastModifiedDate":1482468091000,"size":2234584,"start":0,"end":0,"fullPath":"file:///storage/emulated/0/DCIM/Camera/1482468088035.jpg"}]",
-
-    source: file:///android_asset/www/build/main.js (53746)
-  12-22 22:41:35.331: I/chromium(21323): [INFO:CONSOLE(53790)] "memBadgers: 3 entries", source: file:///android_asset/www/build/main.js (53790) */
-
   multiStep3() {
+    this.multiStep4();
+  }
+
+  multiStep4() {
     if (this.areWeLocal == false) {
       this.thePix.forEach((v, i) => {
         let rawImage = this.slashName(v);
@@ -193,16 +179,19 @@ export class CamPage {
     let o: string = '';
     let p: string = '';
     if (this.areWeLocal == false) {
-      n = campath.name;
-      p = campath.fullPath.split('/').slice(0, -1).join('/') + '/';
-    } else {
       console.log(`?campath? ${JSON.stringify(campath)}`);
-      n = campath.split('/').pop();
+      n = campath.name;
       console.log(`campath n? ${JSON.stringify(n)}`);
-      o = campath.split('/').slice(0, -1).join('/') + '/';
-      console.log(`campath o? ${JSON.stringify(o)}`);
-      p = o.replace(':', '://');
+      p = campath.fullPath.split('/').slice(0, -1).join('/') + '/';
       console.log(`campath p? ${JSON.stringify(p)}`);
+    } else {
+      // console.log(`?campath? ${JSON.stringify(campath)}`);
+      n = campath.split('/').pop();
+      // console.log(`campath n? ${JSON.stringify(n)}`);
+      o = campath.split('/').slice(0, -1).join('/') + '/';
+      // console.log(`campath o? ${JSON.stringify(o)}`);
+      p = o.replace(':', '://');
+      // console.log(`campath p? ${JSON.stringify(p)}`);
     }
     return { 'name': n, 'path': p };
   }
