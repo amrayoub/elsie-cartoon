@@ -136,8 +136,21 @@ export class CamPage {
     }) //thePix loop
     await this.mm.mmWrite();
     console.log(`memBadgers: ${JSON.stringify(this.memBadgers.length)} entries`);
+    console.log(`memBadgers: ${JSON.stringify(this.memBadgers)} `);
     this.multiStep3();
   } // end.multiStep2()
+
+caibn() {
+// "memBadgers: 3 entries"
+// "memBadgers:
+let qp = [
+  {"id":"1482535606550","signetValue":"1482535606550","action":"nuThg","badge":"1482535606715.jpg","thing":"1482535606715.jpg","box":"1482535598358.jpg","signetHuman":"Fri Dec 23 2016 17:26:46 GMT-0600 (CST)"},
+  {"id":"1482535606563","signetValue":"1482535606563","action":"moThg","badge":"1482535614962.jpg","thing":"1482535606715.jpg","box":"1482535598358.jpg","signetHuman":"Fri Dec 23 2016 17:26:46 GMT-0600 (CST)"},
+  {"id":"1482535606576","signetValue":"1482535606576","action":"moThg","badge":"1482535627496.jpg","thing":"1482535606715.jpg","box":"1482535598358.jpg","signetHuman":"Fri Dec 23 2016 17:26:46 GMT-0600 (CST)"}
+  ]
+}
+
+
 
   multiStep3() {
     this.multiStep4();
@@ -162,6 +175,30 @@ export class CamPage {
       // yes, we are local. Ionic will move the files.
     } // are we local?
   }
+
+studies () {
+/**
+"cam.multiStep3 moveFile: {"isFile":true,"isDirectory":false,"name":"1482535606715.jpg","fullPath":"/1482535606715.jpg","filesystem":"<FileSystem: files-external>","nativeURL":"file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/1482535606715.jpg"}", source: file:///android_asset/www/build/main.js (53956)
+"cam.multiStep3 moveFile: {"isFile":true,"isDirectory":false,"name":"1482535614962.jpg","fullPath":"/1482535614962.jpg","filesystem":"<FileSystem: files-external>","nativeURL":"file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/1482535614962.jpg"}", source: file:///android_asset/www/build/main.js (53956)
+"cam.multiStep3 moveFile: {"isFile":true,"isDirectory":false,"name":"1482535627496.jpg","fullPath":"/1482535627496.jpg","filesystem":"<FileSystem: files-external>","nativeURL":"file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/1482535627496.jpg"}", source: file:///android_asset/www/build/main.js (53956)
+" cam(((1a))) 4 records to write", source: file:///android_asset/www/build/main.js (53976)
+" cam(((1b))) prepare to remove file file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/jayson.txt", source: file:///android_asset/www/build/main.js (53977)
+" cam(((1a))) 4 records to write", source: file:///android_asset/www/build/main.js (53976)
+" cam(((1b))) prepare to remove file file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/jayson.txt", source: file:///android_asset/www/build/main.js (53977)
+"File.remove err {"code":1,"message":"NOT_FOUND_ERR"}", source: file:///android_asset/www/build/main.js (53986)
+"File.remove err {"code":1,"message":"NOT_FOUND_ERR"}", source: file:///android_asset/www/build/main.js (53986)
+"File.write.err {"code":12,"message":"PATH_EXISTS_ERR"}", source: file:///android_asset/www/build/main.js (53993)
+"did the writing work out okay?", source: file:///android_asset/www/build/main.js (53996)
+" cam(((1a))) 4 records to write", source: file:///android_asset/www/build/main.js (53976)
+" cam(((1b))) prepare to remove file file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/jayson.txt", source: file:///android_asset/www/build/main.js (53977)
+" cam(((3))) File.write says {"isFile":true,"isDirectory":false,"name":"jayson.txt","fullPath":"/jayson.txt","filesystem":"<FileSystem: files-external>","nativeURL":"file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/jayson.txt"}", source: file:///android_asset/www/build/main.js (53991)
+"did the writing work out okay?", source: file:///android_asset/www/build/main.js (53996)
+" cam(((2))) File.remove says {"success":true,"fileRemoved":{"isFile":true,"isDirectory":false,"name":"jayson.txt","fullPath":"/jayson.txt","filesystem":"<FileSystem: files-external>","nativeURL":"file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/jayson.txt"}}", source: file:///android_asset/www/build/main.js (53984)
+ */
+}
+
+
+
 
   async writeJayson() {
     let jay = [];

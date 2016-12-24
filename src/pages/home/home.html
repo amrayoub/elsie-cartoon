@@ -19,15 +19,15 @@
         </button>
       <button ion-fab (click)="test2()" ><span class="monofett">2</span>
         </button>
-      <button ion-fab (click)="test3()" ><span class="monofett">3</span>
-        </button>
+      <!--<button ion-fab (click)="test3()" ><span class="monofett">3</span>
+        </button>-->
       <button ion-fab color="danger" (click)="emptyDatabase()">
         <ion-icon name="trash"></ion-icon>
         </button>
     </ion-fab-list>
   </ion-fab>
 
-  <!--<p> <code>Ionic Storage driver: asyncStorage</code> </p>-->
+  <p text-right> {{ message }} </p>
 
   <p *ngIf="showStart"> Make a new "box" </p>
 

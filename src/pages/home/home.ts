@@ -4,6 +4,7 @@ import { Storage } from '@ionic/storage';
 import { Badger } from '../../models/badger';
 import { MM } from '../../models/mm';
 import { File, Entry, FileError } from 'ionic-native';
+import { CamPage } from '../cam/cam';
 
 declare var cordova: any;
 
@@ -15,6 +16,7 @@ declare var cordova: any;
 
 export class HomePage {
 
+  message:string;
   nubNotes: string;
   meta: any = {};
   showStart: boolean;
@@ -41,6 +43,7 @@ export class HomePage {
   ionViewWillEnter() {
     this.mm = MM.getInstance();
     this.mm.mmRead();
+    this.message = '';
   }
 
   ionViewDidEnter() {
@@ -57,13 +60,11 @@ export class HomePage {
     // this.mm.mmWrite();
   }
 
-
   emptyDatabase() {
     this.db.clear().then(() => {
-      // Run this code once the database has been entirely deleted.
       console.log('Database is now empty.');
+      this.message = 'Database is now empty.';
     }).catch(function (err) {
-      // This code runs if there were any errors
       console.log(err);
     });
   }
@@ -71,13 +72,13 @@ export class HomePage {
   test1() {
     console.log(`test1() CURRENTs`);
     console.log(`box ${this.mm.curBox}`);
-    console.log(`boxbad ${this.mm.curBoxBadge}`);
+    console.log(`boxbad ${this.fs2} +++ ${this.mm.curBoxBadge}`);
     console.log(`thg ${this.mm.curThg}`);
-    console.log(`thgbad ${this.mm.curThgBadge}`);
+    console.log(`thgbad ${this.fs2} +++ ${this.mm.curThgBadge}`);
   }
 
   test2() {
-    console.log(`test2() doing nothin for now`);
+console.log(`MEMBADGERS`);
 
   }
 
