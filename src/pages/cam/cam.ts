@@ -24,6 +24,7 @@ export class CamPage {
   dbBoxes: any[];
   areWeLocal: boolean;
   mm: any;
+  theFlair: any[] = [];
 
   constructor(public navCtrl: NavController, public db: Storage, private tabs: Tabs) {
     this.foods = ["food-1.jpg", "food-2.jpg", "food-3.jpg", "food-4.jpg", "food-5.jpg", "food-6.jpg", "food-7.jpg", "food-8.jpg", "food-9.jpg"];
@@ -136,21 +137,19 @@ export class CamPage {
     }) //thePix loop
     await this.mm.mmWrite();
     console.log(`memBadgers: ${JSON.stringify(this.memBadgers.length)} entries`);
-    console.log(`memBadgers: ${JSON.stringify(this.memBadgers)} `);
+    // console.log(`memBadgers: ${JSON.stringify(this.memBadgers)} `);
     this.multiStep3();
   } // end.multiStep2()
 
-caibn() {
-// "memBadgers: 3 entries"
-// "memBadgers:
-let qp = [
-  {"id":"1482535606550","signetValue":"1482535606550","action":"nuThg","badge":"1482535606715.jpg","thing":"1482535606715.jpg","box":"1482535598358.jpg","signetHuman":"Fri Dec 23 2016 17:26:46 GMT-0600 (CST)"},
-  {"id":"1482535606563","signetValue":"1482535606563","action":"moThg","badge":"1482535614962.jpg","thing":"1482535606715.jpg","box":"1482535598358.jpg","signetHuman":"Fri Dec 23 2016 17:26:46 GMT-0600 (CST)"},
-  {"id":"1482535606576","signetValue":"1482535606576","action":"moThg","badge":"1482535627496.jpg","thing":"1482535606715.jpg","box":"1482535598358.jpg","signetHuman":"Fri Dec 23 2016 17:26:46 GMT-0600 (CST)"}
-  ]
-}
-
-
+  caibn() {
+    // "memBadgers: 3 entries"
+    // "memBadgers:
+    let qp = [
+      { "id": "1482535606550", "signetValue": "1482535606550", "action": "nuThg", "badge": "1482535606715.jpg", "thing": "1482535606715.jpg", "box": "1482535598358.jpg", "signetHuman": "Fri Dec 23 2016 17:26:46 GMT-0600 (CST)" },
+      { "id": "1482535606563", "signetValue": "1482535606563", "action": "moThg", "badge": "1482535614962.jpg", "thing": "1482535606715.jpg", "box": "1482535598358.jpg", "signetHuman": "Fri Dec 23 2016 17:26:46 GMT-0600 (CST)" },
+      { "id": "1482535606576", "signetValue": "1482535606576", "action": "moThg", "badge": "1482535627496.jpg", "thing": "1482535606715.jpg", "box": "1482535598358.jpg", "signetHuman": "Fri Dec 23 2016 17:26:46 GMT-0600 (CST)" }
+    ]
+  }
 
   multiStep3() {
     this.multiStep4();
@@ -172,33 +171,32 @@ let qp = [
           );
       });
     } else {
+      console.log(`multiStep4: nop`);
+      this.writeJayson();
       // yes, we are local. Ionic will move the files.
     } // are we local?
   }
 
-studies () {
-/**
-"cam.multiStep3 moveFile: {"isFile":true,"isDirectory":false,"name":"1482535606715.jpg","fullPath":"/1482535606715.jpg","filesystem":"<FileSystem: files-external>","nativeURL":"file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/1482535606715.jpg"}", source: file:///android_asset/www/build/main.js (53956)
-"cam.multiStep3 moveFile: {"isFile":true,"isDirectory":false,"name":"1482535614962.jpg","fullPath":"/1482535614962.jpg","filesystem":"<FileSystem: files-external>","nativeURL":"file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/1482535614962.jpg"}", source: file:///android_asset/www/build/main.js (53956)
-"cam.multiStep3 moveFile: {"isFile":true,"isDirectory":false,"name":"1482535627496.jpg","fullPath":"/1482535627496.jpg","filesystem":"<FileSystem: files-external>","nativeURL":"file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/1482535627496.jpg"}", source: file:///android_asset/www/build/main.js (53956)
-" cam(((1a))) 4 records to write", source: file:///android_asset/www/build/main.js (53976)
-" cam(((1b))) prepare to remove file file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/jayson.txt", source: file:///android_asset/www/build/main.js (53977)
-" cam(((1a))) 4 records to write", source: file:///android_asset/www/build/main.js (53976)
-" cam(((1b))) prepare to remove file file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/jayson.txt", source: file:///android_asset/www/build/main.js (53977)
-"File.remove err {"code":1,"message":"NOT_FOUND_ERR"}", source: file:///android_asset/www/build/main.js (53986)
-"File.remove err {"code":1,"message":"NOT_FOUND_ERR"}", source: file:///android_asset/www/build/main.js (53986)
-"File.write.err {"code":12,"message":"PATH_EXISTS_ERR"}", source: file:///android_asset/www/build/main.js (53993)
-"did the writing work out okay?", source: file:///android_asset/www/build/main.js (53996)
-" cam(((1a))) 4 records to write", source: file:///android_asset/www/build/main.js (53976)
-" cam(((1b))) prepare to remove file file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/jayson.txt", source: file:///android_asset/www/build/main.js (53977)
-" cam(((3))) File.write says {"isFile":true,"isDirectory":false,"name":"jayson.txt","fullPath":"/jayson.txt","filesystem":"<FileSystem: files-external>","nativeURL":"file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/jayson.txt"}", source: file:///android_asset/www/build/main.js (53991)
-"did the writing work out okay?", source: file:///android_asset/www/build/main.js (53996)
-" cam(((2))) File.remove says {"success":true,"fileRemoved":{"isFile":true,"isDirectory":false,"name":"jayson.txt","fullPath":"/jayson.txt","filesystem":"<FileSystem: files-external>","nativeURL":"file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/jayson.txt"}}", source: file:///android_asset/www/build/main.js (53984)
- */
-}
-
-
-
+  studies() {
+    /**
+    "cam.multiStep3 moveFile: {"isFile":true,"isDirectory":false,"name":"1482535606715.jpg","fullPath":"/1482535606715.jpg","filesystem":"<FileSystem: files-external>","nativeURL":"file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/1482535606715.jpg"}", source: file:///android_asset/www/build/main.js (53956)
+    "cam.multiStep3 moveFile: {"isFile":true,"isDirectory":false,"name":"1482535614962.jpg","fullPath":"/1482535614962.jpg","filesystem":"<FileSystem: files-external>","nativeURL":"file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/1482535614962.jpg"}", source: file:///android_asset/www/build/main.js (53956)
+    "cam.multiStep3 moveFile: {"isFile":true,"isDirectory":false,"name":"1482535627496.jpg","fullPath":"/1482535627496.jpg","filesystem":"<FileSystem: files-external>","nativeURL":"file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/1482535627496.jpg"}", source: file:///android_asset/www/build/main.js (53956)
+    " cam(((1a))) 4 records to write", source: file:///android_asset/www/build/main.js (53976)
+    " cam(((1b))) prepare to remove file file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/jayson.txt", source: file:///android_asset/www/build/main.js (53977)
+    " cam(((1a))) 4 records to write", source: file:///android_asset/www/build/main.js (53976)
+    " cam(((1b))) prepare to remove file file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/jayson.txt", source: file:///android_asset/www/build/main.js (53977)
+    "File.remove err {"code":1,"message":"NOT_FOUND_ERR"}", source: file:///android_asset/www/build/main.js (53986)
+    "File.remove err {"code":1,"message":"NOT_FOUND_ERR"}", source: file:///android_asset/www/build/main.js (53986)
+    "File.write.err {"code":12,"message":"PATH_EXISTS_ERR"}", source: file:///android_asset/www/build/main.js (53993)
+    "did the writing work out okay?", source: file:///android_asset/www/build/main.js (53996)
+    " cam(((1a))) 4 records to write", source: file:///android_asset/www/build/main.js (53976)
+    " cam(((1b))) prepare to remove file file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/jayson.txt", source: file:///android_asset/www/build/main.js (53977)
+    " cam(((3))) File.write says {"isFile":true,"isDirectory":false,"name":"jayson.txt","fullPath":"/jayson.txt","filesystem":"<FileSystem: files-external>","nativeURL":"file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/jayson.txt"}", source: file:///android_asset/www/build/main.js (53991)
+    "did the writing work out okay?", source: file:///android_asset/www/build/main.js (53996)
+    " cam(((2))) File.remove says {"success":true,"fileRemoved":{"isFile":true,"isDirectory":false,"name":"jayson.txt","fullPath":"/jayson.txt","filesystem":"<FileSystem: files-external>","nativeURL":"file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/jayson.txt"}}", source: file:///android_asset/www/build/main.js (53984)
+     */
+  }
 
   async writeJayson() {
     let jay = [];
@@ -208,7 +206,11 @@ studies () {
         jay = JSON.parse(JSON.stringify(res));
         jay.map((line) => { line.id = undefined; });
         console.log(` cam(((1a))) ${JSON.stringify(jay.length)} records to write`);
+        console.log(`JAY:`);
+        console.log(`${JSON.stringify(jay)}`);
+
         console.log(` cam(((1b))) prepare to remove file ${this.fs2}jayson.txt`);
+
       })
       .catch((err) => { console.log(`db.get mmBadgers err ${JSON.stringify(err)}`); })
 
@@ -228,10 +230,12 @@ studies () {
 
   }
 
+  showBadges() {
 
+    console.log(`finally, show the badges for this thing`);
+    console.log(`THE FLAIR  ${JSON.stringify(this.theFlair)}`);
 
-
-
+  }
 
   actualCampath() {
     let jef = {
@@ -273,7 +277,6 @@ studies () {
     console.log(`test() is doing nothing right now.`);
 
   }
-
 
   /** * OLD CODES HOME */
 
@@ -318,7 +321,6 @@ studies () {
         }
       });
   }
-
 
 } //CamPage
 
