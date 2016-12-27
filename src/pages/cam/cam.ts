@@ -162,8 +162,7 @@ export class CamPage {
         this.jayObj = JSON.parse(JSON.stringify(res));
         this.jayObj.map((line) => { line.id = undefined; });
         console.log(` cam(((1a))) ${JSON.stringify(this.jayObj.length)} records to write`);
-        console.log(`theFlair:`);
-        console.log(`${JSON.stringify(this.jayObj)}`);
+        // console.log(`${JSON.stringify(this.jayObj)}`);
 
         console.log(` cam(((1b))) prepare to remove file ${this.fs2}jayson.txt`);
 
@@ -191,10 +190,15 @@ export class CamPage {
     console.log(`SHOW BADGES`);
     this.justBadges = [];
     this.jayObj.map((line) => {
+
+      if (line.action == "nuThg") {
+        console.log(`JAY.TID ${line.signetValue}`);
+      }
+
       this.justBadges.push(this.fs2 + line.badge);
     })
 
-    console.log(`${JSON.stringify(this.justBadges)}`);
+    // console.log(`${JSON.stringify(this.justBadges)}`);
 
   }
 

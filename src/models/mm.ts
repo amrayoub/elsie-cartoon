@@ -63,7 +63,71 @@ export class MM {
       this.justBoxes = ret;
     });
   }
-}
+
+  async oneThing(tid) {
+    let jef: any;
+    let bil: any;
+    await this.oT1(tid).then((res) => { jef = res; });
+    console.log(`oneThing.jef ${JSON.stringify('x')}`);
+    await this.oT2(jef).then((ret) => { bil = ret; });
+    console.log(`oneThing.bil ${JSON.stringify('y')}`);
+    bil.forEach((ans)=>{
+      console.log(`bil: ${ans.action} ${ans.thing} ${ans.badge}`);
+    })
+    return bil;
+  }
+
+  /** given a Thing Badger, return it and its moThings */
+  oT2(oneThing) {
+    return new Promise((resolve, reject) => {
+      let badgerland: any[] = [];
+      this.mmdb.get('mmBadgers')
+        .then((ret) => {
+          if (ret && ret.length > 0) {
+            ret.forEach((v, k) => {
+              // console.log(`oT2.ret: ${(v.thing)} vs oneThing: ${(oneThing.thing)}`);
+              if (v.thing === oneThing.thing) {
+                badgerland.push(v);
+              }
+            })//ret.each
+          } else {
+            reject("mmBadgers is empty")
+          }
+          if (badgerland && badgerland.length > 0) {
+            resolve(badgerland)
+          }
+        })
+        .catch((err) => {
+          reject("no badgers??")
+        })
+    })
+  }
+
+  /** given an ID, return a Thing Badger */
+  oT1(tid) {
+    return new Promise((resolve, reject) => {
+      console.log(`oT1 got ${tid}`);
+      this.mmdb.get('mmBadgers')
+        .then((ret) => {
+          // console.log(`mmBadgers returned ${(JSON.stringify(ret))}`);
+          let stanley = {};
+          ret.map((reko) => {
+            if (reko.signetValue == tid) {
+              // console.log(`reko.tid found ${reko.signetHuman}`);
+              stanley = Object.assign({}, reko);
+            }
+          })//ret.map
+          if (stanley.hasOwnProperty('action')) {
+            resolve(stanley)
+          } else {
+            reject("404")
+          }
+        })
+    })
+  }
+
+
+} //mm
 
 class Singleton {
   private static instance: Singleton;

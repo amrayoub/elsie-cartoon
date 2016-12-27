@@ -16,7 +16,7 @@ declare var cordova: any;
 
 export class HomePage {
 
-  message:string;
+  message: string;
   nubNotes: string;
   meta: any = {};
   showStart: boolean;
@@ -78,8 +78,13 @@ export class HomePage {
   }
 
   test2() {
-console.log(`MEMBADGERS`);
-
+    console.log(`ONE THING`);
+    let bob = "1482871670509";
+    this.mm.oneThing(bob)
+      .then((zig) => {
+        console.log(`asked for ${JSON.stringify(bob)},`);
+        console.log(`  got ${JSON.stringify(zig)} items`);
+      });
   }
 
   test3() {
