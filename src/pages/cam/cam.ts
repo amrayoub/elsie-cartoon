@@ -16,6 +16,7 @@ declare var cordova: any;
 
 export class CamPage {
 
+  justBadges: string[] = [];
   foods: string[];
   thePix: any[] = [];
   memBadgers: Badger[] = [];
@@ -24,7 +25,7 @@ export class CamPage {
   dbBoxes: any[];
   areWeLocal: boolean;
   mm: any;
-  theFlair: any[] = [];
+  jayObj: any[] = []; // will be written to Jayson.txt
 
   constructor(public navCtrl: NavController, public db: Storage, private tabs: Tabs) {
     this.foods = ["food-1.jpg", "food-2.jpg", "food-3.jpg", "food-4.jpg", "food-5.jpg", "food-6.jpg", "food-7.jpg", "food-8.jpg", "food-9.jpg"];
@@ -40,21 +41,28 @@ export class CamPage {
   }
 
   ionViewWillEnter() {
-    this.mm = MM.getInstance();
-    this.mm.mmRead();
+    this.mmStartup();
   }
 
-  ionViewDidLoad() {
+  ionViewDidLoad() { }
+
+  ionViewWillLeave() {
+    this.mm.mmWrite();
+  }
+
+  mmSget() {
+    this.mm = MM.getInstance();
+  }
+
+  async mmStartup() {
+    await this.mmSget();
+    await this.mm.mmRead();
     if (this.mm && this.mm.justBoxes && this.mm.justBoxes.length === 0) {
       this.tabs.select(2);
     }
   }
 
-  ionViewWillLeave() {
-    // console.log(`box.ts will leave`);
-    this.mm.mmWrite();
-  }
-
+  /** WORK */
   addThing() {
     this.thePix = [];
     this.freshIds = new Ute().ids(); // use slice(0,1)
@@ -147,15 +155,15 @@ export class CamPage {
   }
 
   async writeJayson() {
-    let theFlair = [];
+    this.jayObj = []; // array of Badger objects
 
     await this.db.get('mmBadgers')
       .then((res) => {
-        theFlair = JSON.parse(JSON.stringify(res));
-        theFlair.map((line) => { line.id = undefined; });
-        console.log(` cam(((1a))) ${JSON.stringify(theFlair.length)} records to write`);
+        this.jayObj = JSON.parse(JSON.stringify(res));
+        this.jayObj.map((line) => { line.id = undefined; });
+        console.log(` cam(((1a))) ${JSON.stringify(this.jayObj.length)} records to write`);
         console.log(`theFlair:`);
-        console.log(`${JSON.stringify(theFlair)}`);
+        console.log(`${JSON.stringify(this.jayObj)}`);
 
         console.log(` cam(((1b))) prepare to remove file ${this.fs2}jayson.txt`);
 
@@ -168,7 +176,7 @@ export class CamPage {
       })
       .catch((err) => { console.log(`File.remove err ${JSON.stringify(err)}`); })
 
-    await File.writeFile(this.fs2, "jayson.txt", JSON.stringify(theFlair), true)
+    await File.writeFile(this.fs2, "jayson.txt", JSON.stringify(this.jayObj), true)
       .then((val: Entry) => {
         console.log(` cam(((3))) File.write says ${JSON.stringify(val)}`);
       })
@@ -176,12 +184,17 @@ export class CamPage {
 
     console.log(`did the writing work out okay?`);
 
+    this.showBadges();
   }
 
   showBadges() {
+    console.log(`SHOW BADGES`);
+    this.justBadges = [];
+    this.jayObj.map((line) => {
+      this.justBadges.push(this.fs2 + line.badge);
+    })
 
-    console.log(`finally, show the badges for this thing`);
-    console.log(`THE FLAIR  ${JSON.stringify(this.theFlair)}`);
+    console.log(`${JSON.stringify(this.justBadges)}`);
 
   }
 

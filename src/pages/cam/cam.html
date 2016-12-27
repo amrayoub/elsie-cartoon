@@ -8,7 +8,7 @@
 
 <ion-content padding>
 
-  <ion-fab right middle>
+  <ion-fab left middle>
     <button ion-fab (click)="addThing()" color="secondary">
      <ion-icon name="add"></ion-icon>
      </button><br>
@@ -31,11 +31,11 @@
     </ion-item>
   </ion-list>
 
-  <ion-list *ngIf="theFlair.length>0">
-    <ion-item *ngIf="theFlair.length>0">In the can</ion-item>
-    <ion-item *ngFor="let cub of theFlair">
-      <img alt="Thing Pic" [src]="fs2 + cub?.badge" class="my90x120"><br>
-      {{fs2.slice(-50)}}<br>{{cub?.badge}}
+  <ion-list *ngIf="justBadges.length>0">
+    <ion-item *ngIf="justBadges.length>0">In the can</ion-item>
+    <ion-item *ngFor="let cub of justBadges">
+      <img alt="Thing Pic" [src]="cub" class="my90x120"><br>
+      {{cub}}<br>{{cub.slice(-22)}}
     </ion-item>
   </ion-list>
 

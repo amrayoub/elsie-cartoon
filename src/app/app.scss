@@ -17,7 +17,8 @@
 
 .strike { text-decoration: line-through; }
 .one-shot { color : color($colors, primary, base); }
-.my90x120 { max-width:120px; max-height:90px; }
+.my90x120 { max-height:90px; max-width:120px; }
+.my120x180 { max-height:120px; max-width:180px; }
 .monofett { font-family: 'Monofett', monospace; }
 
 @font-face {
