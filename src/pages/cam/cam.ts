@@ -55,28 +55,10 @@ export class CamPage {
     this.mm.mmWrite();
   }
 
-  shuffleFoods(arr) {
-    var shuffled = arr.slice(0), i = arr.length, temp, index;
-    while (i--) {
-      index = Math.floor(i * Math.random());
-      temp = shuffled[index];
-      shuffled[index] = shuffled[i];
-      shuffled[i] = temp;
-    }
-    return shuffled;
-  }
-
   addThing() {
     this.thePix = [];
     this.freshIds = new Ute().ids(); // use slice(0,1)
     this.multiPix();
-  }
-
-  sMeF() {
-    // *** MediaFile[]:
-    let mf = [{ "name": "1482515754815.jpg", "localURL": "cdvfile://localhost/sdcard/DCIM/Camera/1482515754815.jpg", "type": "image/jpeg", "lastModified": null, "lastModifiedDate": 1482515760000, "size": 2828750, "start": 0, "end": 0, "fullPath": "file:///storage/emulated/0/DCIM/Camera/1482515754815.jpg" }, { "name": "1482515764269.jpg", "localURL": "cdvfile://localhost/sdcard/DCIM/Camera/1482515764269.jpg", "type": "image/jpeg", "lastModified": null, "lastModifiedDate": 1482515767000, "size": 2767202, "start": 0, "end": 0, "fullPath": "file:///storage/emulated/0/DCIM/Camera/1482515764269.jpg" }, { "name": "1482515769877.jpg", "localURL": "cdvfile://localhost/sdcard/DCIM/Camera/1482515769877.jpg", "type": "image/jpeg", "lastModified": null, "lastModifiedDate": 1482515773000, "size": 1858776, "start": 0, "end": 0, "fullPath": "file:///storage/emulated/0/DCIM/Camera/1482515769877.jpg" }]
-    // *** thePix:
-    let tp = [{ "name": "1482515754815.jpg", "localURL": "cdvfile://localhost/sdcard/DCIM/Camera/1482515754815.jpg", "type": "image/jpeg", "lastModified": null, "lastModifiedDate": 1482515760000, "size": 2828750, "start": 0, "end": 0, "fullPath": "file:///storage/emulated/0/DCIM/Camera/1482515754815.jpg" }, { "name": "1482515764269.jpg", "localURL": "cdvfile://localhost/sdcard/DCIM/Camera/1482515764269.jpg", "type": "image/jpeg", "lastModified": null, "lastModifiedDate": 1482515767000, "size": 2767202, "start": 0, "end": 0, "fullPath": "file:///storage/emulated/0/DCIM/Camera/1482515764269.jpg" }, { "name": "1482515769877.jpg", "localURL": "cdvfile://localhost/sdcard/DCIM/Camera/1482515769877.jpg", "type": "image/jpeg", "lastModified": null, "lastModifiedDate": 1482515773000, "size": 1858776, "start": 0, "end": 0, "fullPath": "file:///storage/emulated/0/DCIM/Camera/1482515769877.jpg" }]
   }
 
   async  multiPix() {
@@ -105,7 +87,6 @@ export class CamPage {
     } // areWeLocal?
     this.multiStep2();
   } // multiPix()
-
 
   /** do the database dance */
   async multiStep2() {
@@ -141,19 +122,7 @@ export class CamPage {
     this.multiStep3();
   } // end.multiStep2()
 
-  caibn() {
-    // "memBadgers: 3 entries"
-    // "memBadgers:
-    let qp = [
-      { "id": "1482535606550", "signetValue": "1482535606550", "action": "nuThg", "badge": "1482535606715.jpg", "thing": "1482535606715.jpg", "box": "1482535598358.jpg", "signetHuman": "Fri Dec 23 2016 17:26:46 GMT-0600 (CST)" },
-      { "id": "1482535606563", "signetValue": "1482535606563", "action": "moThg", "badge": "1482535614962.jpg", "thing": "1482535606715.jpg", "box": "1482535598358.jpg", "signetHuman": "Fri Dec 23 2016 17:26:46 GMT-0600 (CST)" },
-      { "id": "1482535606576", "signetValue": "1482535606576", "action": "moThg", "badge": "1482535627496.jpg", "thing": "1482535606715.jpg", "box": "1482535598358.jpg", "signetHuman": "Fri Dec 23 2016 17:26:46 GMT-0600 (CST)" }
-    ]
-  }
-
-  multiStep3() {
-    this.multiStep4();
-  }
+  multiStep3() { this.multiStep4(); }
 
   multiStep4() {
     if (this.areWeLocal == false) {
@@ -177,37 +146,16 @@ export class CamPage {
     } // are we local?
   }
 
-  studies() {
-    /**
-    "cam.multiStep3 moveFile: {"isFile":true,"isDirectory":false,"name":"1482535606715.jpg","fullPath":"/1482535606715.jpg","filesystem":"<FileSystem: files-external>","nativeURL":"file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/1482535606715.jpg"}", source: file:///android_asset/www/build/main.js (53956)
-    "cam.multiStep3 moveFile: {"isFile":true,"isDirectory":false,"name":"1482535614962.jpg","fullPath":"/1482535614962.jpg","filesystem":"<FileSystem: files-external>","nativeURL":"file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/1482535614962.jpg"}", source: file:///android_asset/www/build/main.js (53956)
-    "cam.multiStep3 moveFile: {"isFile":true,"isDirectory":false,"name":"1482535627496.jpg","fullPath":"/1482535627496.jpg","filesystem":"<FileSystem: files-external>","nativeURL":"file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/1482535627496.jpg"}", source: file:///android_asset/www/build/main.js (53956)
-    " cam(((1a))) 4 records to write", source: file:///android_asset/www/build/main.js (53976)
-    " cam(((1b))) prepare to remove file file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/jayson.txt", source: file:///android_asset/www/build/main.js (53977)
-    " cam(((1a))) 4 records to write", source: file:///android_asset/www/build/main.js (53976)
-    " cam(((1b))) prepare to remove file file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/jayson.txt", source: file:///android_asset/www/build/main.js (53977)
-    "File.remove err {"code":1,"message":"NOT_FOUND_ERR"}", source: file:///android_asset/www/build/main.js (53986)
-    "File.remove err {"code":1,"message":"NOT_FOUND_ERR"}", source: file:///android_asset/www/build/main.js (53986)
-    "File.write.err {"code":12,"message":"PATH_EXISTS_ERR"}", source: file:///android_asset/www/build/main.js (53993)
-    "did the writing work out okay?", source: file:///android_asset/www/build/main.js (53996)
-    " cam(((1a))) 4 records to write", source: file:///android_asset/www/build/main.js (53976)
-    " cam(((1b))) prepare to remove file file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/jayson.txt", source: file:///android_asset/www/build/main.js (53977)
-    " cam(((3))) File.write says {"isFile":true,"isDirectory":false,"name":"jayson.txt","fullPath":"/jayson.txt","filesystem":"<FileSystem: files-external>","nativeURL":"file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/jayson.txt"}", source: file:///android_asset/www/build/main.js (53991)
-    "did the writing work out okay?", source: file:///android_asset/www/build/main.js (53996)
-    " cam(((2))) File.remove says {"success":true,"fileRemoved":{"isFile":true,"isDirectory":false,"name":"jayson.txt","fullPath":"/jayson.txt","filesystem":"<FileSystem: files-external>","nativeURL":"file:///storage/emulated/0/Android/data/com.ionicframework.elsie967658/files/jayson.txt"}}", source: file:///android_asset/www/build/main.js (53984)
-     */
-  }
-
   async writeJayson() {
-    let jay = [];
+    let theFlair = [];
 
     await this.db.get('mmBadgers')
       .then((res) => {
-        jay = JSON.parse(JSON.stringify(res));
-        jay.map((line) => { line.id = undefined; });
-        console.log(` cam(((1a))) ${JSON.stringify(jay.length)} records to write`);
-        console.log(`JAY:`);
-        console.log(`${JSON.stringify(jay)}`);
+        theFlair = JSON.parse(JSON.stringify(res));
+        theFlair.map((line) => { line.id = undefined; });
+        console.log(` cam(((1a))) ${JSON.stringify(theFlair.length)} records to write`);
+        console.log(`theFlair:`);
+        console.log(`${JSON.stringify(theFlair)}`);
 
         console.log(` cam(((1b))) prepare to remove file ${this.fs2}jayson.txt`);
 
@@ -220,7 +168,7 @@ export class CamPage {
       })
       .catch((err) => { console.log(`File.remove err ${JSON.stringify(err)}`); })
 
-    await File.writeFile(this.fs2, "jayson.txt", JSON.stringify(jay), true)
+    await File.writeFile(this.fs2, "jayson.txt", JSON.stringify(theFlair), true)
       .then((val: Entry) => {
         console.log(` cam(((3))) File.write says ${JSON.stringify(val)}`);
       })
@@ -271,6 +219,17 @@ export class CamPage {
       // console.log(`campath p? ${JSON.stringify(p)}`);
     }
     return { 'name': n, 'path': p };
+  }
+
+  shuffleFoods(arr) {
+    var shuffled = arr.slice(0), i = arr.length, temp, index;
+    while (i--) {
+      index = Math.floor(i * Math.random());
+      temp = shuffled[index];
+      shuffled[index] = shuffled[i];
+      shuffled[i] = temp;
+    }
+    return shuffled;
   }
 
   test() {
