@@ -189,16 +189,21 @@ export class CamPage {
   showBadges() {
     console.log(`SHOW BADGES`);
     this.justBadges = [];
-    this.jayObj.map((line) => {
+    this.mm.oneThing(this.mm.curThg)
+    .then((x)=>{
+      console.log(`oneThing returned ${JSON.stringify(x)}`);
 
-      if (line.action == "nuThg") {
-        console.log(`JAY.TID ${line.signetValue}`);
-      }
-
-      this.justBadges.push(this.fs2 + line.badge);
+      this.justBadges = x;
     })
 
-    // console.log(`${JSON.stringify(this.justBadges)}`);
+
+    // this.jayObj.map((line) => {
+    //   if (line.action == "nuThg") {
+    //     console.log(`JAY.TID ${line.signetValue}`);
+    //   }
+    //   this.justBadges.push(this.fs2 + line.badge);
+    // })
+    // // console.log(`${JSON.stringify(this.justBadges)}`);
 
   }
 

@@ -79,7 +79,7 @@ export class HomePage {
 
   test2() {
     console.log(`ONE THING`);
-    let bob = "1482871670509";
+    let bob = "1482871670509"; // <---------- change me
     this.mm.oneThing(bob)
       .then((zig) => {
         console.log(`asked for ${JSON.stringify(bob)},`);
