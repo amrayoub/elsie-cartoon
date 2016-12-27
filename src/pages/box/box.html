@@ -7,7 +7,7 @@
 </ion-header>
 
 <ion-content padding>
-<!--
+  <!--
   <ion-toolbar>
     <ion-buttons>
       <button ion-button>
@@ -37,9 +37,16 @@
   <ion-list>
     <ion-item *ngFor="let box of mm?.justBoxes" text-right>
 
-      <img [src]="fs2 + box.badge" alt="cat" class="my90x120"><br>
+      <div *ngIf="mm?.curBox !== box.signetValue">
+        <img [src]="fs2 + box.badge" alt="cat" class="my90x120"><br>
+      </div>
+      <div *ngIf="mm?.curBox === box.signetValue">
+        <img [src]="fs2 + box.badge" alt="cat" class="my180x240"><br>
+      </div>
 
-<!-- ** not until re-openable box code settles down
+
+
+      <!-- ** not until re-openable box code settles down
       <button ion-button (click)="openBox(box.signetValue)" *ngIf="mm?.curBox !== box.signetValue" >
         <ion-icon name="open"></ion-icon>
       </button>
