@@ -8,14 +8,14 @@
 
 <ion-content padding>
 
-  <ion-fab left middle>
+  <ion-fab center middle>
     <button ion-fab (click)="addThing()" color="secondary">
      <ion-icon name="add"></ion-icon>
      </button><br>
     <span class="one-shot">Add Thing</span>
   </ion-fab>
 
-<!--
+  <!--
   <ion-fab left middle>
     <button ion-fab (click)="test()" color="danger">
      <ion-icon name="beaker"></ion-icon>
@@ -24,21 +24,34 @@
 -->
 
 
+  <ion-grid>
+    <ion-row>
+      <ion-col width-50>
+        <img alt="Box Badge" [src]="fs2 + mm?.curBoxBadge" class="my180x240"><br> {{ fs2 }} <br> {{ mm?.curBoxBadge}} <br>        Box
+      </ion-col>
+      <ion-col width-50>
+
+        <ion-list *ngIf="justBadges.length>0">
+          <ion-item *ngFor="let cub of justBadges">
+            <img alt="Thing Pic" [src]="fs2 + cub.badge" class="my90x120"><br> {{cub.badge}}
+            <br>
+            <!--{{cub.slice(-22)}}-->
+          </ion-item>
+        </ion-list>
+
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+
+
+
   <ion-list *ngIf="mm?.curBoxBadge">
-    <ion-item text-right>Box:
-      <img alt="Box Badge" [src]="fs2 + mm?.curBoxBadge" class="my90x120"><br>
-      {{ fs2 }} <br> {{ mm?.curBoxBadge}}
+    <ion-item text-left>
     </ion-item>
   </ion-list>
 
-  <ion-list *ngIf="justBadges.length>0">
-    <ion-item *ngIf="justBadges.length>0">In the can</ion-item>
-    <ion-item *ngFor="let cub of justBadges">
-      <img alt="Thing Pic" [src]="fs2 + cub.badge" class="my90x120"><br>
-      {{cub.badge}}<br>
-      <!--{{cub.slice(-22)}}-->
-    </ion-item>
-  </ion-list>
+
 
   <!--<ion-list *ngIf="thePix.length>0">
     <ion-item *ngIf="thePix.length>0">Un-processed images:</ion-item>
