@@ -8,7 +8,7 @@
 
 <ion-content padding>
 
-  <ion-fab right middle>
+  <ion-fab left middle>
     <button ion-fab (click)="addThing()" color="secondary">
      <ion-icon name="add"></ion-icon>
      </button><br>
@@ -31,16 +31,24 @@
     </ion-item>
   </ion-list>
 
-  <ion-list *ngIf="theFlair.length>0">
-    <ion-item *ngIf="theFlair.length>0">In the can</ion-item>
-    <ion-item *ngFor="let cub of theFlair">
-      <img alt="Thing Pic" [src]="fs2 + cub?.badge" class="my90x120"><br>
-      {{fs2.slice(-50)}}<br>{{cub?.badge}}
+  <ion-list *ngIf="justBadges.length>0">
+    <ion-item *ngIf="justBadges.length>0">Joost Badges</ion-item>
+    <ion-item *ngFor="let cub of justBadges">
+      <img alt="Thing Pic" [src]="cub" class="my90x120"><br>
+      {{cub}}
     </ion-item>
   </ion-list>
 
   <!--<ion-list *ngIf="thePix.length>0">
-    <ion-item *ngIf="thePix.length>0">Un-processed images:</ion-item>
+    <ion-item *ngIf="thePix.length>0">pic.fullPath:</ion-item>
+    <ion-item *ngFor="let pic of thePix">
+      <img alt="Thing Pic" [src]="pic.fullPath" class="my90x120"><br>
+      {{ pic.fullPath }}
+    </ion-item>
+  </ion-list>
+
+  <ion-list *ngIf="thePix.length>0">
+    <ion-item *ngIf="thePix.length>0">pic.fullPath:</ion-item>
     <ion-item *ngFor="let pic of thePix">
       <img alt="Thing Pic" [src]="pic.fullPath" class="my90x120"><br>
       {{ pic.fullPath }}

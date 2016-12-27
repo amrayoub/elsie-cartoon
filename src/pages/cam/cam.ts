@@ -16,6 +16,8 @@ declare var cordova: any;
 
 export class CamPage {
 
+  justBadges: any[] = [];
+  fs2Names: any[] = [];
   foods: string[];
   thePix: any[] = [];
   memBadgers: Badger[] = [];
@@ -81,6 +83,7 @@ export class CamPage {
       this.areWeLocal = true; // a friendly reminder
       let theirNames: string[] = this.shuffleFoods(this.foods);
       theirNames.forEach(element => {
+
         this.thePix.push(this.fs2 + element);
       });
       // console.log(`THING: ${JSON.stringify(theirNames)}`);
@@ -112,7 +115,7 @@ export class CamPage {
         thingFirstImage = rawImage.name;
         xxThg.thing = rawImage.name;
       } else {
-        xxThg.action = "moThg";
+      xxThg.action = "moThg";
         xxThg.thing = thingFirstImage;
       }
     }) //thePix loop
@@ -131,7 +134,7 @@ export class CamPage {
         File.moveFile(rawImage.path, rawImage.name, this.fs2, rawImage.name)
           .then(
           (val: Entry) => {
-            console.log(`cam.multiStep3 moveFile: ${JSON.stringify(val)}`);
+            console.log(`cam.multiStep4 moveFile: ${i} -i- ${JSON.stringify(val)}`);
 
             this.writeJayson();
 
@@ -146,31 +149,35 @@ export class CamPage {
     } // are we local?
   }
 
+  multiStep5() {
+    this.writeJayson();
+  }
+
   async writeJayson() {
-    let theFlair = [];
+    let justBadges = [];
 
     await this.db.get('mmBadgers')
       .then((res) => {
         theFlair = JSON.parse(JSON.stringify(res));
         theFlair.map((line) => { line.id = undefined; });
         console.log(` cam(((1a))) ${JSON.stringify(theFlair.length)} records to write`);
-        console.log(`theFlair:`);
-        console.log(`${JSON.stringify(theFlair)}`);
+        // console.log(`theFlair:`);
+        // console.log(`${JSON.stringify(theFlair)}`);
 
-        console.log(` cam(((1b))) prepare to remove file ${this.fs2}jayson.txt`);
+        // console.log(` cam(((1b))) prepare to remove file ${this.fs2}jayson.txt`);
 
       })
       .catch((err) => { console.log(`db.get mmBadgers err ${JSON.stringify(err)}`); })
 
     await File.removeFile(this.fs2, "jayson.txt")
       .then((res) => {
-        console.log(` cam(((2))) File.remove says ${JSON.stringify(res)}`);
+        // console.log(` cam(((2))) File.remove says ${JSON.stringify(res)}`);
       })
       .catch((err) => { console.log(`File.remove err ${JSON.stringify(err)}`); })
 
     await File.writeFile(this.fs2, "jayson.txt", JSON.stringify(theFlair), true)
       .then((val: Entry) => {
-        console.log(` cam(((3))) File.write says ${JSON.stringify(val)}`);
+        // console.log(` cam(((3))) File.write says ${JSON.stringify(val)}`);
       })
       .catch((err: FileError) => { console.log(`File.write.err ${JSON.stringify(err)}`); });
 
@@ -180,8 +187,8 @@ export class CamPage {
 
   showBadges() {
 
-    console.log(`finally, show the badges for this thing`);
-    console.log(`THE FLAIR  ${JSON.stringify(this.theFlair)}`);
+    // console.log(`finally, show the badges for this thing`);
+    // console.log(`THE FLAIR  ${JSON.stringify(this.theFlair)}`);
 
   }
 
@@ -199,24 +206,34 @@ export class CamPage {
     }
   }
 
-  slashName(campath): any {
+  joo() { // JOOST - a.k.a. this.thePix
+    let jooemu = [
+      "assets/food-6.jpg", "assets/food-4.jpg", "assets/food-2.jpg", "assets/food-5.jpg", "assets/food-8.jpg", "assets/food-9.jpg", "assets/food-1.jpg", "assets/food-7.jpg", "assets/food-3.jpg"
+    ];
+    let joodev = [
+      { "name": "1482863296270.jpg", "localURL": "cdvfile://localhost/sdcard/DCIM/Camera/1482863296270.jpg", "type": "image/jpeg", "lastModified": null, "lastModifiedDate": 1482863300000, "size": 2155306, "start": 0, "end": 0, "fullPath": "file:///storage/emulated/0/DCIM/Camera/1482863296270.jpg" },
+      { "name": "1482863303827.jpg", "localURL": "cdvfile://localhost/sdcard/DCIM/Camera/1482863303827.jpg", "type": "image/jpeg", "lastModified": null, "lastModifiedDate": 1482863310000, "size": 2089675, "start": 0, "end": 0, "fullPath": "file:///storage/emulated/0/DCIM/Camera/1482863303827.jpg" }
+    ];
+  }
+
+  slashName(slashInput): any {
     let n: string = '';
     let o: string = '';
     let p: string = '';
     if (this.areWeLocal == false) {
-      console.log(`?campath? ${JSON.stringify(campath)}`);
-      n = campath.name;
-      console.log(`campath n? ${JSON.stringify(n)}`);
-      p = campath.fullPath.split('/').slice(0, -1).join('/') + '/';
-      console.log(`campath p? ${JSON.stringify(p)}`);
+      console.log(`?slashInput? ${JSON.stringify(slashInput)}`);
+      n = slashInput.name;
+      console.log(`slashInput n? ${JSON.stringify(n)}`);
+      p = slashInput.fullPath.split('/').slice(0, -1).join('/') + '/';
+      console.log(`slashInput p? ${JSON.stringify(p)}`);
     } else {
-      // console.log(`?campath? ${JSON.stringify(campath)}`);
-      n = campath.split('/').pop();
-      // console.log(`campath n? ${JSON.stringify(n)}`);
-      o = campath.split('/').slice(0, -1).join('/') + '/';
-      // console.log(`campath o? ${JSON.stringify(o)}`);
+      console.log(`?slashInput? ${JSON.stringify(slashInput)}`);
+      n = slashInput.split('/').pop();
+      console.log(`slashInput n? ${JSON.stringify(n)}`);
+      o = slashInput.split('/').slice(0, -1).join('/') + '/';
+      console.log(`slashInput o? ${JSON.stringify(o)}`);
       p = o.replace(':', '://');
-      // console.log(`campath p? ${JSON.stringify(p)}`);
+      console.log(`slashInput p? ${JSON.stringify(p)}`);
     }
     return { 'name': n, 'path': p };
   }
