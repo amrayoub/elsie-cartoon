@@ -194,7 +194,7 @@ export class CamPage {
     this.justBadges = [];
     this.mm.oneThing(this.mm.curThg)
       .then((x) => {
-        console.log(`oneThing returned ${JSON.stringify(x)}`);
+        console.log(`oneThing returned ${JSON.stringify(x.length)}`);
         this.justBadges = x;
       })
   }

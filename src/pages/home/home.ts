@@ -41,27 +41,80 @@ export class HomePage {
   }
 
   ionViewWillEnter() {
+    // every time
     this.mm = MM.getInstance();
     this.mm.mmRead();
     this.message = '';
+    if (this.areWeLocal == false) {
+      this.checkDbFs();
+    } else {
+      // some other checkDb here?
+    }
     this.db.get('mmJustBoxes')
       .then((ret) => {
         if (ret.length === 0) { this.tabs.select(2); }
-        else { console.log(`justBoxes ${JSON.stringify(ret)}`); }
+        else { console.log(`justBoxes ${JSON.stringify(ret.length)}`); }
       })
-      .catch((e) => { console.log(`justBoxes fail ${JSON.stringify(e)}`); })
+      .catch((e) => {
+        console.log(`justBoxes fail ${JSON.stringify(e)}`);
+        this.tabs.select(2);
+      })
   }
 
   ionViewDidEnter() {
-
+    // every time
   }
 
   ionViewDidLoad() {
+    // init only
+
   }
 
   ionViewWillLeave() {
     // this.mm.mmWrite();
   }
+
+  /** how many Badgers in db versus how many images in ~/files */
+  async checkDbFs() {
+    let lenDb: number = 0;
+    let lenFs: number = 0;
+    let pathToImages: string = '';
+    pathToImages = this.fs2;
+    await this.db.get('mmBadgers')
+      .then((res) => {
+        if (res.hasOwnProperty('length') && res.length > 0) {
+          // halfway
+          lenDb = res.length;
+        }
+      })
+      .catch((e) => {
+        console.log(`checkDbFs DB.err ${JSON.stringify(e)}`);
+      })
+    await File.listDir(pathToImages, '')
+      .then((ret) => {
+        console.log(`listdir ${JSON.stringify(ret)}`);
+        console.log(`listdir ${JSON.stringify(ret)}`);
+
+        if (ret.hasOwnProperty('length') && ret.length > 0) {
+          // other half
+          lenFs = ret.length;
+        }
+      })
+      .catch((e) => {
+        console.log(`checkDbFs FS.err ${pathToImages} e: ${JSON.stringify(e)}`);
+      })
+    console.log(`checkDbFs -- lenDb ${lenDb}, lenFs ${lenFs}`);
+
+    if (lenFs == 0 && lenDb !== 0) {
+      // problem
+      this.message = "There are no pictures in " + pathToImages + ", yet there's stuff in the database. Perhaps it should be emptied?"
+    }
+
+  }
+
+  // listDir(path, dirName)
+
+
 
   emptyDatabase() {
     this.db.clear().then(() => {
@@ -179,7 +232,7 @@ export class HomePage {
     // });
   }
 
-  checkDb() {
+  oldcheckDb() {
     this.db.keys()
       .then((ret) => {
         this.meta.allkeys = ret;
@@ -191,7 +244,7 @@ export class HomePage {
           this.showStart = false;
           this.db.get("dbglob")
             .then((res) => {
-              console.log(`Home,checkDb,dbglob ${JSON.stringify(res)}`);
+              console.log(`Home,oldcheckDb,dbglob ${JSON.stringify(res)}`);
               if (res == undefined) {
                 // do nothing
               } else {

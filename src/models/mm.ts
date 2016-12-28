@@ -68,11 +68,13 @@ export class MM {
     let jef: any;
     let bil: any;
     await this.oT1(tid).then((res) => { jef = res; });
-    console.log(`oneThing.jef ${JSON.stringify('x')}`);
+    // console.log(`oneThing.jef ${JSON.stringify('x')}`);
+
     await this.oT2(jef).then((ret) => { bil = ret; });
-    console.log(`oneThing.bil ${JSON.stringify('y')}`);
+    // console.log(`oneThing.bil ${JSON.stringify('y')}`);
+
     bil.forEach((ans)=>{
-      console.log(`bil: ${ans.action} ${ans.thing} ${ans.badge}`);
+      // console.log(`bil: ${ans.action} ${ans.thing} ${ans.badge}`);
     })
     return bil;
   }
