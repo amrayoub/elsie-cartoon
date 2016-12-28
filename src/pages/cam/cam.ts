@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { NavController, Tabs } from 'ionic-angular';
+import { Component, ViewChild } from '@angular/core';
+import { NavController, Tabs, Content } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { File, Entry, FileError } from 'ionic-native';
 import { MediaCapture, MediaFile, CaptureImageOptions, CaptureError } from 'ionic-native';
@@ -26,6 +26,8 @@ export class CamPage {
   areWeLocal: boolean;
   mm: any;
   jayObj: any[] = []; // will be written to Jayson.txt
+
+  @ViewChild(Content) content: Content;
 
   constructor(public navCtrl: NavController, public db: Storage, private tabs: Tabs) {
     this.foods = ["food-1.jpg", "food-2.jpg", "food-3.jpg", "food-4.jpg", "food-5.jpg", "food-6.jpg", "food-7.jpg", "food-8.jpg", "food-9.jpg"];
@@ -66,6 +68,7 @@ export class CamPage {
   addThing() {
     this.thePix = [];
     this.freshIds = new Ute().ids(); // use slice(0,1)
+    this.scrollToTop();
     this.multiPix();
   }
 
@@ -190,35 +193,14 @@ export class CamPage {
     console.log(`SHOW BADGES`);
     this.justBadges = [];
     this.mm.oneThing(this.mm.curThg)
-    .then((x)=>{
-      console.log(`oneThing returned ${JSON.stringify(x)}`);
-
-      this.justBadges = x;
-    })
-
-
-    // this.jayObj.map((line) => {
-    //   if (line.action == "nuThg") {
-    //     console.log(`JAY.TID ${line.signetValue}`);
-    //   }
-    //   this.justBadges.push(this.fs2 + line.badge);
-    // })
-    // // console.log(`${JSON.stringify(this.justBadges)}`);
-
+      .then((x) => {
+        console.log(`oneThing returned ${JSON.stringify(x)}`);
+        this.justBadges = x;
+      })
   }
 
-  actualCampath() {
-    let jef = {
-      "name": "1482460786456.jpg",
-      "localURL": "cdvfile://localhost/sdcard/DCIM/Camera/1482460786456.jpg",
-      "type": "image/jpeg",
-      "lastModified": null,
-      "lastModifiedDate": 1482460792000,
-      "size": 2588071,
-      "start": 0,
-      "end": 0,
-      "fullPath": "file:///storage/emulated/0/DCIM/Camera/1482460786456.jpg"
-    }
+  scrollToTop(duration: number = 300) {
+    this.content.scrollToTop(duration);
   }
 
   slashName(campath): any {
