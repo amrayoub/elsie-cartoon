@@ -24,16 +24,25 @@ Example: Here's a box of things, let's do this one.
 
 _Having a functional app, of course, was a vehicle. Along the way I wanted to at least begin understanding how Angular 2 works and how to utilize Storage and Services._
 
-There is no architecture, no engineering. This is a patchwork quilt of trial-and-error code (I use the term loosely), too much of which is cobbed straight outta google. Sensible approaches were often stopped dead due to some still-mysterious incantation that I simply do not know. There's a lot that I do not understand. Thus my so-called solutions are needlessly convoluted. This code stinks.
+There is no architecture, no engineering. This is a patchwork quilt of trial-and-error code (I use the term loosely), too much of which is cobbed straight outta google. Sensible and foolish approaches alike were often stopped dead in their tracks due to some still-mysterious incantation that I simply do not know. There's a lot that I do not understand. Thus my so-called solutions are needlessly convoluted. This code stinks.
 
-* SQLite wouldn't load on the device, thus a key/value storage and all the jungle-gymnastics that goes along with.
+* SQLite wouldn't load on the device, thus there's a key/value storage and all the jungle-gymnastics that goes along with.
 * App always fails with a dumb 404-ish error on first start.
-* I don't quite get Promises even after all this effort, although async/await is absolutly awesome.
-* XWalk is possibly slowing things down but... my device needs it
-* Cordova plugins report slow startup
+* I still don't quite _get_ Promises even after all this effort, although async/await is absolutly awesome.
+* XWalk is possibly slowing things down but... my device needs it, though.
+* Cordova plugins report slow startup.
 * Way, way too many duplicate and/or `this.global` variables
 * Duplicate work is being done all over the place
 * I guess I'm trying to build an ORM; I'm probably not ready for doing that, but...
 
+## Back in the cafe
 
+After shooting "a roll" of pictures, what next? This:
+
+1. Copy the `files` directory from [Android, what happened to [The Filesystem Heirarchy Standard](https://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard)? Seriously, you're drunk.] the _app_ directory to a server somewhere
+7. Process the images, using the "jayson.txt" file which, some of the time, contains actual JSON data.
+7. Find the button on the "home" page that nukes the Storage system (this is kinda important).
+7. Go back for more Things in Boxes.
+
+## -30-
 I learned a lot. As I find time to think about it and read more deeply, sensible approaches ought to make their way in. Heck, someday I might even write a test.

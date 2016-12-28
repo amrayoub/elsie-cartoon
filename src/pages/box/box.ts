@@ -77,21 +77,7 @@ export class BoxPage {
     this.singlePix();
   }
 
-
-  x() {
-    let xt = "test3() BADGERS"
-    let xmmBadgers = [
-      { "id": "1482509880725", "signetValue": "1482509880725", "action": "nuBox", "badge": "1482509897006.jpg", "thing": "", "box": "1482509897006.jpg", "signetHuman": "Fri Dec 23 2016 10:18:00 GMT-0600 (CST)" },
-      { "id": "1482509944984", "signetValue": "1482509944984", "action": "nuThg", "badge": "1482509937786.jpg", "thing": "1482509937786.jpg", "box": "1482509880725", "signetHuman": "Fri Dec 23 2016 10:19:04 GMT-0600 (CST)" },
-      { "id": "1482509944997", "signetValue": "1482509944997", "action": "nuThg", "badge": "1482509944991.jpg", "thing": "1482509944991.jpg", "box": "1482509880725", "signetHuman": "Fri Dec 23 2016 10:19:04 GMT-0600 (CST)" },
-      { "id": "1482509945010", "signetValue": "1482509945010", "action": "moThg", "badge": "1482509957212.jpg", "thing": "1482509944991.jpg", "box": "1482509880725", "signetHuman": "Fri Dec 23 2016 10:19:05 GMT-0600 (CST)" },
-      { "id": "1482509945023", "signetValue": "1482509945023", "action": "moThg", "badge": "1482509966020.jpg", "thing": "1482509944991.jpg", "box": "1482509880725", "signetHuman": "Fri Dec 23 2016 10:19:05 GMT-0600 (CST)" }
-    ]
-  }
-
-
-
-  /** not the same as campath. Nice one, Cordova gang */
+  /** not the same path as Multi- uses. Nice one, Cordova gang */
   slashName(boxpath): Object {
     let n: string = '';
     let o: string = '';

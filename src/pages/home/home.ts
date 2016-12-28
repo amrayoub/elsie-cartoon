@@ -44,6 +44,12 @@ export class HomePage {
     this.mm = MM.getInstance();
     this.mm.mmRead();
     this.message = '';
+    this.db.get('mmJustBoxes')
+      .then((ret) => {
+        if (ret.length === 0) { this.tabs.select(2); }
+        else { console.log(`justBoxes ${JSON.stringify(ret)}`); }
+      })
+      .catch((e) => { console.log(`justBoxes fail ${JSON.stringify(e)}`); })
   }
 
   ionViewDidEnter() {
@@ -51,9 +57,6 @@ export class HomePage {
   }
 
   ionViewDidLoad() {
-    if (this.mm && this.mm.justBoxes && this.mm.justBoxes.length === 0) {
-      this.tabs.select(2);
-    }
   }
 
   ionViewWillLeave() {
