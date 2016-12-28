@@ -135,6 +135,12 @@ export class HomePage {
     console.log(`boxbad ${this.fs2} +++ ${this.mm.curBoxBadge}`);
     console.log(`thg ${this.mm.curThg}`);
     console.log(`thgbad ${this.fs2} +++ ${this.mm.curThgBadge}`);
+
+    // var joe = new ("192.168.1.104", "matt", "this is fun");
+
+    // console.log(`${JSON.stringify(joe)}`);
+
+
   }
 
   test2() {
