@@ -74,6 +74,10 @@ export class HomePage {
     // this.mm.mmWrite();
   }
 
+  async checkForBrokenImages() {
+    // alternative to checkDbFs
+  }
+
   /** how many Badgers in db versus how many images in ~/files */
   async checkDbFs() {
     let lenDb: number = 0;
