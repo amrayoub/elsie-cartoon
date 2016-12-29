@@ -3,7 +3,7 @@ import { App, NavController, Tabs } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { Badger } from '../../models/badger';
 import { MM } from '../../models/mm';
-import { File, Entry, FileError } from 'ionic-native';
+import { File, Entry, FileError, Transfer } from 'ionic-native';
 import { CamPage } from '../cam/cam';
 
 declare var cordova: any;
@@ -16,6 +16,9 @@ declare var cordova: any;
 
 export class HomePage {
 
+  // dogTransfer: Transfer = new Transfer();
+  tattler: any;
+  atlasTransfer: any;
   message: string;
   nubNotes: string;
   meta: any = {};
@@ -28,17 +31,20 @@ export class HomePage {
   constructor(
     public navCtrl: NavController,
     public db: Storage,
-    private tabs: Tabs) {
+    private tabs: Tabs
+  ) {
     try {
       this.areWeLocal = false;
       this.fs2 = cordova.file.externalDataDirectory;
+      this.atlasTransfer = new Transfer();
     } catch (e) {
       this.areWeLocal = true;
       this.fs2 = "assets/";
     } finally {
       // console.log(`Home: Today's FS2 is: ${this.fs2}`);
     } //try
-  }
+
+  } //constructor
 
   ionViewWillEnter() {
     // every time
@@ -118,8 +124,6 @@ export class HomePage {
 
   // listDir(path, dirName)
 
-
-
   emptyDatabase() {
     this.db.clear().then(() => {
       console.log('Database is now empty.');
@@ -135,29 +139,103 @@ export class HomePage {
     console.log(`boxbad ${this.fs2} +++ ${this.mm.curBoxBadge}`);
     console.log(`thg ${this.mm.curThg}`);
     console.log(`thgbad ${this.fs2} +++ ${this.mm.curThgBadge}`);
+    if (this.areWeLocal) {
+      console.log(`NOT touching FILE TRANSFER`);
+    } else {
+      let options = {
+        fileKey: 'image',
+        fileName: this.mm.curBoxBadge,
+        headers: {}
+      }
+      let theFile = this.fs2 + this.mm.curBoxBadge;
+      let urlSpot = "http://192.168.1.11/up";
+      this.atlasTransfer.upload(theFile, urlSpot, options)
+        .then((data) => {
+          console.log(`fileTransfer got ${JSON.stringify(data)}`);
+        }, (err) => {
+          console.log(`fileTransferror ${JSON.stringify(err)}`);
+        })
+    }
 
-    // var joe = new ("192.168.1.104", "matt", "this is fun");
+  }//test1
 
-    // console.log(`${JSON.stringify(joe)}`);
+  test2() {
+    console.log(`ONE BOX`);
+    let bob = this.mm.curBox;
+    this.tattler = this.mm.curBox;
+    this.mm.oneBox(bob)
+      .then((zag) => {
+        console.log(`TEST 2 ASKS FOR ${JSON.stringify(bob)},`);
+        console.log(`  GOT ${JSON.stringify(zag.length)} badges`);
+        if (this.areWeLocal) {
+          console.log(`NOT touching FILE TRANSFER`);
+          zag.forEach((v, k) => {
+            console.log(`  ${v.action} i ${v.id} b ${v.box}`);
+          });
+        } else {
+          let options = { fileKey: 'image', fileName: 'replacedInLoop', headers: {} }
+          let theFile: string = '';
+          let urlSpot = "http://192.168.1.11/up";
+          zag.forEach((v, k) => {
+            options.fileName = v.badge;
+            theFile = this.fs2 + v.badge;
+            this.atlasTransfer.upload(theFile, urlSpot, options)
+              .then((data) => {
+                console.log(`test2 ${JSON.stringify(data)}`);
+              }), (err) => {
+                console.log(`test2err ${JSON.stringify(err)}`);
+              }
+          })//zag.forEach
+        }
+      })
+      .catch((err) => {
+        console.log(`mm.oneBox err ${JSON.stringify(err)}`);
+      });
+  }
 
+
+  plan10() {
+    let p10 = "oneBox 0: \"1482985400961\"";
+    p10 += "oB1 looking for \"1482985400961\"";
+    p10 += "raw ret";
+    let p11 = [
+      { "id": "1482896371686", "signetValue": "1482896371686", "action": "nuBox", "badge": "1482896393804.jpg", "thing": "", "box": "1482896393804.jpg", "signetHuman": "Tue Dec 27 2016 21:39:31 GMT-0600 (CST)" }, { "id": "1482896400039", "signetValue": "1482896400039", "action": "nuBox", "badge": "1482896407097.jpg", "thing": "", "box": "1482896407097.jpg", "signetHuman": "Tue Dec 27 2016 21:40:00 GMT-0600 (CST)" }, { "id": "1482896423908", "signetValue": "1482896423908", "action": "nuBox", "badge": "1482896433287.jpg", "thing": "", "box": "1482896433287.jpg", "signetHuman": "Tue Dec 27 2016 21:40:23 GMT-0600 (CST)" }, { "id": "1482896444285", "signetValue": "1482896444285", "action": "nuThg", "badge": "1482896444315.jpg", "thing": "1482896444315.jpg", "box": "1482896433287.jpg", "signetHuman": "Tue Dec 27 2016 21:40:44 GMT-0600 (CST)" }, { "id": "1482896444298", "signetValue": "1482896444298", "action": "moThg", "badge": "1482896450272.jpg", "thing": "1482896444315.jpg", "box": "1482896433287.jpg", "signetHuman": "Tue Dec 27 2016 21:40:44 GMT-0600 (CST)" }, { "id": "1482896444311", "signetValue": "1482896444311", "action": "moThg", "badge": "1482896460306.jpg", "thing": "1482896444315.jpg", "box": "1482896433287.jpg", "signetHuman": "Tue Dec 27 2016 21:40:44 GMT-0600 (CST)" }, { "id": "1482911116343", "signetValue": "1482911116343", "action": "nuThg", "badge": "1482911116392.jpg", "thing": "1482911116392.jpg", "box": "1482896433287.jpg", "signetHuman": "Wed Dec 28 2016 01:45:16 GMT-0600 (CST)" }, { "id": "1482911116356", "signetValue": "1482911116356", "action": "moThg", "badge": "1482911166316.jpg", "thing": "1482911116392.jpg", "box": "1482896433287.jpg", "signetHuman": "Wed Dec 28 2016 01:45:16 GMT-0600 (CST)" }, { "id": "1482911116369", "signetValue": "1482911116369", "action": "moThg", "badge": "1482911175142.jpg", "thing": "1482911116392.jpg", "box": "1482896433287.jpg", "signetHuman": "Wed Dec 28 2016 01:45:16 GMT-0600 (CST)" }, { "id": "1482985400960", "signetValue": "1482985400960", "action": "nuBox", "badge": "1482985411108.jpg", "thing": "", "box": "1482985411108.jpg", "signetHuman": "Wed Dec 28 2016 22:23:20 GMT-0600 (CST)" }, { "id": "1482989076874", "signetValue": "1482989076874", "action": "nuThg", "badge": "1482989076927.jpg", "thing": "1482989076927.jpg", "box": "1482985411108.jpg", "signetHuman": "Wed Dec 28 2016 23:24:36 GMT-0600 (CST)" }, { "id": "1482989076887", "signetValue": "1482989076887", "action": "moThg", "badge": "1482989087766.jpg", "thing": "1482989076927.jpg", "box": "1482985411108.jpg", "signetHuman": "Wed Dec 28 2016 23:24:36 GMT-0600 (CST)" }, { "id": "1482989076900", "signetValue": "1482989076900", "action": "moThg", "badge": "1482989094325.jpg", "thing": "1482989076927.jpg", "box": "1482985411108.jpg", "signetHuman": "Wed Dec 28 2016 23:24:36 GMT-0600 (CST)" }, { "id": "1482989113003", "signetValue": "1482989113003", "action": "nuThg", "badge": "1482989113015.jpg", "thing": "1482989113015.jpg", "box": "1482985411108.jpg", "signetHuman": "Wed Dec 28 2016 23:25:13 GMT-0600 (CST)" }, { "id": "1482989113016", "signetValue": "1482989113016", "action": "moThg", "badge": "1482989119537.jpg", "thing": "1482989113015.jpg", "box": "1482985411108.jpg", "signetHuman": "Wed Dec 28 2016 23:25:13 GMT-0600 (CST)" }, { "id": "1482989113029", "signetValue": "1482989113029", "action": "moThg", "badge": "1482989125110.jpg", "thing": "1482989113015.jpg", "box": "1482985411108.jpg", "signetHuman": "Wed Dec 28 2016 23:25:13 GMT-0600 (CST)" }];
+    let p12 = "EXCEPTION: Uncaught (in promise): [object Object]";
+    let p13 = "ORIGINAL STACKTRACE:"
+    let p14 = "Error: Uncaught (in promise): [object Object]"
 
   }
 
-  test2() {
+  plan9() {
+    let oB1lookingfor = "1482985400961";
+
+    let rawret = [
+      { "id": "1482896371686", "signetValue": "1482896371686", "action": "nuBox", "badge": "1482896393804.jpg", "thing": "", "box": "1482896393804.jpg", "signetHuman": "Tue Dec 27 2016 21:39:31 GMT-0600 (CST)" }, { "id": "1482896400039", "signetValue": "1482896400039", "action": "nuBox", "badge": "1482896407097.jpg", "thing": "", "box": "1482896407097.jpg", "signetHuman": "Tue Dec 27 2016 21:40:00 GMT-0600 (CST)" },
+      { "id": "1482896423908", "signetValue": "1482896423908", "action": "nuBox", "badge": "1482896433287.jpg", "thing": "", "box": "1482896433287.jpg", "signetHuman": "Tue Dec 27 2016 21:40:23 GMT-0600 (CST)" },
+      { "id": "1482896444285", "signetValue": "1482896444285", "action": "nuThg", "badge": "1482896444315.jpg", "thing": "1482896444315.jpg", "box": "1482896433287.jpg", "signetHuman": "Tue Dec 27 2016 21:40:44 GMT-0600 (CST)" },
+      { "id": "1482896444298", "signetValue": "1482896444298", "action": "moThg", "badge": "1482896450272.jpg", "thing": "1482896444315.jpg", "box": "1482896433287.jpg", "signetHuman": "Tue Dec 27 2016 21:40:44 GMT-0600 (CST)" },
+      { "id": "1482896444311", "signetValue": "1482896444311", "action": "moThg", "badge": "1482896460306.jpg", "thing": "1482896444315.jpg", "box": "1482896433287.jpg", "signetHuman": "Tue Dec 27 2016 21:40:44 GMT-0600 (CST)" },
+      { "id": "1482911116343", "signetValue": "1482911116343", "action": "nuThg", "badge": "1482911116392.jpg", "thing": "1482911116392.jpg", "box": "1482896433287.jpg", "signetHuman": "Wed Dec 28 2016 01:45:16 GMT-0600 (CST)" },
+      { "id": "1482911116356", "signetValue": "1482911116356", "action": "moThg", "badge": "1482911166316.jpg", "thing": "1482911116392.jpg", "box": "1482896433287.jpg", "signetHuman": "Wed Dec 28 2016 01:45:16 GMT-0600 (CST)" },
+      { "id": "1482911116369", "signetValue": "1482911116369", "action": "moThg", "badge": "1482911175142.jpg", "thing": "1482911116392.jpg", "box": "1482896433287.jpg", "signetHuman": "Wed Dec 28 2016 01:45:16 GMT-0600 (CST)" },
+      { "id": "1482985400960", "signetValue": "1482985400960", "action": "nuBox", "badge": "1482985411108.jpg", "thing": "", "box": "1482985411108.jpg", "signetHuman": "Wed Dec 28 2016 22:23:20 GMT-0600 (CST)" },
+      { "id": "1482989076874", "signetValue": "1482989076874", "action": "nuThg", "badge": "1482989076927.jpg", "thing": "1482989076927.jpg", "box": "1482985411108.jpg", "signetHuman": "Wed Dec 28 2016 23:24:36 GMT-0600 (CST)" },
+      { "id": "1482989076887", "signetValue": "1482989076887", "action": "moThg", "badge": "1482989087766.jpg", "thing": "1482989076927.jpg", "box": "1482985411108.jpg", "signetHuman": "Wed Dec 28 2016 23:24:36 GMT-0600 (CST)" },
+      { "id": "1482989076900", "signetValue": "1482989076900", "action": "moThg", "badge": "1482989094325.jpg", "thing": "1482989076927.jpg", "box": "1482985411108.jpg", "signetHuman": "Wed Dec 28 2016 23:24:36 GMT-0600 (CST)" },
+      { "id": "1482989113003", "signetValue": "1482989113003", "action": "nuThg", "badge": "1482989113015.jpg", "thing": "1482989113015.jpg", "box": "1482985411108.jpg", "signetHuman": "Wed Dec 28 2016 23:25:13 GMT-0600 (CST)" },
+      { "id": "1482989113016", "signetValue": "1482989113016", "action": "moThg", "badge": "1482989119537.jpg", "thing": "1482989113015.jpg", "box": "1482985411108.jpg", "signetHuman": "Wed Dec 28 2016 23:25:13 GMT-0600 (CST)" },
+      { "id": "1482989113029", "signetValue": "1482989113029", "action": "moThg", "badge": "1482989125110.jpg", "thing": "1482989113015.jpg", "box": "1482985411108.jpg", "signetHuman": "Wed Dec 28 2016 23:25:13 GMT-0600 (CST)" }];
+
+  }
+
+  test3() {
     console.log(`ONE THING`);
     let bob = "1482871670509"; // <---------- change me
     this.mm.oneThing(bob)
       .then((zig) => {
         console.log(`asked for ${JSON.stringify(bob)},`);
-        console.log(`  got ${JSON.stringify(zig)} items`);
+        console.log(`  got ${JSON.stringify(zig)} badges`);
       });
-  }
-
-  test3() {
-    console.log(`test3() BADGERS`);
-    this.db.get('mmBadgers').then((res) => {
-      console.log(`mmBadgers ${JSON.stringify(res)}`);
-    })
   }
 
   test4() {
