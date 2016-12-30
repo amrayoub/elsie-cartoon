@@ -15,12 +15,12 @@
       <button ion-fab (click)="writeJayson()" >
         <ion-icon name="paper"></ion-icon>
         </button> -->
-      <button ion-fab (click)="test1()" ><span class="monofett">1</span>
+      <button ion-fab (click)="test1()"><span class="monofett">1</span>
         </button>
-      <button ion-fab (click)="test2()" ><span class="monofett">2</span>
+      <button ion-fab (click)="test2()"><span class="monofett">2</span>
         </button>
-      <!--<button ion-fab (click)="test3()" ><span class="monofett">3</span>
-        </button>-->
+      <button ion-fab (click)="test4()"><span class="monofett">4</span>
+        </button>
       <button ion-fab color="danger" (click)="emptyDatabase()">
         <ion-icon name="trash"></ion-icon>
         </button>
@@ -31,12 +31,22 @@
 
   <p *ngIf="showStart"> Make a new "box" </p>
 
-  <p *ngIf="mm?.curBoxBadge">
-    <img [src]="fs2 + mm?.curBoxBadge" alt="Box Badge" class="my120x180">
-    <br>
-    cur <strong>{{ mm?.curBox }}</strong> <br>
-    tat <strong>{{ tattler }}</strong> <br>
-  </p>
+  <div *ngIf="!uploading">
+    <p *ngIf="mm?.curBoxBadge">
+      <img [src]="fs2 + mm?.curBoxBadge" alt="Box Badge" class="my120x180">
+      <br> cur <strong>{{ mm?.curBox }}</strong> <br>
+
+      <span *ngIf="tattler">
+      tattler <strong>{{ tattler }}</strong> <br>
+      </span>
+      <button ion-button (click)="upYours(mm?.curBoxBadge)" >up</button>
+
+    </p>
+  </div>
+
+  <div *ngIf="uploading">
+    {{uploading}}... {{xferImage}}
+  </div>
 
 
 </ion-content>

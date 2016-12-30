@@ -3,8 +3,12 @@ import { App, NavController, Tabs } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { Badger } from '../../models/badger';
 import { MM } from '../../models/mm';
-import { File, Entry, FileError, Transfer } from 'ionic-native';
+import { File, Entry, FileError, Transfer, FileUploadResult } from 'ionic-native';
 import { CamPage } from '../cam/cam';
+
+import { Observable } from 'rxjs/Observable';
+import { Observer } from 'rxjs/Observer';
+import 'rxjs/add/observable/from';
 
 declare var cordova: any;
 
@@ -27,6 +31,9 @@ export class HomePage {
   fs2: any;
   areWeLocal: boolean;
   mm: any;
+  uploading: boolean = false;
+  xferImage: string = '';
+  testBoxes: any[] = [];
 
   constructor(
     public navCtrl: NavController,
@@ -59,7 +66,10 @@ export class HomePage {
     this.db.get('mmJustBoxes')
       .then((ret) => {
         if (ret.length === 0) { this.tabs.select(2); }
-        else { console.log(`justBoxes ${JSON.stringify(ret.length)}`); }
+        else {
+          this.testBoxes = ret; // see test4() below
+          console.log(`justBoxes ${JSON.stringify(ret.length)}`);
+        }
       })
       .catch((e) => {
         console.log(`justBoxes fail ${JSON.stringify(e)}`);
@@ -125,12 +135,19 @@ export class HomePage {
   // listDir(path, dirName)
 
   emptyDatabase() {
-    this.db.clear().then(() => {
-      console.log('Database is now empty.');
-      this.message = 'Database is now empty.';
-    }).catch(function (err) {
-      console.log(err);
-    });
+    this.uploading = false;
+    this.mm.mmClear()
+      .then(() => {
+        console.log(`mmClear ok`);
+        // options are useless. :/
+        this.tabs.select(2, {
+          animate: true,
+          animation: 'fade',
+          duration: 4000
+        });
+      }).catch(function (err) {
+        console.log(`mmClear err ${err}`);
+      });
   }
 
   test1() {
@@ -140,7 +157,7 @@ export class HomePage {
     console.log(`thg ${this.mm.curThg}`);
     console.log(`thgbad ${this.fs2} +++ ${this.mm.curThgBadge}`);
     if (this.areWeLocal) {
-      console.log(`NOT touching FILE TRANSFER`);
+      console.log(`OUT OF DATE`);
     } else {
       let options = {
         fileKey: 'image',
@@ -156,36 +173,40 @@ export class HomePage {
           console.log(`fileTransferror ${JSON.stringify(err)}`);
         })
     }
-
   }//test1
 
   test2() {
+    this.uploading = true;
     console.log(`ONE BOX`);
     let bob = this.mm.curBox;
-    this.tattler = this.mm.curBox;
+    // this.tattler = this.mm.curBox;
     this.mm.oneBox(bob)
       .then((zag) => {
         console.log(`TEST 2 ASKS FOR ${JSON.stringify(bob)},`);
         console.log(`  GOT ${JSON.stringify(zag.length)} badges`);
         if (this.areWeLocal) {
           console.log(`NOT touching FILE TRANSFER`);
-          zag.forEach((v, k) => {
-            console.log(`  ${v.action} i ${v.id} b ${v.box}`);
-          });
+
+          // zag.forEach((v, k) => {
+          //   setTimeout(() => {
+          //     this.xferImage = this.fs2 + v.badge;
+          //     console.log(`  ${v.action} i ${v.id} b ${v.box}`);
+          //   }, 1000);
+          // });
+
+          for (let i = 0; i < zag.length; i++) {
+            setTimeout(() => {
+              this.xferImage = this.fs2 + zag[i].badge;
+              console.log(`  ${zag[i].action} i ${zag[i].id} b ${zag[i].box}`);
+            }, 1000);
+          }
+
+
         } else {
-          let options = { fileKey: 'image', fileName: 'replacedInLoop', headers: {} }
-          let theFile: string = '';
-          let urlSpot = "http://192.168.1.11/up";
-          zag.forEach((v, k) => {
-            options.fileName = v.badge;
-            theFile = this.fs2 + v.badge;
-            this.atlasTransfer.upload(theFile, urlSpot, options)
-              .then((data) => {
-                console.log(`test2 ${JSON.stringify(data)}`);
-              }), (err) => {
-                console.log(`test2err ${JSON.stringify(err)}`);
-              }
-          })//zag.forEach
+          this.test2push(zag)
+            .then((ret) => {
+              console.log(`DONE UPLOADING ${JSON.stringify(ret)}`);
+            });
         }
       })
       .catch((err) => {
@@ -193,6 +214,27 @@ export class HomePage {
       });
   }
 
+  test2push(thebadgers) {
+    return new Promise((resolve) => {
+      let options = { fileKey: 'image', fileName: 'replacedInLoop', headers: {} }
+      let theFile: string = '';
+      let urlSpot = "http://192.168.1.11/up";
+      thebadgers.forEach((v, k) => {
+        options.fileName = v.badge;
+        theFile = this.fs2 + v.badge;
+        this.atlasTransfer.upload(theFile, urlSpot, options)
+          .then((data) => {
+            this.xferImage = theFile;
+            console.log(`test2 ${JSON.stringify(data)}`);
+          }), (err) => {
+            console.log(`test2err ${JSON.stringify(err)}`);
+          }
+        if (k >= v.length) {
+          resolve({ message: 'too soon?' })
+        }
+      })//zag.forEach
+    })
+  }
 
   plan10() {
     let p10 = "oneBox 0: \"1482985400961\"";
@@ -238,11 +280,98 @@ export class HomePage {
       });
   }
 
-  test4() {
-    console.log(`test4() `);
+
+  upYours(fname) {
+    let realfname = fname;
+    if (fname.hasOwnProperty('badge')) {
+      realfname = fname.badge;
+    }
+    console.log(`FNAME ${JSON.stringify(fname)} REAL ${JSON.stringify(realfname)}`);
+
+    let whatFileTransferSays = {
+      "bytesSent": 0,
+      "responseCode": 9000,
+      "response": "Marvellous",
+      "headers": { "filename": "1483042386148.jpg" }
+    }
+
+    let carterSpyPills = {
+      "response": {
+        "bytesSent": 0,
+        "responseCode": 9000,
+        "response": "Marvellous",
+        "headers": { "filename": "1483042395125.jpg" }
+      },
+      "responseCode": 200,
+      "objectId": "",
+      "bytesSent": 2274452
+    }
+
+    let locaXfer = new Transfer();
+    let options = {
+      fileKey: 'image',
+      fileName: realfname,
+      headers: {}
+    }
+    console.log(`OPT ${JSON.stringify(options)}`);
+    let theFile: string = this.fs2 + realfname;
+    let urlSpot = "http://192.168.1.11/up";
+    let moe: FileUploadResult ;
+    locaXfer.upload(theFile, urlSpot, options)
+      .then((data) => {
+        this.xferImage = theFile;
+
+        console.log(`DATA ${JSON.stringify(data)}`);
+        console.log(`data RESPONSE ${JSON.stringify(data.response)}`);
+        moe = data;
+        console.log(`moe HEADERS ${JSON.stringify(moe.headers)}`);
+
+        // console.log(`bytes ${data.bytesSent}`);
+
+      }), (err) => {
+        console.log(`data err ${JSON.stringify(err)}`);
+      }
   }
 
-  //12-22 21:54:50.248: I/chromium(8764): [INFO:CONSOLE(49235)] "Error: Uncaught (in promise): [object Object]
+  test4() {
+    let source = Observable.from(this.mm.badgers);
+    let subscription = source.subscribe(
+      (x) => {
+        this.upYours(x)
+      },
+      (e) => {
+        console.log(`test4 ERR ${JSON.stringify(e)}`);
+      },
+      () => {
+        console.log(`test4 COMPLETE`);
+      }
+    )
+
+  }
+  oldasynctest4() {
+    let miller = this;
+    let array = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    let boo = [];
+    // console.log(`${JSON.stringify(this.mm.mmAllBadgers)}`);
+    this.mm.mmAllBadgers().then((ret) => {
+      boo = ret;
+      console.log(`boo ${JSON.stringify(boo.length)}`);
+    })
+    // let source = Observable.from(this.testBoxes);
+    let source = Observable.from(boo);
+    let subscription = source.subscribe(
+      function (x) {
+        miller.upYours(x.badge);
+      },
+      function (err) {
+        console.log('Error: ' + err);
+      },
+      function () {
+        console.log('Completed');
+
+      });
+  }
+
 
   async writeJayson() {
     let jay = [];
