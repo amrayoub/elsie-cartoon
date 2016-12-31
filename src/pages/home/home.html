@@ -39,14 +39,16 @@
       <span *ngIf="tattler">
       tattler <strong>{{ tattler }}</strong> <br>
       </span>
-      <button ion-button (click)="upYours(mm?.curBoxBadge)" >up</button>
+      <button ion-button (click)="upYours(mm?.curBoxBadge)">up</button>
 
     </p>
   </div>
 
   <div *ngIf="uploading">
-    {{uploading}}... {{xferImage}}
+    Uploading... <br>
+    <div *ngFor="let moe of moeSent">
+      <img [src]="moe.p + moe.n" alt="" class="my90x120">
+    </div>
   </div>
-
 
 </ion-content>

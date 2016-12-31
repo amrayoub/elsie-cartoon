@@ -9,6 +9,7 @@ import { CamPage } from '../cam/cam';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 import 'rxjs/add/observable/from';
+import 'rxjs/add/observable/fromPromise';
 
 declare var cordova: any;
 
@@ -34,6 +35,8 @@ export class HomePage {
   uploading: boolean = false;
   xferImage: string = '';
   testBoxes: any[] = [];
+  moeSent: any[] = [];
+  moeDone: any[] = [];
 
   constructor(
     public navCtrl: NavController,
@@ -88,6 +91,7 @@ export class HomePage {
 
   ionViewWillLeave() {
     // this.mm.mmWrite();
+    this.uploading = false;
   }
 
   async checkForBrokenImages() {
@@ -280,14 +284,7 @@ export class HomePage {
       });
   }
 
-
-  upYours(fname) {
-    let realfname = fname;
-    if (fname.hasOwnProperty('badge')) {
-      realfname = fname.badge;
-    }
-    console.log(`FNAME ${JSON.stringify(fname)} REAL ${JSON.stringify(realfname)}`);
-
+  moSpy() {
     let whatFileTransferSays = {
       "bytesSent": 0,
       "responseCode": 9000,
@@ -306,48 +303,115 @@ export class HomePage {
       "objectId": "",
       "bytesSent": 2274452
     }
+  }
 
-    let locaXfer = new Transfer();
-    let options = {
-      fileKey: 'image',
-      fileName: realfname,
-      headers: {}
+  nukeIt(fname) {
+    let obj = this.moeSent.find(x => x.n === fname);
+    if (obj !== undefined) {
+      let index = this.moeSent.indexOf(obj);
+      if (index >= 0) {
+        this.moeSent.splice(index, 1);
+      }
     }
-    console.log(`OPT ${JSON.stringify(options)}`);
+  }
+
+  upYoursWorker(theFile, urlSpot, options) {
+    let locaXfer = new Transfer();
+    let moeret: any;
+    let curly = Observable.fromPromise(
+      locaXfer.upload(theFile, urlSpot, options)
+        .then((data) => {
+          // this.xferImage = theFile;
+          // console.log(`DATA ${JSON.stringify(data)}`);
+          // console.log(`data RESPONSE ${JSON.stringify(data.response)}`);
+          moeret = Object.assign({}, JSON.parse(data.response));
+          // let data_RESPONSE = { "bytesSent": 0, "responseCode": 9000, "response": "Marvellous", "headers": { "filename": "1483042386148.jpg" } }
+          console.log(`MOERET ${JSON.stringify(moeret.headers.filename)}`);
+          this.nukeIt(moeret.headers.filename);
+          // moe = data;
+          // console.log(`moe HEADERS ${JSON.stringify(moe.headers)}`);
+          // console.log(`bytes ${data.bytesSent}`);
+        })
+      // .catch((err) => {
+      //   console.log(`data err ${JSON.stringify(err)}`);
+      // })
+    );
+
+  }
+
+  upYours(fname) {
+    let realfname = fname;
+    if (fname.hasOwnProperty('badge')) { realfname = fname.badge; }
+    // console.log(`FNAME ${JSON.stringify(fname)} REAL ${JSON.stringify(realfname)}`);
+    let options = { fileKey: 'image', fileName: realfname, headers: {} }
+    // console.log(`OPT ${JSON.stringify(options)}`);
     let theFile: string = this.fs2 + realfname;
     let urlSpot = "http://192.168.1.11/up";
-    let moe: FileUploadResult ;
-    locaXfer.upload(theFile, urlSpot, options)
-      .then((data) => {
-        this.xferImage = theFile;
-
-        console.log(`DATA ${JSON.stringify(data)}`);
-        console.log(`data RESPONSE ${JSON.stringify(data.response)}`);
-        moe = data;
-        console.log(`moe HEADERS ${JSON.stringify(moe.headers)}`);
-
-        // console.log(`bytes ${data.bytesSent}`);
-
-      }), (err) => {
-        console.log(`data err ${JSON.stringify(err)}`);
-      }
+    // let moe: FileUploadResult;
+    // this.upYoursWorker(theFile, urlSpot, options) ;
   }
+  /** Consider...
+   * 1. fun1(){ }
+   *      builds xfer[], gets Observable.from
+   * 2. fun2(){ }
+   *      observer of fun1, next/err/done
+   *      done is significant
+   * 3. fun3(){ } activated by #2/done. ?how?
+   *      pops xfer[], gets Observable.from
+   *      emits next when answer comes back from server
+   *      emits done when xfer[] is empty
+   * 4. fun4(){ }
+   *      observer of fun3, next/err/done
+   *      next is significant
+   *      done will unsubscribe all
+   */
 
   test4() {
-    let source = Observable.from(this.mm.badgers);
-    let subscription = source.subscribe(
+    this.uploading = true;
+    this.moeSent = [];
+    this.moeDone = [];
+
+    this.mm.badgers.map(x => {
+      this.moeSent.push({ n: x.badge, p: this.fs2 })
+    });
+    // console.log(`ROSTER ${JSON.stringify(this.moeSent)}`);
+    let moe$ = Observable.from(this.moeSent);
+    let subb = moe$.subscribe(
       (x) => {
-        this.upYours(x)
+        console.log(`MOE gets ${JSON.stringify(x)}`);
+        this.upYours(x.n); // can haz more obscur?
       },
       (e) => {
-        console.log(`test4 ERR ${JSON.stringify(e)}`);
+        console.log(`MOE FAIL ${e}`);
       },
       () => {
-        console.log(`test4 COMPLETE`);
+        console.log(`MOE DONE`);
+        // subb.unsubscribe();
       }
-    )
+    );
 
+
+    // let source = Observable.from(this.mm.badgers);
+    // let subscription = source.subscribe(
+    //   (x) => {
+    //     this.upYours(x)
+    //   },
+    //   (e) => {
+    //     console.log(`test4 ERR ${JSON.stringify(e)}`);
+    //   },
+    //   () => {
+    //     console.log(`test4 COMPLETE`);
+    //   }
+    // )
+  }//test4
+
+  test5MountainWestVideo() {
+    // let keyups;
+    // var searchResultsSets = keyups.map(function(key){
+    //   return Observable.getJSON('/search?'+input.value);
+    // })
   }
+
   oldasynctest4() {
     let miller = this;
     let array = [1, 2, 3, 4, 5, 6, 7, 8, 9];
