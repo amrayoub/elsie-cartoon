@@ -8,10 +8,21 @@ import { CamPage } from '../cam/cam';
 
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
+import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/from';
 import 'rxjs/add/observable/fromPromise';
 
 declare var cordova: any;
+
+export class FakeTransfer {
+  upload(name, url, opts = {}) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({ data: { name: name, greets: "hello" } })
+      }, 500)
+    })
+  }
+}
 
 @Component({
   selector: 'page-home',
@@ -20,6 +31,8 @@ declare var cordova: any;
 })
 
 export class HomePage {
+
+  sinatraServer: string = "drcrook:/home/vagrant/sinatra";
 
   // dogTransfer: Transfer = new Transfer();
   tattler: any;
@@ -179,7 +192,7 @@ export class HomePage {
     }
   }//test1
 
-  test2() {
+  formertest2() {
     this.uploading = true;
     console.log(`ONE BOX`);
     let bob = this.mm.curBox;
@@ -238,6 +251,45 @@ export class HomePage {
         }
       })//zag.forEach
     })
+  }
+
+  test2() {
+    console.log(`[TEST2] --> UPSeven()`);
+    let bob = this.db.get('mmBadgers')
+      .then((res) => {
+        console.log(`res ${JSON.stringify(res.length)}`);
+
+        res.forEach((xyz, k) => {
+          console.log(`[${k}] ${JSON.stringify(xyz.badge)}`)
+
+          this.upSeven(xyz).subscribe(
+            (n) => {
+              // console.log(`[${k}] ${JSON.stringify(n)}`)
+            },
+            (e) => { console.log(`e ${e}`) },
+            () => { console.log(`DONE`) }
+          );
+
+        })
+
+
+      })
+
+
+
+    // let realfname = fname;
+    // if (fname.hasOwnProperty('badge')) { realfname = fname.badge; }
+    // let options = { fileKey: 'image', fileName: realfname, headers: {} }
+    // let theFile: string = this.fs2 + realfname;
+    // let urlSpot = "http://192.168.1.11/up";
+
+
+    // let moe: FileUploadResult;
+    // let fT = new FakeTransfer();
+    // fT.upload(theFile, urlSpot, options)
+    //   .then((res) => {
+    //     console.log(`FT.UPLOAD ${JSON.stringify(res)}`);
+    //   })
   }
 
   plan10() {
@@ -315,28 +367,52 @@ export class HomePage {
     }
   }
 
-  upYoursWorker(theFile, urlSpot, options) {
+  upSeven(fname, locSw = true) {
+    return Observable.create(function (observer) {
+      let realfname = fname;
+      if (fname.hasOwnProperty('badge')) { realfname = fname.badge; }
+
+      let urlSpot = "http://192.168.1.11/up";
+      let options = { fileKey: 'image', fileName: realfname, headers: {} }
+      let moeret: any;
+      let locaXfer;
+      if (locSw) {
+        locaXfer = new FakeTransfer();
+      } else {
+        locaXfer = new Transfer();
+      }
+      locaXfer.upload(realfname, urlSpot, options)
+        .then((data) => {
+          console.log(`   locaXfer ${JSON.stringify(data)}`);
+          observer.next(data);
+        })
+    });
+  }
+
+
+  upYoursWorker(fname) {
+    let realfname = fname;
+    if (fname.hasOwnProperty('badge')) { realfname = fname.badge; }
+    let urlSpot = "http://192.168.1.11/up";
+    let options = { fileKey: 'image', fileName: realfname, headers: {} }
     let locaXfer = new Transfer();
     let moeret: any;
-    let curly = Observable.fromPromise(
-      locaXfer.upload(theFile, urlSpot, options)
-        .then((data) => {
-          // this.xferImage = theFile;
-          // console.log(`DATA ${JSON.stringify(data)}`);
-          // console.log(`data RESPONSE ${JSON.stringify(data.response)}`);
-          moeret = Object.assign({}, JSON.parse(data.response));
-          // let data_RESPONSE = { "bytesSent": 0, "responseCode": 9000, "response": "Marvellous", "headers": { "filename": "1483042386148.jpg" } }
-          console.log(`MOERET ${JSON.stringify(moeret.headers.filename)}`);
-          this.nukeIt(moeret.headers.filename);
-          // moe = data;
-          // console.log(`moe HEADERS ${JSON.stringify(moe.headers)}`);
-          // console.log(`bytes ${data.bytesSent}`);
-        })
-      // .catch((err) => {
-      //   console.log(`data err ${JSON.stringify(err)}`);
-      // })
-    );
-
+    locaXfer.upload(realfname, urlSpot, options)
+      .then((data) => {
+        // this.xferImage = theFile;
+        // console.log(`DATA ${JSON.stringify(data)}`);
+        // console.log(`data RESPONSE ${JSON.stringify(data.response)}`);
+        moeret = Object.assign({}, JSON.parse(data.response));
+        // let data_RESPONSE = { "bytesSent": 0, "responseCode": 9000, "response": "Marvellous", "headers": { "filename": "1483042386148.jpg" } }
+        console.log(`MOERET ${JSON.stringify(moeret.headers.filename)}`);
+        this.nukeIt(moeret.headers.filename);
+        // moe = data;
+        // console.log(`moe HEADERS ${JSON.stringify(moe.headers)}`);
+        // console.log(`bytes ${data.bytesSent}`);
+      })
+    // .catch((err) => {
+    //   console.log(`data err ${JSON.stringify(err)}`);
+    // })
   }
 
   upYours(fname) {
