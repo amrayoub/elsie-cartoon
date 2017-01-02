@@ -20,14 +20,13 @@ export class FakeTransfer {
   upload(name, url, opts = {}) {
     let justname = name.split('/').pop();
     return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(JSON.stringify({
-          bytesSent: 0,
-          responseCode: 9000,
-          response: "Groovy, Babe",
-          headers: { filename: justname }
-        }))
-      }, 0)
+      let sluggo = JSON.stringify({
+        bytesSent: 0,
+        responseCode: 9000,
+        response: "Groovy, Babe",
+        headers: { filename: justname }
+      });
+      resolve({ response: sluggo })
     })
   }
 }
@@ -328,7 +327,7 @@ export class HomePage {
   }
 
   nukeOneMoe(fname) {
-    let obj = this.moeSent.find(x => x.n === fname);
+    let obj = this.moeSent.find(x => x.badge === fname);
     if (obj !== undefined) {
       let index = this.moeSent.indexOf(obj);
       if (index >= 0) {
@@ -339,52 +338,61 @@ export class HomePage {
 
   }
 
-   test6a() {
+  test6a() {
     console.log(`TEST6(A) / UPSIX()`);
-    let locSw = false;
-    if (this.areWeLocal) { locSw = true }
+    // let locSw = false;
+    // if (this.areWeLocal) { locSw = true }
+    let locSw; this.areWeLocal ? locSw = true : locSw = false;
 
-     this.db.get('mmBadgers')
+    this.moeSent.push({ p: this.fs2, badge: 'jayson.txt' })
+
+    this.db.get('mmBadgers')
       .then((ret) => {
         this.uploading = true;
         ret.forEach((v) => {
-          this.moeSent.push({ p: this.fs2, n: v.badge });
+          this.moeSent.push({ p: this.fs2, badge: v.badge });
         })
       });
-   }
+  }
 
-   test6b(){
+  test6b() {
     console.log(`TEST6(B) / UPSIX()`);
-    let locSw = false;
-    if (this.areWeLocal) { locSw = true }
-     this.db.get('mmBadgers')
-      .then((res) => {
-        res.forEach((xyz, k) => {
-          // console.log(`[${k}] ${JSON.stringify(xyz.badge)}`);
-          this.upSix(xyz.badge, locSw).subscribe(
-            (n) => {
-              console.log(`[${k}]]] ${JSON.stringify(n)}`)
+    // let locSw = false;
+    // if (this.areWeLocal) { locSw = true }
+    let locSw; this.areWeLocal ? locSw = true : locSw = false;
 
-              /** get this: n is bullshit; n.response is JSON */
-              // {"response":"{\"bytesSent\":0,\"responseCode\":9000,\"response\":\"Marvellous\",\"headers\":{\"filename\":\"1483042411443.jpg\"}}","responseCode":200,"objectId":"","bytesSent":3286562}"
+    // this.db.get('mmBadgers')
+    // .then((res) => {
+    // res.forEach((xyz, k) => {
+    this.moeSent.forEach((xyz, k) => {
+      // console.log(`[${k}] ${JSON.stringify(xyz.badge)}`);
+      this.upSix(xyz.badge, locSw).subscribe(
+        (n) => {
+          console.log(`[${k}]]] ${JSON.stringify(n)}`)
 
-              let rats = JSON.parse(n.response);
-              let mice = '';
-              if (rats.hasOwnProperty('headers')) {
-                let cats = rats.headers;
-                if (cats.hasOwnProperty('filename')) {
-                  mice = rats.headers.filename;
-                  console.log(`MICE ${mice}`);
-                }
-              }
-              this.nukeOneMoe(mice);
-            },
-            (e) => { console.log(`e ${e}`) },
-            () => { console.log(`DONE`) }
-          );
+          /** KNOW THIS: n is bullshit; n.response is JSON */
 
-        })
-      })
+          // {"response":"{\"bytesSent\":0,\"responseCode\":9000,\"response\":\"Marvellous\",\"headers\":{\"filename\":\"1483042411443.jpg\"}}","responseCode":200,"objectId":"","bytesSent":3286562}"
+
+          // {\"bytesSent\":0,\"responseCode\":9000,\"response\":\"Groovy, Babe\",\"headers\":{\"filename\":\"jayson.txt\"}}}"
+
+          let rats = JSON.parse(n.response);
+          let mice = '';
+          if (rats.hasOwnProperty('headers')) {
+            let cats = rats.headers;
+            if (cats.hasOwnProperty('filename')) {
+              mice = rats.headers.filename;
+              console.log(`MICE ${mice}`);
+            }
+          }
+          this.nukeOneMoe(mice);
+        },
+        (e) => { console.log(`e ${e}`) },
+        () => { console.log(`DONE`) }
+      );
+
+    })//.forEach
+    // })//.then(res)
   }
 
   test7() {

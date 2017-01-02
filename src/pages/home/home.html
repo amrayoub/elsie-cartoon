@@ -47,7 +47,15 @@
   <div *ngIf="uploading">
     Uploading... <br>
     <div *ngFor="let moe of moeSent">
-      <img [src]="moe.p + moe.n" alt="" class="my90x120">
+
+      <div *ngIf="moe.badge !='jayson.txt'">
+        <img [src]="moe.p + moe.badge" alt="" class="my90x120">
+      </div>
+
+      <div *ngIf="moe.badge=='jayson.txt'">
+        the manifest
+      </div>
+
     </div>
     <button ion-button (click)="test6b()">
         test6 B</button>
