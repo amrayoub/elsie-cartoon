@@ -22,7 +22,6 @@ export class BoxPage {
   thePhoto: any;
   rawImage: any;
   box: Badger;
-  dbId: any;
 
   fs2: any;
   dbBoxes: any[];
@@ -71,8 +70,7 @@ export class BoxPage {
   addBox() {
     this.box = new Badger();
     this.box.action = "nuBox"
-    this.dbId = new Date().valueOf().toString();
-    // console.log(`made nuBox: ${JSON.stringify(this.box)}`);
+    console.log(`MADE nuBox BADGER: ${JSON.stringify(this.box)}`);
     // this.multiPix();
     this.singlePix();
   }
@@ -127,6 +125,7 @@ export class BoxPage {
       this.rawImage = this.slashName(thisCat);
       this.box.badge = this.rawImage.name;
       this.box.box = this.rawImage.name;
+      console.log(`singlePix ${JSON.stringify(this.box)}`);
       this.mvImageToSafePlace();
     }
   } //singlePix()
@@ -148,7 +147,7 @@ export class BoxPage {
   }
 
   async saveBoxObject() {
-    this.mm.curBox = this.dbId;
+    this.mm.curBox = this.box.id;
     this.mm.curBoxBadge = this.box.badge;
     this.mm.badgers.push(this.box);
     this.mm.justBoxes.push(this.box);
@@ -245,6 +244,8 @@ export class BoxPage {
         // }
       });
   }
+
+  dbId: any;
 
   oldersaveBoxObject() {
     this.meta.glob.curBox = this.dbId;
