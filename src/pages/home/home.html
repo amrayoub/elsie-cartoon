@@ -39,11 +39,9 @@
       <span *ngIf="tattler">
       tattler <strong>{{ tattler }}</strong> <br>
       </span>
-      <button ion-button (click)="test2()">
-        test2
-        </button>
-
     </p>
+    <button ion-button (click)="test6a()">
+        test6 A</button>
   </div>
 
   <div *ngIf="uploading">
@@ -51,6 +49,8 @@
     <div *ngFor="let moe of moeSent">
       <img [src]="moe.p + moe.n" alt="" class="my90x120">
     </div>
+    <button ion-button (click)="test6b()">
+        test6 B</button>
   </div>
 
 </ion-content>

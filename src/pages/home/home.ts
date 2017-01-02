@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { App, NavController, Tabs } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { Badger } from '../../models/badger';
@@ -11,15 +11,23 @@ import { Observer } from 'rxjs/Observer';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/from';
 import 'rxjs/add/observable/fromPromise';
+import 'rxjs/add/operator/delay';
+import 'rxjs/add/operator/concatMap';
 
 declare var cordova: any;
 
 export class FakeTransfer {
   upload(name, url, opts = {}) {
+    let justname = name.split('/').pop();
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve({ data: { name: name, greets: "hello" } })
-      }, 500)
+        resolve(JSON.stringify({
+          bytesSent: 0,
+          responseCode: 9000,
+          response: "Groovy, Babe",
+          headers: { filename: justname }
+        }))
+      }, 0)
     })
   }
 }
@@ -52,6 +60,7 @@ export class HomePage {
   moeDone: any[] = [];
 
   constructor(
+    private changeDetectionRef: ChangeDetectorRef,
     public navCtrl: NavController,
     public db: Storage,
     private tabs: Tabs
@@ -64,7 +73,7 @@ export class HomePage {
       this.areWeLocal = true;
       this.fs2 = "assets/";
     } finally {
-      // console.log(`Home: Today's FS2 is: ${this.fs2}`);
+      console.log(`Home: Today's FS2 is: ${this.fs2}`);
     } //try
 
   } //constructor
@@ -253,45 +262,6 @@ export class HomePage {
     })
   }
 
-  test2() {
-    console.log(`[TEST2] --> UPSeven()`);
-    let bob = this.db.get('mmBadgers')
-      .then((res) => {
-        console.log(`res ${JSON.stringify(res.length)}`);
-
-        res.forEach((xyz, k) => {
-          console.log(`[${k}] ${JSON.stringify(xyz.badge)}`)
-
-          this.upSeven(xyz).subscribe(
-            (n) => {
-              // console.log(`[${k}] ${JSON.stringify(n)}`)
-            },
-            (e) => { console.log(`e ${e}`) },
-            () => { console.log(`DONE`) }
-          );
-
-        })
-
-
-      })
-
-
-
-    // let realfname = fname;
-    // if (fname.hasOwnProperty('badge')) { realfname = fname.badge; }
-    // let options = { fileKey: 'image', fileName: realfname, headers: {} }
-    // let theFile: string = this.fs2 + realfname;
-    // let urlSpot = "http://192.168.1.11/up";
-
-
-    // let moe: FileUploadResult;
-    // let fT = new FakeTransfer();
-    // fT.upload(theFile, urlSpot, options)
-    //   .then((res) => {
-    //     console.log(`FT.UPLOAD ${JSON.stringify(res)}`);
-    //   })
-  }
-
   plan10() {
     let p10 = "oneBox 0: \"1482985400961\"";
     p10 += "oB1 looking for \"1482985400961\"";
@@ -357,33 +327,88 @@ export class HomePage {
     }
   }
 
-  nukeIt(fname) {
+  nukeOneMoe(fname) {
     let obj = this.moeSent.find(x => x.n === fname);
     if (obj !== undefined) {
       let index = this.moeSent.indexOf(obj);
       if (index >= 0) {
         this.moeSent.splice(index, 1);
+        console.log(`nuked ${fname}`);
       }
     }
+
   }
 
-  upSeven(fname, locSw = true) {
-    return Observable.create(function (observer) {
-      let realfname = fname;
-      if (fname.hasOwnProperty('badge')) { realfname = fname.badge; }
+   test6a() {
+    console.log(`TEST6(A) / UPSIX()`);
+    let locSw = false;
+    if (this.areWeLocal) { locSw = true }
 
-      let urlSpot = "http://192.168.1.11/up";
-      let options = { fileKey: 'image', fileName: realfname, headers: {} }
+     this.db.get('mmBadgers')
+      .then((ret) => {
+        this.uploading = true;
+        ret.forEach((v) => {
+          this.moeSent.push({ p: this.fs2, n: v.badge });
+        })
+      });
+   }
+
+   test6b(){
+    console.log(`TEST6(B) / UPSIX()`);
+    let locSw = false;
+    if (this.areWeLocal) { locSw = true }
+     this.db.get('mmBadgers')
+      .then((res) => {
+        res.forEach((xyz, k) => {
+          // console.log(`[${k}] ${JSON.stringify(xyz.badge)}`);
+          this.upSix(xyz.badge, locSw).subscribe(
+            (n) => {
+              console.log(`[${k}]]] ${JSON.stringify(n)}`)
+
+              /** get this: n is bullshit; n.response is JSON */
+              // {"response":"{\"bytesSent\":0,\"responseCode\":9000,\"response\":\"Marvellous\",\"headers\":{\"filename\":\"1483042411443.jpg\"}}","responseCode":200,"objectId":"","bytesSent":3286562}"
+
+              let rats = JSON.parse(n.response);
+              let mice = '';
+              if (rats.hasOwnProperty('headers')) {
+                let cats = rats.headers;
+                if (cats.hasOwnProperty('filename')) {
+                  mice = rats.headers.filename;
+                  console.log(`MICE ${mice}`);
+                }
+              }
+              this.nukeOneMoe(mice);
+            },
+            (e) => { console.log(`e ${e}`) },
+            () => { console.log(`DONE`) }
+          );
+
+        })
+      })
+  }
+
+  test7() {
+
+  }
+
+  upSix(fname, locSw = true) {
+    return Observable.create(function (observer) {
       let moeret: any;
       let locaXfer;
       if (locSw) {
         locaXfer = new FakeTransfer();
+        this.fs2 = "assets/";
       } else {
         locaXfer = new Transfer();
+        this.fs2 = cordova.file.externalDataDirectory;
       }
-      locaXfer.upload(realfname, urlSpot, options)
+      let fullname = this.fs2 + fname;
+      let urlSpot = "http://192.168.1.11/up";
+      let options = { fileKey: 'image', fileName: fullname, headers: {} }
+      console.log(`LOCAXFER... ${fullname}, ${urlSpot}, ${JSON.stringify(options)}`);
+      locaXfer.upload(fullname, urlSpot, options)
         .then((data) => {
-          console.log(`   locaXfer ${JSON.stringify(data)}`);
+          // console.log(`   locaXfer ${JSON.stringify(data)}`);
           observer.next(data);
         })
     });
@@ -405,7 +430,7 @@ export class HomePage {
         moeret = Object.assign({}, JSON.parse(data.response));
         // let data_RESPONSE = { "bytesSent": 0, "responseCode": 9000, "response": "Marvellous", "headers": { "filename": "1483042386148.jpg" } }
         console.log(`MOERET ${JSON.stringify(moeret.headers.filename)}`);
-        this.nukeIt(moeret.headers.filename);
+        this.nukeOneMoe(moeret.headers.filename);
         // moe = data;
         // console.log(`moe HEADERS ${JSON.stringify(moe.headers)}`);
         // console.log(`bytes ${data.bytesSent}`);
